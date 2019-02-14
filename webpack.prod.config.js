@@ -8,8 +8,10 @@ const config = {
   },
   output: {
     filename: 'rc-md2html.min.js',
-    path: path.resolve(__dirname, 'lib')
+    path: path.resolve(__dirname, 'lib'),
+    libraryTarget: "umd"
   },  
+  mode: 'production',
   module: {
     rules: [
       {
@@ -21,6 +23,14 @@ const config = {
         use: [
           'style-loader',
           'css-loader'
+        ]
+      },
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader', 
+          'css-loader', 
+          'less-loader'
         ]
       },
       {

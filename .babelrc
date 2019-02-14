@@ -12,5 +12,6 @@
 				"pragma": "React.createElement"
 			}
 		]
-	]
+	],
+	"plugins": ["@babel/plugin-proposal-class-properties"]
 }

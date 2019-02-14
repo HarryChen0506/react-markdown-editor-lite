@@ -1,5 +1,5 @@
 
-const a = '123'
-console.log('a', a)
+import MdEditor from './MdEditor'
 
-export default a
+export default MdEditor
+export { MdEditor }

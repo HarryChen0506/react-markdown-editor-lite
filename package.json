@@ -32,6 +32,7 @@
   "homepage": "https://github.com/HarryChen0506/rc-md2html#readme",
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
@@ -48,6 +49,8 @@
     "karma-mocha": "^1.3.0",
     "karma-sinon": "^1.0.5",
     "karma-webpack": "^3.0.5",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "mocha": "^5.2.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
@@ -57,5 +60,8 @@
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14"
+  },
+  "dependencies": {
+    "md-js": "^1.0.4"
   }
 }
