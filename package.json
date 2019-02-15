@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "markdown-it": "^8.4.2",
-    "markdown-it-emoji": "^1.4.0",
-    "md-js": "^1.0.4"
+    "markdown-it-emoji": "^1.4.0"
   }
 }

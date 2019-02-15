@@ -48,17 +48,6 @@ class MdEditor extends React.Component {
 
   init = () => {
     const { value } = this.props
-    // const myRender = new Mdjs.MdjsRenderer();
-    // myRender.func.heading = function(level, name, content=''){
-    //   content = content.trim()
-    //   if ([1, 2, 3, 4, 5, 6].includes(level)) {
-    //     return `<h${level} id="${content}" name="${content}">${content}</h${level}>`
-    //   }
-    //   return `<h${level}>${content}</h${level}>`      
-    // };
-    // this.mdjs = new Mdjs(myRender);    
-    // console.log(level, name, content)
-
     this.mdjs = new MarkdownIt({
       html: true,
       linkify: true,
@@ -95,8 +84,7 @@ class MdEditor extends React.Component {
   }
 
   handleChange = (e) => {
-    const value = e.target.value
-    // console.log('value', value)
+    const value = e.target.value   
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
     const text = value.replace(/↵/g,'\n')
