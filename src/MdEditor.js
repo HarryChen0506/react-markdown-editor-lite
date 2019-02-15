@@ -2,6 +2,8 @@
 import React from 'react'
 import './index.less'
 import Mdjs from 'md-js'
+import MarkdownIt from 'markdown-it'
+import emoji from 'markdown-it-emoji'
 
 export class HtmlRender extends React.Component {
   render() {
@@ -46,16 +48,25 @@ class MdEditor extends React.Component {
 
   init = () => {
     const { value } = this.props
-    const myRender = new Mdjs.MdjsRenderer();
-    myRender.func.heading = function(level, name, content=''){
-      // console.log(level, name, content)
-      content = content.trim()
-      if ([1, 2, 3, 4, 5, 6].includes(level)) {
-        return `<h${level} id="${content}" name="${content}">${content}</h${level}>`
-      }
-      return `<h${level}>${content}</h${level}>`      
-    };
-    this.mdjs = new Mdjs(myRender);    
+    // const myRender = new Mdjs.MdjsRenderer();
+    // myRender.func.heading = function(level, name, content=''){
+    //   content = content.trim()
+    //   if ([1, 2, 3, 4, 5, 6].includes(level)) {
+    //     return `<h${level} id="${content}" name="${content}">${content}</h${level}>`
+    //   }
+    //   return `<h${level}>${content}</h${level}>`      
+    // };
+    // this.mdjs = new Mdjs(myRender);    
+    // console.log(level, name, content)
+
+    this.mdjs = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true
+    })
+    // 插件
+    this.mdjs.use(emoji)
+
     this.setState({
       html: this.renderHTML(value)
     })
@@ -80,7 +91,7 @@ class MdEditor extends React.Component {
   } 
 
   renderHTML = (markdownText = '') => { 
-    return this.mdjs.md2html(markdownText);
+    return this.mdjs.render(markdownText)
   }
 
   handleChange = (e) => {
