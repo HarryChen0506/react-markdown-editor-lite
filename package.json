@@ -1,6 +1,6 @@
 {
   "name": "rc-md2html",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a light react component for covert markdown into HTML",
   "main": "./lib/rc-md2html.min.js",
   "directories": {
