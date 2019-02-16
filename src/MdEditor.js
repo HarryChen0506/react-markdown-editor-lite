@@ -1,10 +1,10 @@
 // markdown editor 
 import React from 'react'
-import './index.less'
-import Mdjs from 'md-js'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import NavigationBar from './NavigationBar'
+import Icon from './Icon'
+import './index.less'
 
 export class HtmlRender extends React.Component {
   render() {
@@ -162,7 +162,7 @@ class MdEditor extends React.Component {
     return ( 
       <div className={'rc-md2html-editor'}>
         <NavigationBar />
-        <div className="editor-contain">          
+        <div className="editor-container">          
           {renderContent()}
         </div>        
       </div>
