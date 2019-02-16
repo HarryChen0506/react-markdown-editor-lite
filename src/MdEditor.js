@@ -4,6 +4,7 @@ import './index.less'
 import Mdjs from 'md-js'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
+import NavigationBar from './NavigationBar'
 
 export class HtmlRender extends React.Component {
   render() {
@@ -159,9 +160,11 @@ class MdEditor extends React.Component {
       }
     };
     return ( 
-      <div className={'editor'}>
-        {renderControl()}
-        {renderContent()}
+      <div className={'rc-md2html-editor'}>
+        <NavigationBar />
+        <div className="editor-contain">          
+          {renderContent()}
+        </div>        
       </div>
     )
   }

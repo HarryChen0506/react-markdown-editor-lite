@@ -1,7 +1,7 @@
-.editor {
-  display: flex;
+.rc-md2html-editor {  
   height: 100%;
   position: relative;  
+  background: pink;
   .ctrl-wrap {
     position: absolute;
     top: 0;
@@ -16,31 +16,38 @@
         color: #1890FF;
       }
     }
-  }  
-  .input-wrap {
-    flex: 1;  
-    .input {
-      box-sizing: border-box;
-      width: 100%;
-      height: 100%;
-      min-height: 200px;
-      background: #333; 
-      padding: 15px;
-      color: #fff;
-      font-size: 14px;
-      line-height: 20px;
+  }
+  .editor-contain {
+    display: flex;
+    .input-wrap {
+      flex: 1;  
+      .input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        background: #333; 
+        padding: 15px;
+        color: #fff;
+        font-size: 14px;
+        line-height: 20px;
+      }
     }
-  }
-  .html-wrap {
-    flex: 1;
-    margin-left: 20px;
-    height: 100%;
-    overflow: auto;
-  }
+    .html-wrap {
+      flex: 1;
+      margin-left: 20px;
+      height: 100%;
+      overflow: auto;
+    }
+  }  
+}
+
+// navigationBar 
+.rc-md2html-navigation {
+ background: gray
 }
 // 自定义htmL样式
-.custom-html-style {
-  
+.custom-html-style {  
   color: #333;  
   
   h1 {
