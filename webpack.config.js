@@ -39,18 +39,17 @@ const config = {
           'css-loader', 
           'less-loader'
         ]
-      },
+      },      
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/, 
         use: [
-          'file-loader'
+          {
+            loader: 'url-loader',
+            options: {
+                limit: 10000
+            }
+          }
         ]
-      },
-      {
-        test: /\.(eot|woff|ttf)$/, 
-        use: [
-          'file-loader'
-        ] 
       }
     ]
   },

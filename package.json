@@ -1,6 +1,6 @@
 {
   "name": "rc-md2html",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a light react component for covert markdown into HTML",
   "main": "./lib/rc-md2html.min.js",
   "directories": {
@@ -57,6 +57,7 @@
     "sinon": "^7.2.3",
     "sinon-chai": "^3.3.0",
     "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14"
