@@ -30,7 +30,11 @@ class Demo extends React.Component {
       <div className="demo-wrap">
         <h3>rc-md2html demo :-)</h3>  
         <div className="editor-wrap">
-          <MdEditor value={mock_text} defaultShow="both" mdStyle={{color: '#fff'}} onChange={this.onEditorChange} />  
+          <MdEditor 
+            value={mock_text} 
+            defaultShow="both" 
+            onChange={this.onEditorChange} 
+          />  
         </div> 
       </div>      
     )

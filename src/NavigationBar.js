@@ -9,8 +9,22 @@ class NavigationBar extends React.Component {
   render() {   
     return ( 
       <div className={'rc-md2html-navigation'}>
-        导航
-        <Icon type="icon-arrows-alt"/>
+        <div className="nav-left">
+          <div className="button-wrap">
+            <button className="button" name="undo"><Icon type="icon-reply"/></button>
+            <button className="button" name="redo"><Icon type="icon-share"/></button>
+          </div>  
+        </div>
+        <div class="nav-middle">
+          <span>提示</span>
+        </div>
+        <div class="nav-right">
+          <div className="button-wrap">
+            <button className="button"><Icon type="icon-arrows-alt"/></button>
+            <button className="button"><Icon type="icon-arrows-alt"/></button>
+          </div> 
+        </div>
+        
       </div>
     )
   }
