@@ -173,7 +173,7 @@ class MdEditor extends React.Component {
       const PREVIEW = (
         <section className={'sec-html'}>
           <ToolBar
-            style={{right: '15px'}}
+            style={{right: '20px'}}
             render={
               <>
                 <span className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></span>
