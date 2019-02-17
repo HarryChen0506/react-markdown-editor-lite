@@ -16,6 +16,14 @@ export class HtmlRender extends React.Component {
   }
 }
 
+class HtmlCode extends React.Component {
+  render() {
+    return ( 
+      <textarea className="html-code" value={this.props.html} onChange={() => {}}></textarea>
+    )
+  }
+}
+
 class MdEditor extends React.Component {
   constructor(props) {
     super(props)    
@@ -23,7 +31,8 @@ class MdEditor extends React.Component {
     this.state = {
       text: (this.props.value || '').replace(/↵/g,'\n'),
       html: '',      
-      view: this.config.view
+      view: this.config.view,
+      htmlType: 'render', // 'render' 'source'
     }
   } 
 
@@ -78,6 +87,8 @@ class MdEditor extends React.Component {
     }}
     this.setState({
       view: view
+    }, () => {
+      // console.log('state', this.state)
     })
   }
 
@@ -94,6 +105,18 @@ class MdEditor extends React.Component {
   handleHtmlPreview = () => {
     const {view} = this.state
     this.changeView('md', !view.md)
+  }
+
+  hanldeToggleHtmlType = () => {
+    let {htmlType} = this.state
+    if (htmlType === 'render') {
+      htmlType = 'source'
+    } else if (htmlType === 'source') {
+      htmlType = 'render'
+    }
+    this.setState({
+      htmlType: htmlType
+    })
   }
 
   handleChange = (e) => {
@@ -122,16 +145,18 @@ class MdEditor extends React.Component {
   render() {    
     const { view } = this.state
     const renderContent = () => {       
-      const { html, text, view } = this.state 
+      const { html, text, view, htmlType } = this.state 
       const MD = (
         <section className={'sec-md'}>
           <ToolBar
             render={
               <>
-                <a className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></a>
-                <a className="button" title="copy"><Icon type="icon-copy"/></a>
-                <a className="button" title="preview" onClick={this.handleHtmlPreview}><Icon type="icon-desktop"/></a>
-                <a className="button" title="empty"><Icon type="icon-expand"/></a>
+                <span className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></span>
+                <span className="button" title={view.html ? 'preview' : 'both'} onClick={this.handleMdPreview}>
+                  {view.html ? <Icon type="icon-desktop"/> 
+                    :<Icon type="icon-columns"/>
+                  }
+                </span>                
               </>
             }
           ></ToolBar>
@@ -151,16 +176,24 @@ class MdEditor extends React.Component {
             style={{right: '15px'}}
             render={
               <>
-                <a className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></a>
-                <a className="button" title="copy"><Icon type="icon-copy"/></a>
-                <a className="button" title="preview" onClick={this.handleHtmlPreview}><Icon type="icon-desktop"/></a>
-                <a className="button" title="empty"><Icon type="icon-expand"/></a>
+                <span className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></span>
+                <span className="button" title={view.md ? 'preview' : 'both'} onClick={this.handleHtmlPreview}>
+                  {view.md ? <Icon type="icon-desktop"/> 
+                    :<Icon type="icon-columns"/>
+                  }
+                </span>
+                <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
+                  {htmlType === 'render' ? <Icon type="icon-code"/>
+                    : <Icon type="icon-eye"/>
+                  }
+                </span>
               </>
             }
-          ></ToolBar>
-          <div className="html-wrap">
-            <HtmlRender html={html}/> 
-          </div>
+          ></ToolBar>          
+          {htmlType === 'render' ? 
+            <div className="html-wrap"><HtmlRender html={html}/></div>
+            : <div className={'html-code-wrap'}><HtmlCode html={html}/></div>
+          }  
         </section>
       )      
       return (
@@ -171,7 +204,7 @@ class MdEditor extends React.Component {
       )
     }
     return ( 
-      <div className={'rc-md2html-editor'}>
+      <div className={'rc-md2html-editor'} style={this.props.style}>
         {view.menu && <NavigationBar />}
         <div className="editor-container">          
           {renderContent()}
