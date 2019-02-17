@@ -26,14 +26,14 @@
   .editor-container {
     display: flex;
     flex: 1;
-    .input-wrap {
+    .sec-md {
       flex: 1;  
       position: relative;
       .input {
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 15px;
+        padding: 20px 15px 15px 15px;        
         overflow-y: scroll;
         border: none;
         resize: none;
@@ -45,15 +45,21 @@
         line-height: 20px;
       }
     }
-    .html-wrap {
+    .sec-html {
       flex: 1;
       position: relative;
       margin-left: 20px;
-      height: 100%;
-      overflow: auto;
+      height: 100%;  
+      .html-wrap {  
+        height: 100%;
+        box-sizing: border-box;
+        padding-top: 20px;
+        overflow: auto;        
+      }    
     }
   }  
 }
+
 
 // navigationBar 
 .rc-md2html-navigation {
@@ -93,6 +99,7 @@
     }
   }
 }
+
 // 自定义htmL样式
 .custom-html-style {  
   color: #333;  

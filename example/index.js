@@ -5,27 +5,30 @@ import MdEditor from '../src/index.js'
 // import MdEditor from '../lib/rc-md2html.min.js'
 import content  from './content.js'
 import './index.less'
-// const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
-const mock_text = content
+// const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+const mock_content = content
 
 class Demo extends React.Component {
-  constructor (props) {
-    super(props)
-  }  
 
-  onEditorChange ({html, text, show}) {    
-    console.log('onEditorChange', html, text, show)
+  handleEditorChange ({html, text}) {
+    console.log('handleEditorChange', html, text)
   }
 
   render () {
     return (
       <div className="demo-wrap">
-        <h3>rc-md2html demo :-)</h3>  
+        <h3>rc-md2html demo</h3>  
         <div className="editor-wrap">
           <MdEditor 
-            value={mock_text} 
-            defaultShow="both" 
-            onChange={this.onEditorChange} 
+            value={mock_content}
+            config={{
+              view: {
+                menu: true,
+                md: true,
+                html: true
+              }
+            }}
+            onChange={this.handleEditorChange} 
           />  
         </div> 
       </div>      

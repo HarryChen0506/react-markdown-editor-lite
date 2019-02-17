@@ -5,28 +5,31 @@ import emoji from 'markdown-it-emoji'
 import NavigationBar from './NavigationBar'
 import Icon from './Icon'
 import ToolBar from './ToolBar'
+import _config from './config'
 import './index.less'
 
 export class HtmlRender extends React.Component {
   render() {
-    return (
-      <div dangerouslySetInnerHTML = {{ __html: this.props.html}} className={'custom-html-style'} />
+    return (      
+      <div dangerouslySetInnerHTML = {{ __html: this.props.html}} className={'custom-html-style'} />  
     )
   }
 }
 
 class MdEditor extends React.Component {
-
   constructor(props) {
     super(props)    
+    this.config = this.initConfig()
     this.state = {
       text: (this.props.value || '').replace(/↵/g,'\n'),
-      html: '',
-      showType: this.props.defaultShow || 'md', // 展示区域 md, preview, both      
+      html: '',      
+      view: this.config.view
     }
-  }  
+  } 
 
-  mdjs = null
+  config = {}
+
+  mdjs = null  
 
   componentDidMount() {
     this.init()
@@ -61,26 +64,36 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleShowMd = () => {
-    this.setState({
-      showType: 'md',
-    })
+  initConfig = () => {
+    return Object.assign({}, _config, this.props.config)
   }
-
-  handleShowPreview = () => {
-    this.setState({
-      showType: 'preview',
-    })
-  }
-
-  handleShowAll = () => {
-    this.setState({
-      showType: 'both',
-    })
-  } 
 
   renderHTML = (markdownText = '') => { 
     return this.mdjs.render(markdownText)
+  }
+
+  changeView = (key = 'md', val = true) =>{
+    const view = {...this.state.view, ...{
+      [key]: val
+    }}
+    this.setState({
+      view: view
+    })
+  }
+
+  handleToggleMenu = () => {
+    const {view} = this.state
+    this.changeView('menu', !view.menu)
+  }
+
+  handleMdPreview = () => {
+    const {view} = this.state
+    this.changeView('html', !view.html)
+  }
+
+  handleHtmlPreview = () => {
+    const {view} = this.state
+    this.changeView('md', !view.md)
   }
 
   handleChange = (e) => {
@@ -106,37 +119,18 @@ class MdEditor extends React.Component {
     onChange && onChange(output)
   }  
 
-  render() {
-    const renderControl = () => {
-      const { showType } = this.state;
-      const mdClass = showType === 'md' ? 'checked' : '';
-      const previewClass = showType === 'preview' ? 'checked' : '';
-      const bothClass = showType === 'both' ? 'checked' : '';
-      return (
-        <div className={'ctrl-wrap'}>  
-          <button className={mdClass} onClick={this.handleShowMd}>
-            MD
-          </button>
-          <button className={previewClass} onClick={this.handleShowPreview}>
-            预览
-          </button> 
-          <button className={bothClass} onClick={this.handleShowAll}>
-            全部
-          </button>
-        </div> 
-      )
-    }
-    const renderContent = () => {
-      const { mdStyle } = this.props;
-      const { html, text, showType } = this.state;    
+  render() {    
+    const { view } = this.state
+    const renderContent = () => {       
+      const { html, text, view } = this.state 
       const MD = (
-        <div className={'input-wrap'}>
+        <section className={'sec-md'}>
           <ToolBar
             render={
               <>
-                <a className="button" title="hidden menu"><Icon type="icon-chevron-up"/></a>
+                <a className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></a>
                 <a className="button" title="copy"><Icon type="icon-copy"/></a>
-                <a className="button" title="preview"><Icon type="icon-desktop"/></a>
+                <a className="button" title="preview" onClick={this.handleHtmlPreview}><Icon type="icon-desktop"/></a>
                 <a className="button" title="empty"><Icon type="icon-expand"/></a>
               </>
             }
@@ -145,45 +139,40 @@ class MdEditor extends React.Component {
             id="textarea"
             ref={node => this.textarea = node}
             value={text}
-            style={mdStyle}
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
           />
-        </div>
+        </section>
       );
       const PREVIEW = (
-        <div className={'html-wrap'}>
+        <section className={'sec-html'}>
           <ToolBar
             style={{right: '15px'}}
             render={
               <>
-                <a className="button" title="hidden menu"><Icon type="icon-chevron-up"/></a>
+                <a className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></a>
                 <a className="button" title="copy"><Icon type="icon-copy"/></a>
-                <a className="button" title="preview"><Icon type="icon-desktop"/></a>
+                <a className="button" title="preview" onClick={this.handleHtmlPreview}><Icon type="icon-desktop"/></a>
                 <a className="button" title="empty"><Icon type="icon-expand"/></a>
               </>
             }
           ></ToolBar>
-          <HtmlRender html={html}/>          
-        </div>
-      ); 
-      if (showType === 'md') {
-        return MD
-      } else if (showType === 'preview') {
-        return PREVIEW
-      } else if (showType === 'both') {
-        return (
-          <>
-            {MD}
-            {PREVIEW}
-          </>
-        )
-      }
-    };
+          <div className="html-wrap">
+            <HtmlRender html={html}/> 
+          </div>
+        </section>
+      )      
+      return (
+        <>
+          {view.md && MD}
+          {view.html && PREVIEW}
+        </>
+      )
+    }
     return ( 
       <div className={'rc-md2html-editor'}>
-        <NavigationBar />
+        {view.menu && <NavigationBar />}
         <div className="editor-container">          
           {renderContent()}
         </div>        
