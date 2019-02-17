@@ -21,6 +21,7 @@ class Demo extends React.Component {
         <div className="editor-wrap">
           <MdEditor 
             value={mock_content}
+            style={{height: '500px', width: '100%'}}
             config={{
               view: {
                 menu: true,

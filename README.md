@@ -16,18 +16,24 @@ import MdEditor from 'rc-md2html'
 import './index.less'
 const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 class Demo extends React.Component {
-  handleEditorChange ({html, text, show}) {    
-    console.log('handleEditorChange', html, text, show)
+  handleEditorChange ({html, text}) {    
+    console.log('handleEditorChange', html, text)
   }
   render() {
     return (      
         <div>
           <h3>示例</h3>
           <MdEditor 
-            value={mock_text} 
-            defaultShow="md" 
-            mdStyle={{color: '#fff'}} 
-            onChange={this.handleEditorChange}
+            value={mock_content}
+            style={{height: '500px'}}
+            config={{
+              view: {
+                menu: true,
+                md: true,
+                html: true
+              }
+            }}
+            onChange={this.handleEditorChange} 
           />                
         </div>      
     )
