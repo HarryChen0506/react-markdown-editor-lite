@@ -5,7 +5,7 @@ import './font.less'
 class Icon extends React.Component {
   render() {   
     return ( 
-      <sapn className={this.props.type} ></sapn>
+      <span className={this.props.type} ></span>
     )
   }
 }

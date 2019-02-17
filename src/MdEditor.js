@@ -4,14 +4,13 @@ import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import NavigationBar from './NavigationBar'
 import Icon from './Icon'
+import ToolBar from './ToolBar'
 import './index.less'
 
 export class HtmlRender extends React.Component {
   render() {
     return (
-      <div className={'html-wrap'}>
-        <div dangerouslySetInnerHTML = {{ __html: this.props.html}} className={'custom-html-style'} />
-      </div>
+      <div dangerouslySetInnerHTML = {{ __html: this.props.html}} className={'custom-html-style'} />
     )
   }
 }
@@ -132,6 +131,16 @@ class MdEditor extends React.Component {
       const { html, text, showType } = this.state;    
       const MD = (
         <div className={'input-wrap'}>
+          <ToolBar
+            render={
+              <>
+                <a className="button" title="hidden menu"><Icon type="icon-chevron-up"/></a>
+                <a className="button" title="copy"><Icon type="icon-copy"/></a>
+                <a className="button" title="preview"><Icon type="icon-desktop"/></a>
+                <a className="button" title="empty"><Icon type="icon-expand"/></a>
+              </>
+            }
+          ></ToolBar>
           <textarea
             id="textarea"
             ref={node => this.textarea = node}
@@ -144,7 +153,20 @@ class MdEditor extends React.Component {
         </div>
       );
       const PREVIEW = (
-        <HtmlRender html={html}/>
+        <div className={'html-wrap'}>
+          <ToolBar
+            style={{right: '15px'}}
+            render={
+              <>
+                <a className="button" title="hidden menu"><Icon type="icon-chevron-up"/></a>
+                <a className="button" title="copy"><Icon type="icon-copy"/></a>
+                <a className="button" title="preview"><Icon type="icon-desktop"/></a>
+                <a className="button" title="empty"><Icon type="icon-expand"/></a>
+              </>
+            }
+          ></ToolBar>
+          <HtmlRender html={html}/>          
+        </div>
       ); 
       if (showType === 'md') {
         return MD

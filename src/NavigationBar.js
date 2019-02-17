@@ -9,22 +9,21 @@ class NavigationBar extends React.Component {
   render() {   
     return ( 
       <div className={'rc-md2html-navigation'}>
-        <div className="nav-left">
+        <div className="navigation-nav left">
           <div className="button-wrap">
-            <button className="button" name="undo"><Icon type="icon-reply"/></button>
-            <button className="button" name="redo"><Icon type="icon-share"/></button>
+            <a className="button" title="empty"><Icon type="icon-trash-o"/></a>
+            <a className="button" title="undo"><Icon type="icon-reply"/></a>
+            <a className="button" title="redo"><Icon type="icon-share"/></a>
           </div>  
         </div>
-        <div class="nav-middle">
-          <span>提示</span>
+        <div className="navigation-nav middle">
+          {/* <span>提示</span> */}
         </div>
-        <div class="nav-right">
+        <div className="navigation-nav right">
           <div className="button-wrap">
-            <button className="button"><Icon type="icon-arrows-alt"/></button>
-            <button className="button"><Icon type="icon-arrows-alt"/></button>
+            {/* <a className="button" title="clean"><Icon type="icon-cog"/></a> */}
           </div> 
-        </div>
-        
+        </div>        
       </div>
     )
   }
