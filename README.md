@@ -1,6 +1,9 @@
 # rc-md2html
 一款轻量的将markdown语法解析成HTML语言的react组件
 
+### demo
+![image](https://github.com/HarryChen0506/rc-md2html/blob/master/example/rc-md2html.png)
+
 ### Install
 
 ```
