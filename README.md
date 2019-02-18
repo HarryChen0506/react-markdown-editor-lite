@@ -29,25 +29,23 @@ npm install rc-md2html --save
 import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from 'rc-md2html'
-import './index.less'
 
 const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
-class Demo extends React.Component {
+export default class Demo extends React.Component {
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
   }
   render() {
     return (      
-        <div style="heght: 500px">
-          <MdEditor
-            value={mock_content}
-            onChange={this.handleEditorChange} 
-          />                
-        </div>      
+      <div style="heght: 500px">
+        <MdEditor
+          value={mock_content}
+          onChange={this.handleEditorChange} 
+        />                
+      </div>
     )
   }
 }
-export default Demo
 ```
 
 ### More Example
@@ -56,55 +54,44 @@ export default Demo
 import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from 'rc-md2html'
-import './index.less'
 
 const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
-class Demo extends React.Component {
-
+export default class Demo extends React.Component {
   mdEditor = null
-
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
-  }  
-
-  handleGetMdValue = () => {
-    if (this.mdEditor) {
-      alert(this.mdEditor.getMdValue())      
-    }
   }
-
-  handleGetHtmlValue = () => {
-    if (this.mdEditor) {
-      alert(this.mdEditor.getHtmlValue())      
-    }
+  handleGetMdValue = () => {   
+    this.mdEditor && alert(this.mdEditor.getMdValue())      
   }
-
+  handleGetHtmlValue = () => {    
+    this.mdEditor && alert(this.mdEditor.getHtmlValue())      
+  }
   render() {
     return (      
-        <div>
-          <nav className="nav">
-            <button onClick={this.handleGetMdValue} >getMdValue</button>  
-            <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>  
-          </nav>
-          <section style="heght: 500px">
-            <MdEditor 
-              ref={node => this.mdEditor = node}
-              value={mock_content}
-              style={{height: '400px'}}
-              config={{
-                view: {
-                  menu: true,
-                  md: true,
-                  html: true
-                }
-              }}
-              onChange={this.handleEditorChange} 
-            />
-          </section>                        
-        </div>      
+      <div>
+        <nav>
+          <button onClick={this.handleGetMdValue} >getMdValue</button>  
+          <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>  
+        </nav>
+        <section style="heght: 500px">
+          <MdEditor 
+            ref={node => this.mdEditor = node}
+            value={mock_content}
+            style={{height: '400px'}}
+            config={{
+              view: {
+                menu: true,
+                md: true,
+                html: true
+              }
+            }}
+            onChange={this.handleEditorChange} 
+          />
+        </section>                        
+      </div>      
     )
   }
 }
-export default Demo
 ```
 
