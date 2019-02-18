@@ -17,7 +17,7 @@ npm install rc-md2html --save
 | --- | --- | --- | --- | --- |
 | value | markdown content | String | '' |  |
 | style | component container style | Object | {height: '100%'} |  |
-| config | component config | Object | {} |  |
+| config | component config | Object | {view: {...}, logger: {...}} |  |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
@@ -30,14 +30,14 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from 'rc-md2html'
 
-const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
   }
   render() {
     return (      
-      <div style="heght: 500px">
+      <div style="height: 500px">
         <MdEditor
           value={mock_content}
           onChange={this.handleEditorChange} 
@@ -55,7 +55,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from 'rc-md2html'
 
-const mock_text = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
   mdEditor = null
   handleEditorChange ({html, md}) {    
@@ -74,7 +74,7 @@ export default class Demo extends React.Component {
           <button onClick={this.handleGetMdValue} >getMdValue</button>  
           <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>  
         </nav>
-        <section style="heght: 500px">
+        <section style="height: 500px">
           <MdEditor 
             ref={node => this.mdEditor = node}
             value={mock_content}
