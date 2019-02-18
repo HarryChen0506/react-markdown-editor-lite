@@ -8,8 +8,7 @@ class Logger {
 
   record = []
 
-  recycle = [] 
-
+  recycle = []
 
   pushRecord = (val) =>{
     return this.record.push(val)

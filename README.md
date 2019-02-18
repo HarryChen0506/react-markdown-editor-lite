@@ -1,5 +1,6 @@
 # rc-md2html
-一款轻量的将markdown语法解析成HTML语言的react组件
+* a light react component to covert markdown into HTML
+* 一款轻量的将markdown语法解析成HTML语言的react组件
 
 ### demo
 ![image](https://github.com//HarryChen0506/rc-md2html/blob/master/example/rc-md2html.PNG?raw=true)
@@ -25,7 +26,7 @@ class Demo extends React.Component {
   render() {
     return (      
         <div>
-          <h3>示例</h3>
+          <h3>example</h3>
           <MdEditor 
             value={mock_content}
             style={{height: '500px'}}

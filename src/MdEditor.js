@@ -66,6 +66,10 @@ class MdEditor extends React.Component {
     })
   }
 
+  UNSAFE_componentWillUnmount () {
+    this.endLogger()
+  }
+
   init = () => {
     const { value } = this.props
     this.mdjs = new MarkdownIt({
