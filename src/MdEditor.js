@@ -2,6 +2,15 @@
 import React from 'react'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
+import subscript from 'markdown-it-sub'
+import superscript from 'markdown-it-sup'
+import footnote from 'markdown-it-footnote'
+import deflist from 'markdown-it-deflist'
+import abbreviation from 'markdown-it-abbr'
+import insert from 'markdown-it-ins'
+import mark from 'markdown-it-mark'
+import tasklists from 'markdown-it-task-lists'
+
 import Logger from './logger'
 import NavigationBar from './NavigationBar'
 import Icon from './Icon'
@@ -79,6 +88,14 @@ class MdEditor extends React.Component {
     })
     // 插件
     this.mdjs.use(emoji)
+    .use(subscript)
+    .use(superscript)
+    .use(footnote)
+    .use(deflist)
+    .use(abbreviation)
+    .use(insert)
+    .use(mark)
+    .use(tasklists, { enabled: this.taskLists })
 
     this.setState({
       html: this.renderHTML(value)
