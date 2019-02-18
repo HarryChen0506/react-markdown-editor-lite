@@ -6,8 +6,8 @@ import MdEditor from '../src/index.js'
 import content  from './content.js'
 import './index.less'
 // const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
-const mock_content = "Hello.\n "
-// const mock_content = content
+// const mock_content = "### Hello :-)\n "
+const mock_content = content
 
 class Demo extends React.Component {
 
