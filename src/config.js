@@ -9,6 +9,9 @@ const config = {
     md: true,
     html: true
   },
+  logger: {
+    interval: 3000
+  }
 }
 
 export default config

@@ -2,6 +2,7 @@
 import React from 'react'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
+import Logger from './logger'
 import NavigationBar from './NavigationBar'
 import Icon from './Icon'
 import ToolBar from './ToolBar'
@@ -38,12 +39,17 @@ class MdEditor extends React.Component {
 
   config = {}
 
+  logger = {}
+
+  loggerTimerId = null
+
   mdjs = null  
 
   mdText = null
 
   componentDidMount() {
     this.init()
+    this.initLogger()
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -77,6 +83,48 @@ class MdEditor extends React.Component {
 
   initConfig = () => {
     return Object.assign({}, _config, this.props.config)
+  }
+
+  initLogger = () => {
+    this.logger = new Logger()
+    this.startLogger()
+  }
+
+  startLogger = () => {    
+    if (!this.loggerTimerId) {
+      this.loggerTimerId = setInterval(() => {
+        const {text} = this.state
+        if (this.logger.getLastRecord() !== text) {
+          this.logger.pushRecord(text)        
+        }
+      }, this.config.logger.interval)
+    }   
+    // 清空redo历史
+    this.logger.cleanRedoList() 
+  }
+
+  endLogger = () => {
+    if (this.loggerTimerId) {
+      clearInterval(this.loggerTimerId)
+      this.loggerTimerId = null
+    }    
+  }
+
+  handleGetLogger = () => {
+    console.log('handleGetLogger', this.logger)
+  }
+
+  handleUndo = () => {
+    this.logger.undo((last) => {
+      this.endLogger()
+      this._setMdText(last)
+    })
+  }
+
+  handleRedo = () => {
+    this.logger.redo((last) => {
+      this._setMdText(last)
+    })
   }
 
   renderHTML = (markdownText = '') => { 
@@ -122,31 +170,34 @@ class MdEditor extends React.Component {
   }
 
   handleEmpty = () => {
-    const result = window.confirm('Are you sure to empty markdown ?')
-    console.log('result', result)
-    if (result) {
-      this.setState({
-        text: '',
-        html: ''
-      })
-    }
+    if (window.confirm) {
+      const result = window.confirm('Are you sure to empty markdown ?')
+      if (result) {
+        this.setState({
+          text: '',
+          html: ''
+        })
+      }
+    }    
   }
 
   handleChange = (e) => {
+    this.startLogger() 
     const value = e.target.value   
+    this._setMdText(value)
+  }
+  _setMdText = (value = '') => {
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
     const text = value.replace(/↵/g,'\n')
     const html = this.renderHTML(text)
-    const {showType} = this.state
     this.setState({
       html,
       text: value
     })
     this.onEmit({
       text,
-      html,
-      show: showType
+      html
     })
   }
 
@@ -170,9 +221,10 @@ class MdEditor extends React.Component {
       <NavigationBar 
         left={
           <div className="button-wrap">
-            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash-o"/></span>
-            <span className="button" title="undo"><Icon type="icon-reply"/></span>
-            <span className="button" title="redo"><Icon type="icon-share"/></span>
+            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash-o"/></span>            
+            {/* <span className="button" title="show" onClick={this.handleGetLogger}><Icon type="icon-tablet"/></span> */}
+            <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
+            <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>
           </div> 
         }
       />
