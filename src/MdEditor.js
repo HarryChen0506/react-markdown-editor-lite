@@ -40,6 +40,8 @@ class MdEditor extends React.Component {
 
   mdjs = null  
 
+  mdText = null
+
   componentDidMount() {
     this.init()
   }
@@ -119,6 +121,17 @@ class MdEditor extends React.Component {
     })
   }
 
+  handleEmpty = () => {
+    const result = window.confirm('Are you sure to empty markdown ?')
+    console.log('result', result)
+    if (result) {
+      this.setState({
+        text: '',
+        html: ''
+      })
+    }
+  }
+
   handleChange = (e) => {
     const value = e.target.value   
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
@@ -142,8 +155,28 @@ class MdEditor extends React.Component {
     onChange && onChange(output)
   }  
 
+  getMdValue = () => {    
+    return this.state.text
+  }
+
+  getHtmlValue = () => {
+    return this.state.html
+  }
+
   render() {    
     const { view } = this.state
+    const renderNavigation = () => {
+      return view.menu && 
+      <NavigationBar 
+        left={
+          <div className="button-wrap">
+            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash-o"/></span>
+            <span className="button" title="undo"><Icon type="icon-reply"/></span>
+            <span className="button" title="redo"><Icon type="icon-share"/></span>
+          </div> 
+        }
+      />
+    }
     const renderContent = () => {       
       const { html, text, view, htmlType } = this.state 
       const MD = (
@@ -151,7 +184,11 @@ class MdEditor extends React.Component {
           <ToolBar
             render={
               <>
-                <span className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></span>
+                <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+                  {view.menu ? <Icon type="icon-chevron-up"/> 
+                    :<Icon type="icon-chevron-down"/>
+                  }
+                </span>
                 <span className="button" title={view.html ? 'preview' : 'both'} onClick={this.handleMdPreview}>
                   {view.html ? <Icon type="icon-desktop"/> 
                     :<Icon type="icon-columns"/>
@@ -162,21 +199,25 @@ class MdEditor extends React.Component {
           ></ToolBar>
           <textarea
             id="textarea"
-            ref={node => this.textarea = node}
+            ref={node => this.mdText = node}
             value={text}
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
           />
         </section>
-      );
+      )
       const PREVIEW = (
         <section className={'sec-html'}>
           <ToolBar
             style={{right: '20px'}}
             render={
               <>
-                <span className="button" title="hidden menu" onClick={this.handleToggleMenu}><Icon type="icon-chevron-up"/></span>
+                <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+                  {view.menu ? <Icon type="icon-chevron-up"/> 
+                    :<Icon type="icon-chevron-down"/>
+                  }
+                </span>
                 <span className="button" title={view.md ? 'preview' : 'both'} onClick={this.handleHtmlPreview}>
                   {view.md ? <Icon type="icon-desktop"/> 
                     :<Icon type="icon-columns"/>
@@ -202,10 +243,10 @@ class MdEditor extends React.Component {
           {view.html && PREVIEW}
         </>
       )
-    }
+    }    
     return ( 
       <div className={'rc-md2html-editor'} style={this.props.style}>
-        {view.menu && <NavigationBar />}
+        {renderNavigation()}
         <div className="editor-container">          
           {renderContent()}
         </div>        
