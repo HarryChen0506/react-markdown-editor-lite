@@ -318,10 +318,12 @@ class MdEditor extends React.Component {
       )
     }    
     return ( 
-      <div className={'rc-md2html-editor'} style={this.props.style}>
+      <div className={'rc-md2html-editor'} style={this.props.style}>        
         {renderNavigation()}
-        <div className="editor-container">          
-          {renderContent()}
+        <div className="editor-main">
+          <div className="editor-container">   
+            {renderContent()}
+          </div>
         </div>        
       </div>
     )
