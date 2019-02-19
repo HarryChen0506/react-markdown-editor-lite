@@ -98,3 +98,11 @@ export default class Demo extends React.Component {
 }
 ```
 
+## References / Thanks
+
+Big thanks to [markdown-it](https://github.com/markdown-it/markdown-it) authors
+
+### License
+
+[MIT](https://github.com/HarryChen0506/rc-md2html/blob/master/LICENSE)
+
