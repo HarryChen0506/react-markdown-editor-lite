@@ -5,18 +5,18 @@
 * 一款轻量的基于react的Markdown编辑器
 * 使用'markdown-it'作为Markdown解析器
 
-### Demo
+## Demo
 
 online demo [https://rc-md2html.github.io/](https://rc-md2html.github.io/)
 ![image](https://github.com//HarryChen0506/rc-md2html/blob/master/example/rc-md2html.PNG?raw=true)
 
-### Install
+## Install
 
 ```
 npm install rc-md2html --save
 ```
 
-### Props
+## Props
 
 | Property | Description | Type | default | Remarks |
 | --- | --- | --- | --- | --- |
@@ -28,7 +28,7 @@ npm install rc-md2html --save
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
 
 
-### Basic Usage
+## Basic Usage
 
 ```js
 'use strict';
@@ -54,7 +54,7 @@ export default class Demo extends React.Component {
 }
 ```
 
-### More Example
+## More Example
 
 ```js
 'use strict';
@@ -106,7 +106,7 @@ export default class Demo extends React.Component {
 
 Big thanks to [markdown-it](https://github.com/markdown-it/markdown-it) authors
 
-### License
+## License
 
 [MIT](https://github.com/HarryChen0506/rc-md2html/blob/master/LICENSE)
 
