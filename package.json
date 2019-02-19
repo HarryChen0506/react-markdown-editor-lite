@@ -1,7 +1,7 @@
 {
   "name": "rc-md2html",
-  "version": "0.2.1",
-  "description": "a light react component to covert markdown into HTML",
+  "version": "0.2.2",
+  "description": "a light-weight Markdown editor based on markdown-it and react",
   "main": "./lib/rc-md2html.min.js",
   "directories": {
     "example": "example",
@@ -21,6 +21,8 @@
   "keywords": [
     "markdown",
     "html",
+    "editor",
+    "parser",
     "react",
     "component"
   ],

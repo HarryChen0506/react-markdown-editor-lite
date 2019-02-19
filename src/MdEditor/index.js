@@ -11,11 +11,11 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 
-import Logger from './logger'
-import NavigationBar from './NavigationBar'
-import Icon from './Icon'
-import ToolBar from './ToolBar'
-import _config from './config'
+import Logger from '../logger'
+import NavigationBar from '../NavigationBar'
+import Icon from '../Icon'
+import ToolBar from '../ToolBar'
+import _config from '../config.js'
 import './index.less'
 
 export class HtmlRender extends React.Component {

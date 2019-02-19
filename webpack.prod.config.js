@@ -11,6 +11,12 @@ const config = {
     path: path.resolve(__dirname, 'lib'),
     libraryTarget: "umd"
   },  
+  externals: [
+    {
+      react: 'react',    
+    },
+    /^markdown-it.*$/i
+  ],
   mode: 'production',
   module: {
     rules: [

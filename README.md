@@ -1,9 +1,11 @@
 # rc-md2html
-* a light react component to covert markdown into HTML
-* 一款轻量的将markdown语法解析成HTML语言的react组件
+* a light-weight Markdown editor of react component
+* use [markdown-it](https://github.com/markdown-it/markdown-it) as a parser
+* 一款轻量的基于react的Markdown编辑器
+* 使用'markdown-it'作为Markdown解析器
 
 ### Demo
-[https://rc-md2html.github.io/](https://rc-md2html.github.io/)
+online demo [https://rc-md2html.github.io/](https://rc-md2html.github.io/)
 ![image](https://github.com//HarryChen0506/rc-md2html/blob/master/example/rc-md2html.PNG?raw=true)
 
 ### Install
@@ -24,7 +26,7 @@ npm install rc-md2html --save
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
 
 
-### Basic Example
+### Basic Usage
 ```js
 'use strict';
 import React from 'react'
