@@ -2,6 +2,13 @@ const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const version = require("./package.json").version;
+const banner =
+  "/**\n" +
+  " * rc-md2html v" + version + "\n" +
+  " * https://github.com/HarryChen0506/rc-md2html\n" +
+  " * MIT License\n" +
+  " */\n";
 const config = {
   entry: {
     app: './src/index.js',
@@ -54,6 +61,7 @@ const config = {
   },
   plugins: [
     new CleanWebpackPlugin(['lib']),
+    new webpack.BannerPlugin({banner, raw: false})
   ],
 };
 
