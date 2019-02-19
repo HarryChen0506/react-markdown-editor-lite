@@ -1,7 +1,8 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const webpack = require('webpack');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack')
+
 const config = {
   entry: {
     app: './example/index.js',
@@ -29,6 +30,7 @@ const config = {
         test: /\.css$/,
         use: [
           'style-loader',
+          'postcss-loader',
           'css-loader'
         ]
       },
@@ -36,7 +38,8 @@ const config = {
         test: /\.less$/,
         use: [
           'style-loader', 
-          'css-loader', 
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader',
           'less-loader'
         ]
       },      
@@ -54,7 +57,7 @@ const config = {
     ]
   },
   plugins: [
-    // new CleanWebpackPlugin(['dist']),
+    // new CleanWebpackPlugin(['dist']),    
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './public/index.html'),
       filename: 'index.html',
