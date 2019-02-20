@@ -1,8 +1,8 @@
 # rc-md2html
 
-* a light-weight Markdown editor of react component
+* a light-weight Markdown editor of React component
 * use [markdown-it](https://github.com/markdown-it/markdown-it) as a parser
-* 一款轻量的基于react的Markdown编辑器
+* 一款轻量的基于React的Markdown编辑器
 * 使用'markdown-it'作为Markdown解析器
 
 ## Demo

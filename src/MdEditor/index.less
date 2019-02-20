@@ -21,18 +21,17 @@
         color: #1890FF;
       }
     }
-  }
-  .editor-main {
-    flex: auto;
-    display: flex;
-    height: 100%;
-  }
+  }  
   .editor-container {
+    flex: 1;
     display: flex;  
     width: 100%; 
+    min-height: 0;
     .sec-md {
       flex: 1; 
       position: relative;
+      min-height: 0;
+      min-width: 0;
       .input {
         box-sizing: border-box;
         width: 100%;
@@ -52,6 +51,8 @@
     .sec-html {
       flex: 1;
       position: relative;
+      min-height: 0;
+      min-width: 0;
       margin-left: 20px;
       .html-wrap {  
         height: 100%;
