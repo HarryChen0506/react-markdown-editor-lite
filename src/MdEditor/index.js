@@ -11,7 +11,8 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 
-import Logger from '../logger'
+import Logger from '../utils/logger'
+import Decorate from '../utils/decorate'
 import NavigationBar from '../NavigationBar'
 import Icon from '../Icon'
 import ToolBar from '../ToolBar'
@@ -155,13 +156,14 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleBold = () => {
-    console.log('handleBold')
+  handleDecorate = (type) => {
+    console.log('handleDecorate', type)
     const {text} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
     const afterContent = text.slice(selection.end, text.length)
-    const result = beforeContent + `**${selection.text}**` + afterContent
+    const decorate = new Decorate(selection.text)
+    const result = beforeContent + `${decorate.getDecoratedText(type)}` + afterContent
     console.log('result', result)
     this._setMdText(result)
   }
@@ -276,11 +278,16 @@ class MdEditor extends React.Component {
       <NavigationBar 
         left={
           <div className="button-wrap">
-            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash-o"/></span>            
-            {/* <span className="button" title="show" onClick={this.handleGetLogger}><Icon type="icon-tablet"/></span> */}
+            <span className="button" title="header" onClick={() => this.handleDecorate('h1')}><Icon type="icon-header"/></span>
+            <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold"/></span>
+            <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
+            <span className="button" title="italic" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline"/></span> 
+            <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough"/></span> 
+            <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
+                                 
+            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash"/></span>            
             <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
-            <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>
-            <span className="button" title="bold" onClick={this.handleBold}><Icon type="icon-cut"/></span>
+            <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>            
           </div> 
         }
       />
