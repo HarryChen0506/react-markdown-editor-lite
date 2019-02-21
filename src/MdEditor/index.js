@@ -14,6 +14,7 @@ import tasklists from 'markdown-it-task-lists'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
 import NavigationBar from '../NavigationBar'
+import DropList from '../DropList'
 import Icon from '../Icon'
 import ToolBar from '../ToolBar'
 import _config from '../config.js'
@@ -44,6 +45,9 @@ class MdEditor extends React.Component {
       html: '',      
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
+      dropButton: {
+        header: false
+      }
     }
   } 
 
@@ -161,6 +165,11 @@ class MdEditor extends React.Component {
   handleDecorate = (type) => {
     const clearList = [
       'h1', 
+      'h2', 
+      'h3', 
+      'h4', 
+      'h5', 
+      'h6', 
       'bold', 
       'italic', 
       'underline', 
@@ -311,14 +320,46 @@ class MdEditor extends React.Component {
     return this.state.html
   }
 
+  showDropList = (type = 'header', flag) => {
+    const {dropButton} = this.state
+    this.setState({
+      dropButton: {...dropButton, [type]: flag}
+    })
+    console.log('showDropList', this.state.dropButton) 
+  }
+
   render() {    
-    const { view } = this.state
+    const { view, dropButton } = this.state    
     const renderNavigation = () => {
       return view.menu && 
       <NavigationBar 
         left={
           <div className="button-wrap">
-            <span className="button" title="header" onClick={() => this.handleDecorate('h1')}><Icon type="icon-header"/></span>
+            <span className="button" title="header" 
+              onMouseEnter={() => this.showDropList('header', true)} 
+              onMouseOut={() => this.showDropList('header', false)} 
+              >
+            <Icon type="icon-header"/>
+            <DropList 
+              show={dropButton.header}
+              onClose={() => {
+                console.log('close')                    
+                this.showDropList('header', false)
+              }}
+              render={() => {
+                return (
+                  <ul>
+                    <li className="drop-item"><h1 onClick={() => this.handleDecorate('h1')}>H1</h1></li>  
+                    <li className="drop-item"><h2 onClick={() => this.handleDecorate('h2')}>H2</h2></li>  
+                    <li className="drop-item"><h3 onClick={() => this.handleDecorate('h3')}>H3</h3></li>  
+                    <li className="drop-item"><h4 onClick={() => this.handleDecorate('h4')}>H4</h4></li>  
+                    <li className="drop-item"><h5 onClick={() => this.handleDecorate('h5')}>H5</h5></li>  
+                    <li className="drop-item"><h6 onClick={() => this.handleDecorate('h6')}>H6</h6></li>  
+                  </ul>
+                )
+              }}
+            />        
+            </span>
             <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold"/></span>
             <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
             <span className="button" title="italic" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline"/></span> 

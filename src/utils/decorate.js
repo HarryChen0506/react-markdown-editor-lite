@@ -19,6 +19,21 @@ class Decorate {
       case 'h1':
         return `\n # ${this.target} \n`
         break
+      case 'h2':
+        return `\n ## ${this.target} \n`
+        break
+      case 'h3':
+        return `\n ### ${this.target} \n`
+        break
+      case 'h4':
+        return `\n #### ${this.target} \n`
+        break
+      case 'h5':
+        return `\n ##### ${this.target} \n`
+        break
+      case 'h6':
+        return `\n ###### ${this.target} \n`
+        break
       case 'bold':
         return `**${this.target}**`
         break
