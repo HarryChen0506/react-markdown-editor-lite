@@ -56,13 +56,15 @@ class MdEditor extends React.Component {
   mdjs = null  
 
   mdText = null
-
-  selection = {
-    clearable: true,
+  
+  initialSelection = {
+    isSelected: false,
     start: 0,
     end: 0,
     text: ''
   }
+
+  selection = Object.assign({}, this.initialSelection)
 
   componentDidMount() {
     this.init()
@@ -157,15 +159,50 @@ class MdEditor extends React.Component {
   }
 
   handleDecorate = (type) => {
-    console.log('handleDecorate', type)
+    const clearList = [
+      'h1', 
+      'bold', 
+      'italic', 
+      'underline', 
+      'strikethrough', 
+      'unorder', 
+      'order', 
+      'image', 
+      'link'
+    ]
+    if (clearList.indexOf(type) > -1) {
+      if (!this.selection.isSelected) {
+        return
+      }
+      const content = this._getDecoratedText(type)
+      this._setMdText(content)
+      this._clearSelection()
+    } else {
+      const content = this._getDecoratedText(type)
+      this._setMdText(content)
+    }    
+  }
+
+  _getDecoratedText = (type) => {
     const {text} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
     const afterContent = text.slice(selection.end, text.length)
     const decorate = new Decorate(selection.text)
-    const result = beforeContent + `${decorate.getDecoratedText(type)}` + afterContent
-    console.log('result', result)
-    this._setMdText(result)
+    let decoratedText = ''
+    if (type === 'image') {
+      decoratedText = decorate.getDecoratedText(type, {
+        imageUrl: 'https://octodex.github.com/images/minion.png'
+      })
+    } else if (type === 'link') {
+      decoratedText = decorate.getDecoratedText(type, {
+        linkUrl: 'https://octodex.github.com/images/minion.png'
+      })
+    } else {
+      decoratedText = decorate.getDecoratedText(type)
+    }
+    const result = beforeContent + `${decoratedText}` + afterContent
+    return result
   }
 
   renderHTML = (markdownText = '') => { 
@@ -179,7 +216,6 @@ class MdEditor extends React.Component {
     this.setState({
       view: view
     }, () => {
-      // console.log('state', this.state)
     })
   }
 
@@ -230,8 +266,12 @@ class MdEditor extends React.Component {
 
   handleInputSelect = (e) => {
     e.persist()    
-    this.selection = {...this.selection, ...this._getSelectionInfo(e)}
-    console.log('handleInputSelect', e, this.selection)
+    this.selection = {...this.selection, ...{isSelected: true}, ...this._getSelectionInfo(e)}
+    // console.log('handleInputSelect', e, this.selection)
+  }
+
+  _clearSelection = () => {
+    this.selection = Object.assign({}, this.initialSelection)
   }
 
   _getSelectionInfo = (e) => {
@@ -283,7 +323,11 @@ class MdEditor extends React.Component {
             <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
             <span className="button" title="italic" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline"/></span> 
             <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough"/></span> 
+            <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul"/></span>    
+            <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol"/></span>    
+            
             <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
+            <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
                                  
             <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash"/></span>            
             <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
