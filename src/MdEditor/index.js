@@ -56,12 +56,19 @@ class MdEditor extends React.Component {
 
   mdText = null
 
+  selection = {
+    clearable: true,
+    start: 0,
+    end: 0,
+    text: ''
+  }
+
   componentDidMount() {
     this.init()
     this.initLogger()
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.value === this.props.value) {
       // console.log('value not change')
       return
@@ -75,7 +82,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  UNSAFE_componentWillUnmount () {
+  componentWillUnmount () {
     this.endLogger()
   }
 
@@ -148,6 +155,17 @@ class MdEditor extends React.Component {
     })
   }
 
+  handleBold = () => {
+    console.log('handleBold')
+    const {text} = this.state
+    const {selection} = this
+    const beforeContent = text.slice(0, selection.start)
+    const afterContent = text.slice(selection.end, text.length)
+    const result = beforeContent + `**${selection.text}**` + afterContent
+    console.log('result', result)
+    this._setMdText(result)
+  }
+
   renderHTML = (markdownText = '') => { 
     return this.mdjs.render(markdownText)
   }
@@ -207,6 +225,22 @@ class MdEditor extends React.Component {
     const value = e.target.value   
     this._setMdText(value)
   }
+
+  handleInputSelect = (e) => {
+    e.persist()    
+    this.selection = {...this.selection, ...this._getSelectionInfo(e)}
+    console.log('handleInputSelect', e, this.selection)
+  }
+
+  _getSelectionInfo = (e) => {
+    const source = e.srcElement || e.target
+    const start = source.selectionStart
+    const end = source.selectionEnd
+    const text = (source.value || '').slice(start, end)
+    const selection = {start, end, text}
+    return selection
+  }
+
   _setMdText = (value = '') => {
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
@@ -246,6 +280,7 @@ class MdEditor extends React.Component {
             {/* <span className="button" title="show" onClick={this.handleGetLogger}><Icon type="icon-tablet"/></span> */}
             <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
             <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>
+            <span className="button" title="bold" onClick={this.handleBold}><Icon type="icon-cut"/></span>
           </div> 
         }
       />
@@ -277,6 +312,7 @@ class MdEditor extends React.Component {
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
+            onSelect={this.handleInputSelect}
           />
         </section>
       )
