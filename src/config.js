@@ -3,7 +3,7 @@
  */
 
 const config = {
-  theme : "default",
+  theme : 'default',
   view: {
     menu: true,
     md: true,
@@ -11,7 +11,9 @@ const config = {
   },
   logger: {
     interval: 3000
-  }
+  },
+  imageUrl: '',
+  linkUrl: ''
 }
 
 export default config

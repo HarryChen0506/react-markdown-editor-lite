@@ -1,9 +1,9 @@
 # rc-md2html
 
-* a light-weight Markdown editor of React component
+* a light-weight(size 66KB) Markdown editor of React component
 * use [markdown-it](https://github.com/markdown-it/markdown-it) as a parser
-* 一款轻量的基于React的Markdown编辑器
-* 使用'markdown-it'作为Markdown解析器
+* 一款轻量的基于React的Markdown编辑器, 压缩后代码只有66KB
+* 使用markdown-it作为Markdown解析器
 
 ## Demo
 
@@ -24,6 +24,8 @@ npm install rc-md2html --save
 | style | component container style | Object | {height: '100%'} |  |
 | config | component config | Object | {view: {...}, logger: {...}} |  |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
+| config.imageUrl | default image url | String | '' | |
+| config.linkUrl | default link url | String | '' | |
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
 
@@ -91,7 +93,8 @@ export default class Demo extends React.Component {
                 menu: true,
                 md: true,
                 html: true
-              }
+              },
+              imageUrl: 'https://octodex.github.com/images/minion.png'
             }}
             onChange={this.handleEditorChange} 
           />

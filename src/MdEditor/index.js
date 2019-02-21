@@ -201,11 +201,11 @@ class MdEditor extends React.Component {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
-        imageUrl: 'https://octodex.github.com/images/minion.png'
+        imageUrl: this.config.imageUrl
       })
     } else if (type === 'link') {
       decoratedText = decorate.getDecoratedText(type, {
-        linkUrl: 'https://octodex.github.com/images/minion.png'
+        linkUrl: this.config.linkUrl
       })
     } else {
       decoratedText = decorate.getDecoratedText(type)
@@ -325,7 +325,6 @@ class MdEditor extends React.Component {
     this.setState({
       dropButton: {...dropButton, [type]: flag}
     })
-    console.log('showDropList', this.state.dropButton) 
   }
 
   render() {    
@@ -337,13 +336,12 @@ class MdEditor extends React.Component {
           <div className="button-wrap">
             <span className="button" title="header" 
               onMouseEnter={() => this.showDropList('header', true)} 
-              onMouseOut={() => this.showDropList('header', false)} 
+              onMouseLeave={() => this.showDropList('header', false)} 
               >
             <Icon type="icon-header"/>
             <DropList 
               show={dropButton.header}
               onClose={() => {
-                console.log('close')                    
                 this.showDropList('header', false)
               }}
               render={() => {
