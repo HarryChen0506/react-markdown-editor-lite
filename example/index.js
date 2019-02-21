@@ -5,7 +5,7 @@ import MdEditor from '../src/index.js'
 // import MdEditor from '../lib/rc-md2html.min.js'
 import content  from './content.js'
 import './index.less'
-// const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+// const mock_content = "Hello.\n\n - This is markdown.\n - It is fun\n - Love it or leave it."
 // const mock_content = "### Hello :-)\n "
 const mock_content = content
 
@@ -47,7 +47,8 @@ class Demo extends React.Component {
                 menu: true,
                 md: true,
                 html: true
-              }
+              },
+              imageUrl: 'https://octodex.github.com/images/minion.png'
             }}
             onChange={this.handleEditorChange} 
           />  

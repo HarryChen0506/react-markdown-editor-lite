@@ -11,8 +11,10 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 
-import Logger from '../logger'
+import Logger from '../utils/logger'
+import Decorate from '../utils/decorate'
 import NavigationBar from '../NavigationBar'
+import DropList from '../DropList'
 import Icon from '../Icon'
 import ToolBar from '../ToolBar'
 import _config from '../config.js'
@@ -43,6 +45,9 @@ class MdEditor extends React.Component {
       html: '',      
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
+      dropButton: {
+        header: false
+      }
     }
   } 
 
@@ -55,13 +60,22 @@ class MdEditor extends React.Component {
   mdjs = null  
 
   mdText = null
+  
+  initialSelection = {
+    isSelected: false,
+    start: 0,
+    end: 0,
+    text: ''
+  }
+
+  selection = Object.assign({}, this.initialSelection)
 
   componentDidMount() {
     this.init()
     this.initLogger()
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.value === this.props.value) {
       // console.log('value not change')
       return
@@ -75,7 +89,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  UNSAFE_componentWillUnmount () {
+  componentWillUnmount () {
     this.endLogger()
   }
 
@@ -148,6 +162,58 @@ class MdEditor extends React.Component {
     })
   }
 
+  handleDecorate = (type) => {
+    const clearList = [
+      'h1', 
+      'h2', 
+      'h3', 
+      'h4', 
+      'h5', 
+      'h6', 
+      'bold', 
+      'italic', 
+      'underline', 
+      'strikethrough', 
+      'unorder', 
+      'order', 
+      'image', 
+      'link'
+    ]
+    if (clearList.indexOf(type) > -1) {
+      if (!this.selection.isSelected) {
+        return
+      }
+      const content = this._getDecoratedText(type)
+      this._setMdText(content)
+      this._clearSelection()
+    } else {
+      const content = this._getDecoratedText(type)
+      this._setMdText(content)
+    }    
+  }
+
+  _getDecoratedText = (type) => {
+    const {text} = this.state
+    const {selection} = this
+    const beforeContent = text.slice(0, selection.start)
+    const afterContent = text.slice(selection.end, text.length)
+    const decorate = new Decorate(selection.text)
+    let decoratedText = ''
+    if (type === 'image') {
+      decoratedText = decorate.getDecoratedText(type, {
+        imageUrl: this.config.imageUrl
+      })
+    } else if (type === 'link') {
+      decoratedText = decorate.getDecoratedText(type, {
+        linkUrl: this.config.linkUrl
+      })
+    } else {
+      decoratedText = decorate.getDecoratedText(type)
+    }
+    const result = beforeContent + `${decoratedText}` + afterContent
+    return result
+  }
+
   renderHTML = (markdownText = '') => { 
     return this.mdjs.render(markdownText)
   }
@@ -159,7 +225,6 @@ class MdEditor extends React.Component {
     this.setState({
       view: view
     }, () => {
-      // console.log('state', this.state)
     })
   }
 
@@ -207,6 +272,26 @@ class MdEditor extends React.Component {
     const value = e.target.value   
     this._setMdText(value)
   }
+
+  handleInputSelect = (e) => {
+    e.persist()    
+    this.selection = {...this.selection, ...{isSelected: true}, ...this._getSelectionInfo(e)}
+    // console.log('handleInputSelect', e, this.selection)
+  }
+
+  _clearSelection = () => {
+    this.selection = Object.assign({}, this.initialSelection)
+  }
+
+  _getSelectionInfo = (e) => {
+    const source = e.srcElement || e.target
+    const start = source.selectionStart
+    const end = source.selectionEnd
+    const text = (source.value || '').slice(start, end)
+    const selection = {start, end, text}
+    return selection
+  }
+
   _setMdText = (value = '') => {
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
@@ -235,17 +320,57 @@ class MdEditor extends React.Component {
     return this.state.html
   }
 
+  showDropList = (type = 'header', flag) => {
+    const {dropButton} = this.state
+    this.setState({
+      dropButton: {...dropButton, [type]: flag}
+    })
+  }
+
   render() {    
-    const { view } = this.state
+    const { view, dropButton } = this.state    
     const renderNavigation = () => {
       return view.menu && 
       <NavigationBar 
         left={
           <div className="button-wrap">
-            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash-o"/></span>            
-            {/* <span className="button" title="show" onClick={this.handleGetLogger}><Icon type="icon-tablet"/></span> */}
+            <span className="button" title="header" 
+              onMouseEnter={() => this.showDropList('header', true)} 
+              onMouseLeave={() => this.showDropList('header', false)} 
+              >
+            <Icon type="icon-header"/>
+            <DropList 
+              show={dropButton.header}
+              onClose={() => {
+                this.showDropList('header', false)
+              }}
+              render={() => {
+                return (
+                  <ul>
+                    <li className="drop-item"><h1 onClick={() => this.handleDecorate('h1')}>H1</h1></li>  
+                    <li className="drop-item"><h2 onClick={() => this.handleDecorate('h2')}>H2</h2></li>  
+                    <li className="drop-item"><h3 onClick={() => this.handleDecorate('h3')}>H3</h3></li>  
+                    <li className="drop-item"><h4 onClick={() => this.handleDecorate('h4')}>H4</h4></li>  
+                    <li className="drop-item"><h5 onClick={() => this.handleDecorate('h5')}>H5</h5></li>  
+                    <li className="drop-item"><h6 onClick={() => this.handleDecorate('h6')}>H6</h6></li>  
+                  </ul>
+                )
+              }}
+            />        
+            </span>
+            <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold"/></span>
+            <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
+            <span className="button" title="italic" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline"/></span> 
+            <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough"/></span> 
+            <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul"/></span>    
+            <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol"/></span>    
+            
+            <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
+            <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
+                                 
+            <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash"/></span>            
             <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
-            <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>
+            <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>            
           </div> 
         }
       />
@@ -277,6 +402,7 @@ class MdEditor extends React.Component {
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
+            onSelect={this.handleInputSelect}
           />
         </section>
       )

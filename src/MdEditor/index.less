@@ -107,7 +107,9 @@
   .button-wrap {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     .button {
+      position: relative;
       min-width: 24px;
       height: 28px;
       margin-right: 5px;
@@ -120,6 +122,37 @@
         color: #333;
       }
     }
+  }
+  ul, li {
+    list-style: none; 
+    margin: 0;
+    padding:0;
+  }
+  h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: inherit;
+    font-weight: 500;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    line-height: 1.1
+  }
+  h1 {
+    font-size: 34px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 24px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  h5 {
+    font-size: 14px;
+  }
+  h6 {
+    font-size: 12px;
   }
 }
 
