@@ -68,7 +68,7 @@ class MdEditor extends React.Component {
     text: ''
   }
 
-  selection = Object.assign({}, this.initialSelection)
+  selection = {...this.initialSelection}
 
   componentDidMount() {
     this.init()
@@ -117,7 +117,7 @@ class MdEditor extends React.Component {
   }
 
   initConfig = () => {
-    return Object.assign({}, _config, this.props.config)
+    return {..._config, ...this.props.config}
   }
 
   initLogger = () => {
@@ -280,7 +280,7 @@ class MdEditor extends React.Component {
   }
 
   _clearSelection = () => {
-    this.selection = Object.assign({}, this.initialSelection)
+    this.selection = {...this.initialSelection}
   }
 
   _getSelectionInfo = (e) => {
