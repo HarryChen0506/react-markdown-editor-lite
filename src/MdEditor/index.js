@@ -175,7 +175,10 @@ class MdEditor extends React.Component {
       'underline', 
       'strikethrough', 
       'unorder', 
-      'order', 
+      'order',
+      'quote',
+      'hr',
+      'table',
       'image', 
       'link'
     ]
@@ -364,6 +367,9 @@ class MdEditor extends React.Component {
             <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough"/></span> 
             <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul"/></span>    
             <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol"/></span>    
+            <span className="button" title="quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left"/></span>    
+            <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize"/></span>    
+            <span className="button" title="table" onClick={() => this.handleDecorate('table')}><Icon type="icon-th"/></span>    
             
             <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
             <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
