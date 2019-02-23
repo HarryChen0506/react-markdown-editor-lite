@@ -400,7 +400,7 @@ class MdEditor extends React.Component {
                 </span>                
               </>
             }
-          ></ToolBar>
+          ></ToolBar>          
           <textarea
             id="textarea"
             ref={node => this.mdText = node}
