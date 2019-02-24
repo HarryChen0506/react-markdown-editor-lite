@@ -1,5 +1,6 @@
 // markdown editor 
 import React from 'react'
+import ReactDOM from 'react-dom'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import subscript from 'markdown-it-sub'
@@ -11,6 +12,7 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 
+import tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
 import NavigationBar from '../NavigationBar'
@@ -47,7 +49,8 @@ class MdEditor extends React.Component {
       htmlType: 'render', // 'render' 'source'
       dropButton: {
         header: false
-      }
+      },
+      fullScreen: false
     }
   } 
 
@@ -59,7 +62,15 @@ class MdEditor extends React.Component {
 
   mdjs = null  
 
-  mdText = null
+  nodeMdText = null
+
+  nodeMdPreview = null
+
+  nodeMdPreviewWraper = null
+
+  scale = 0
+
+  hasContentChanged = true
   
   initialSelection = {
     isSelected: false,
@@ -68,7 +79,7 @@ class MdEditor extends React.Component {
     text: ''
   }
 
-  selection = Object.assign({}, this.initialSelection)
+  selection = {...this.initialSelection}
 
   componentDidMount() {
     this.init()
@@ -117,7 +128,7 @@ class MdEditor extends React.Component {
   }
 
   initConfig = () => {
-    return Object.assign({}, _config, this.props.config)
+    return {..._config, ...this.props.config}
   }
 
   initLogger = () => {
@@ -175,7 +186,10 @@ class MdEditor extends React.Component {
       'underline', 
       'strikethrough', 
       'unorder', 
-      'order', 
+      'order',
+      'quote',
+      'hr',
+      'table',
       'image', 
       'link'
     ]
@@ -218,6 +232,13 @@ class MdEditor extends React.Component {
     return this.mdjs.render(markdownText)
   }
 
+  handleToggleFullScreen = () => {
+    const {fullScreen} = this.state
+    this.setState({
+      fullScreen: !fullScreen
+    })
+  }
+
   changeView = (key = 'md', val = true) =>{
     const view = {...this.state.view, ...{
       [key]: val
@@ -231,6 +252,26 @@ class MdEditor extends React.Component {
   handleToggleMenu = () => {
     const {view} = this.state
     this.changeView('menu', !view.menu)
+  }
+
+  handleToggleView = (type) => {
+    if (type === 'md') {
+      const view = {...this.state.view, ...{
+        md: false,
+        html: true
+      }}
+      this.setState({
+        view: view
+      })
+    } else {
+      const view = {...this.state.view, ...{
+        md: true,
+        html: false
+      }}
+      this.setState({
+        view: view
+      })
+    }
   }
 
   handleMdPreview = () => {
@@ -270,6 +311,9 @@ class MdEditor extends React.Component {
   handleChange = (e) => {
     this.startLogger() 
     const value = e.target.value   
+    if (!this.hasContentChanged) {
+      this.hasContentChanged = true
+    }
     this._setMdText(value)
   }
 
@@ -279,8 +323,29 @@ class MdEditor extends React.Component {
     // console.log('handleInputSelect', e, this.selection)
   }
 
+  handleInputScroll = tool.throttle((e) => {
+    e.persist() 
+    this.hasContentChanged && this._setScrollValue()  
+    const {nodeMdPreview} = this    
+    this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale 
+  }, 1000/60) 
+
+  handlePreviewScroll = tool.throttle((e) => {
+    e.persist() 
+    this.hasContentChanged && this._setScrollValue()
+    this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+  }, 1000/60)
+
+  _setScrollValue = () => {
+    // 设置值，方便 scrollBy 操作
+    const {nodeMdText, nodeMdPreview, nodeMdPreviewWraper} = this
+    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
+    this.hasContentChanged = false
+    // console.log('this.scale', this.scale)    
+  }
+
   _clearSelection = () => {
-    this.selection = Object.assign({}, this.initialSelection)
+    this.selection = {...this.initialSelection}
   }
 
   _getSelectionInfo = (e) => {
@@ -328,7 +393,7 @@ class MdEditor extends React.Component {
   }
 
   render() {    
-    const { view, dropButton } = this.state    
+    const { view, dropButton, fullScreen } = this.state    
     const renderNavigation = () => {
       return view.menu && 
       <NavigationBar 
@@ -338,25 +403,25 @@ class MdEditor extends React.Component {
               onMouseEnter={() => this.showDropList('header', true)} 
               onMouseLeave={() => this.showDropList('header', false)} 
               >
-            <Icon type="icon-header"/>
-            <DropList 
-              show={dropButton.header}
-              onClose={() => {
-                this.showDropList('header', false)
-              }}
-              render={() => {
-                return (
-                  <ul>
-                    <li className="drop-item"><h1 onClick={() => this.handleDecorate('h1')}>H1</h1></li>  
-                    <li className="drop-item"><h2 onClick={() => this.handleDecorate('h2')}>H2</h2></li>  
-                    <li className="drop-item"><h3 onClick={() => this.handleDecorate('h3')}>H3</h3></li>  
-                    <li className="drop-item"><h4 onClick={() => this.handleDecorate('h4')}>H4</h4></li>  
-                    <li className="drop-item"><h5 onClick={() => this.handleDecorate('h5')}>H5</h5></li>  
-                    <li className="drop-item"><h6 onClick={() => this.handleDecorate('h6')}>H6</h6></li>  
-                  </ul>
-                )
-              }}
-            />        
+              <Icon type="icon-header"/>
+              <DropList 
+                show={dropButton.header}
+                onClose={() => {
+                  this.showDropList('header', false)
+                }}
+                render={() => {
+                  return (
+                    <ul>
+                      <li className="drop-item"><h1 onClick={() => this.handleDecorate('h1')}>H1</h1></li>  
+                      <li className="drop-item"><h2 onClick={() => this.handleDecorate('h2')}>H2</h2></li>  
+                      <li className="drop-item"><h3 onClick={() => this.handleDecorate('h3')}>H3</h3></li>  
+                      <li className="drop-item"><h4 onClick={() => this.handleDecorate('h4')}>H4</h4></li>  
+                      <li className="drop-item"><h5 onClick={() => this.handleDecorate('h5')}>H5</h5></li>  
+                      <li className="drop-item"><h6 onClick={() => this.handleDecorate('h6')}>H6</h6></li>  
+                    </ul>
+                  )
+                }}
+              />        
             </span>
             <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold"/></span>
             <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
@@ -364,6 +429,9 @@ class MdEditor extends React.Component {
             <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough"/></span> 
             <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul"/></span>    
             <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol"/></span>    
+            <span className="button" title="quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left"/></span>    
+            <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize"/></span>    
+            <span className="button" title="table" onClick={() => this.handleDecorate('table')}><Icon type="icon-table"/></span>    
             
             <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
             <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
@@ -371,6 +439,13 @@ class MdEditor extends React.Component {
             <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash"/></span>            
             <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply"/></span>
             <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share"/></span>            
+          </div> 
+        }
+        right={
+          <div className="button-wrap">
+            <span className="button" title="full screen" onClick={this.handleToggleFullScreen}>
+              {fullScreen ? <Icon type="icon-shrink"/>:<Icon type="icon-enlarge"/>}
+            </span>
           </div> 
         }
       />
@@ -383,26 +458,24 @@ class MdEditor extends React.Component {
             render={
               <>
                 <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
-                  {view.menu ? <Icon type="icon-chevron-up"/> 
-                    :<Icon type="icon-chevron-down"/>
-                  }
+                  {view.menu ? <Icon type="icon-chevron-up"/>:<Icon type="icon-chevron-down"/>}
                 </span>
-                <span className="button" title={view.html ? 'preview' : 'both'} onClick={this.handleMdPreview}>
-                  {view.html ? <Icon type="icon-desktop"/> 
-                    :<Icon type="icon-columns"/>
-                  }
-                </span>                
+                <span className="button" title={view.html ? 'preview' : 'column'} onClick={this.handleMdPreview}>
+                  {view.html ? <Icon type="icon-desktop"/>:<Icon type="icon-columns"/>}
+                </span>    
+                <span className="button" title={'toggle'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh"/></span>            
               </>
             }
-          ></ToolBar>
+          ></ToolBar>          
           <textarea
             id="textarea"
-            ref={node => this.mdText = node}
+            ref={node => this.nodeMdText = node}
             value={text}
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
             onSelect={this.handleInputSelect}
+            onScroll={this.handleInputScroll}
           />
         </section>
       )
@@ -417,22 +490,31 @@ class MdEditor extends React.Component {
                     :<Icon type="icon-chevron-down"/>
                   }
                 </span>
-                <span className="button" title={view.md ? 'preview' : 'both'} onClick={this.handleHtmlPreview}>
+                <span className="button" title={view.md ? 'preview' : 'column'} onClick={this.handleHtmlPreview}>
                   {view.md ? <Icon type="icon-desktop"/> 
                     :<Icon type="icon-columns"/>
                   }
                 </span>
+                <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh"/></span>   
                 <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
                   {htmlType === 'render' ? <Icon type="icon-code"/>
                     : <Icon type="icon-eye"/>
                   }
-                </span>
+                </span>                         
               </>
             }
           ></ToolBar>          
           {htmlType === 'render' ? 
-            <div className="html-wrap"><HtmlRender html={html}/></div>
-            : <div className={'html-code-wrap'}><HtmlCode html={html}/></div>
+            (<div className="html-wrap" 
+              ref={node => this.nodeMdPreviewWraper = node} 
+              onScroll={this.handlePreviewScroll}>
+              <HtmlRender html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)}/>
+            </div>)
+            : (<div className={'html-code-wrap'} 
+                ref={node => this.nodeMdPreviewWraper = ReactDOM.findDOMNode(node)}
+                onScroll={this.handlePreviewScroll}>
+                <HtmlCode html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)}/>
+              </div>)
           }  
         </section>
       )      
@@ -444,7 +526,7 @@ class MdEditor extends React.Component {
       )
     }    
     return ( 
-      <div className={'rc-md2html-editor'} style={this.props.style}>        
+      <div className={`rc-md2html-editor ${fullScreen ? 'full' : ''}`} style={this.props.style}>        
         {renderNavigation()}        
         <div className="editor-container">   
           {renderContent()}

@@ -17,22 +17,22 @@ class Decorate {
   calcDecorateText = (type, option = {}) => {
     switch (type) {
       case 'h1':
-        return `\n # ${this.target} \n`
+        return `\n# ${this.target} \n`
         break
       case 'h2':
-        return `\n ## ${this.target} \n`
+        return `\n## ${this.target} \n`
         break
       case 'h3':
-        return `\n ### ${this.target} \n`
+        return `\n### ${this.target} \n`
         break
       case 'h4':
-        return `\n #### ${this.target} \n`
+        return `\n#### ${this.target} \n`
         break
       case 'h5':
-        return `\n ##### ${this.target} \n`
+        return `\n##### ${this.target} \n`
         break
       case 'h6':
-        return `\n ###### ${this.target} \n`
+        return `\n###### ${this.target} \n`
         break
       case 'bold':
         return `**${this.target}**`
@@ -47,12 +47,20 @@ class Decorate {
         return `~~${this.target}~~`
         break
       case 'unorder':
-        return `\n - ${this.target}`
+        return `\n- ${this.target}\n`
         break 
       case 'order':
-        return `\n 1. ${this.target}`
+        return `\n1. ${this.target}\n`
         break  
-        
+      case 'quote':
+        return `\n> ${this.target}\n`
+        break   
+      case 'hr':
+        return `\n---\n`
+        break  
+      case 'table':
+        return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
+        break  
       case 'image': 
         return `![${this.target}](${option.imageUrl || ''})`
         break   

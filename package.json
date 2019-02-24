@@ -1,6 +1,6 @@
 {
   "name": "rc-md2html",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "a light-weight Markdown editor based on markdown-it and React",
   "main": "./lib/rc-md2html.min.js",
   "directories": {
@@ -39,6 +39,7 @@
     "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.4.7",
     "babel-loader": "^8.0.5",
+    "babel-polyfill": "^6.26.0",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^1.0.1",
     "css-loader": "^2.1.0",
