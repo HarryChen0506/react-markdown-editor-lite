@@ -70,6 +70,8 @@ class MdEditor extends React.Component {
 
   scale = 0
 
+  willScrollEle = '' // 即将滚动的元素 md html
+
   hasContentChanged = true
   
   initialSelection = {
@@ -323,17 +325,24 @@ class MdEditor extends React.Component {
     // console.log('handleInputSelect', e, this.selection)
   }
 
+  handleScrollEle = (node) => {
+    this.willScrollEle = node
+  }
+
   handleInputScroll = tool.throttle((e) => {
-    e.persist() 
-    this.hasContentChanged && this._setScrollValue()  
-    const {nodeMdPreview} = this    
-    this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale 
+    e.persist()    
+    if (this.willScrollEle === 'md') {
+      this.hasContentChanged && this._setScrollValue()  
+      this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+    }     
   }, 1000/60) 
 
   handlePreviewScroll = tool.throttle((e) => {
-    e.persist() 
-    this.hasContentChanged && this._setScrollValue()
-    this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+    e.persist()    
+    if (this.willScrollEle === 'html') { 
+      this.hasContentChanged && this._setScrollValue()
+      this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+    }    
   }, 1000/60)
 
   _setScrollValue = () => {
@@ -476,6 +485,7 @@ class MdEditor extends React.Component {
             onChange={this.handleChange}
             onSelect={this.handleInputSelect}
             onScroll={this.handleInputScroll}
+            onMouseOver={() => this.handleScrollEle('md')}
           />
         </section>
       )
@@ -507,6 +517,7 @@ class MdEditor extends React.Component {
           {htmlType === 'render' ? 
             (<div className="html-wrap" 
               ref={node => this.nodeMdPreviewWraper = node} 
+              onMouseOver={() => this.handleScrollEle('html')}
               onScroll={this.handlePreviewScroll}>
               <HtmlRender html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)}/>
             </div>)

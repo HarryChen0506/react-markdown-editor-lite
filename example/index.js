@@ -52,7 +52,7 @@ class Demo extends React.Component {
             onChange={this.handleEditorChange} 
           />  
         </div> 
-        <div style={{marginTop: '30px'}}>
+        {/* <div style={{marginTop: '30px'}}>
           <MdEditor
             value={mock_content_1}
             style={{height: '200px', width: '100%'}}
@@ -66,7 +66,7 @@ class Demo extends React.Component {
             }}
             onChange={this.handleEditorChange} 
           />  
-        </div> 
+        </div>  */}
         
       </div>      
     )
