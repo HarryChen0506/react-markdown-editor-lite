@@ -8,7 +8,7 @@ class NavigationBar extends React.Component {
   }
   render() {   
     return ( 
-      <div className={'rc-md2html-navigation'}>
+      <div className={'rc-md-navigation'}>
         <div className="navigation-nav left">
           {this.props.left} 
         </div>

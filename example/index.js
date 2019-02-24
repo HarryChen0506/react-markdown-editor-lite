@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from '../src/index.js'
-// import MdEditor from '../lib/rc-md2html.min.js'
+// import MdEditor from '../lib/react-markdown-editor-lite.min.js'
 import content  from './content.js'
 import './index.less'
 // const mock_content = "Hello.\n\n - This is markdown.\n - It is fun\n - Love it or leave it."
@@ -31,7 +31,7 @@ class Demo extends React.Component {
   render () {
     return (
       <div className="demo-wrap">
-        <h3>rc-md2html demo</h3>  
+        <h3>react-markdown-editor-lite demo</h3>  
         <nav className="nav">
           <button onClick={this.handleGetMdValue} >getMdValue</button>  
           <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>  

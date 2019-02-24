@@ -1,4 +1,4 @@
-# rc-md2html
+# react-markdown-editor-lite
 
 * a light-weight(size 66KB) Markdown editor of React component
 * use [markdown-it](https://github.com/markdown-it/markdown-it) as a parser
@@ -13,13 +13,13 @@
 
 ## Demo
 
-online demo [https://rc-md2html.github.io/](https://rc-md2html.github.io/)
-![image](https://github.com//HarryChen0506/rc-md2html/blob/master/example/rc-md2html-v-0-3-2.PNG?raw=true)
+online demo [https://react-markdown-editor-lite.github.io/](https://react-markdown-editor-lite.github.io/)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-3-2.PNG?raw=true)
 
 ## Install
 
 ```
-npm install rc-md2html --save
+npm install react-markdown-editor-lite --save
 ```
 
 ## Props
@@ -51,7 +51,7 @@ this api return a html text parsed by markdown-it
 'use strict';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MdEditor from 'rc-md2html'
+import MdEditor from 'react-markdown-editor-lite'
 
 const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
@@ -77,7 +77,7 @@ export default class Demo extends React.Component {
 'use strict';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MdEditor from 'rc-md2html'
+import MdEditor from 'react-markdown-editor-lite'
 
 const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
@@ -126,5 +126,5 @@ Big thanks to [markdown-it](https://github.com/markdown-it/markdown-it) authors
 
 ## License
 
-[MIT](https://github.com/HarryChen0506/rc-md2html/blob/master/LICENSE)
+[MIT](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/LICENSE)
 

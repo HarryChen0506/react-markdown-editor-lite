@@ -5,8 +5,8 @@ const webpack = require('webpack');
 const version = require("./package.json").version;
 const banner =
   "/**\n" +
-  " * rc-md2html v" + version + "\n" +
-  " * https://github.com/HarryChen0506/rc-md2html\n" +
+  " * react-markdown-editor-lite v" + version + "\n" +
+  " * https://github.com/HarryChen0506/react-markdown-editor-lite\n" +
   " * MIT License\n" +
   " */\n";
 const config = {
@@ -14,7 +14,7 @@ const config = {
     app: './src/index.js',
   },
   output: {
-    filename: 'rc-md2html.min.js',
+    filename: 'react-markdown-editor-lite.min.js',
     path: path.resolve(__dirname, 'lib'),
     libraryTarget: "umd"
   },  
