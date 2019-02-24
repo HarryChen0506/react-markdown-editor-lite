@@ -40,13 +40,10 @@ const tool = {
   deepClone: deepClone,
   throttle: function (func, deltaX) {
     let lastCalledAt = new Date().getTime()
-    const _this = this
     return function() {
       if(new Date().getTime() - lastCalledAt >= deltaX) {
-          func.apply(this, arguments)
-          lastCalledAt = new Date().getTime();
-      } else {
-        // console.log('throttle')
+        func.apply(this, arguments)
+        lastCalledAt = new Date().getTime()
       }
     }
   }
