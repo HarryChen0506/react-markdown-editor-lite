@@ -254,6 +254,26 @@ class MdEditor extends React.Component {
     this.changeView('menu', !view.menu)
   }
 
+  handleToggleView = (type) => {
+    if (type === 'md') {
+      const view = {...this.state.view, ...{
+        md: false,
+        html: true
+      }}
+      this.setState({
+        view: view
+      })
+    } else {
+      const view = {...this.state.view, ...{
+        md: true,
+        html: false
+      }}
+      this.setState({
+        view: view
+      })
+    }
+  }
+
   handleMdPreview = () => {
     const {view} = this.state
     this.changeView('html', !view.html)
@@ -423,7 +443,7 @@ class MdEditor extends React.Component {
         }
         right={
           <div className="button-wrap">
-            <span className="button" title="redo" onClick={this.handleToggleFullScreen}>
+            <span className="button" title="full screen" onClick={this.handleToggleFullScreen}>
               {fullScreen ? <Icon type="icon-shrink"/>:<Icon type="icon-enlarge"/>}
             </span>
           </div> 
@@ -440,9 +460,10 @@ class MdEditor extends React.Component {
                 <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
                   {view.menu ? <Icon type="icon-chevron-up"/>:<Icon type="icon-chevron-down"/>}
                 </span>
-                <span className="button" title={view.html ? 'preview' : 'both'} onClick={this.handleMdPreview}>
+                <span className="button" title={view.html ? 'preview' : 'column'} onClick={this.handleMdPreview}>
                   {view.html ? <Icon type="icon-desktop"/>:<Icon type="icon-columns"/>}
-                </span>                
+                </span>    
+                <span className="button" title={'toggle'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh"/></span>            
               </>
             }
           ></ToolBar>          
@@ -469,16 +490,17 @@ class MdEditor extends React.Component {
                     :<Icon type="icon-chevron-down"/>
                   }
                 </span>
-                <span className="button" title={view.md ? 'preview' : 'both'} onClick={this.handleHtmlPreview}>
+                <span className="button" title={view.md ? 'preview' : 'column'} onClick={this.handleHtmlPreview}>
                   {view.md ? <Icon type="icon-desktop"/> 
                     :<Icon type="icon-columns"/>
                   }
                 </span>
+                <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh"/></span>   
                 <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
                   {htmlType === 'render' ? <Icon type="icon-code"/>
                     : <Icon type="icon-eye"/>
                   }
-                </span>
+                </span>                         
               </>
             }
           ></ToolBar>          
