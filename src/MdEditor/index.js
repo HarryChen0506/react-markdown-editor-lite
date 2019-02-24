@@ -537,7 +537,7 @@ class MdEditor extends React.Component {
       )
     }    
     return ( 
-      <div className={`rc-md2html-editor ${fullScreen ? 'full' : ''}`} style={this.props.style}>        
+      <div className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style}>        
         {renderNavigation()}        
         <div className="editor-container">   
           {renderContent()}

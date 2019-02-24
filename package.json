@@ -1,8 +1,8 @@
 {
-  "name": "rc-md2html",
+  "name": "react-markdown-editor-lite",
   "version": "0.3.3",
   "description": "a light-weight Markdown editor based on markdown-it and React",
-  "main": "./lib/rc-md2html.min.js",
+  "main": "./lib/react-markdown-editor-lite.min.js",
   "directories": {
     "example": "example",
     "lib": "lib",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HarryChen0506/rc-md2html.git"
+    "url": "git+https://github.com/HarryChen0506/react-markdown-editor-lite.git"
   },
   "keywords": [
     "markdown",
@@ -29,9 +29,9 @@
   "author": "HarryChen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HarryChen0506/rc-md2html/issues"
+    "url": "https://github.com/HarryChen0506/react-markdown-editor-lite/issues"
   },
-  "homepage": "https://github.com/HarryChen0506/rc-md2html#readme",
+  "homepage": "https://github.com/HarryChen0506/react-markdown-editor-lite#readme",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.0",
