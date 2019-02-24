@@ -1,5 +1,6 @@
 // markdown editor 
 import React from 'react'
+import ReactDOM from 'react-dom'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import subscript from 'markdown-it-sub'
@@ -11,6 +12,7 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 
+import tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
 import NavigationBar from '../NavigationBar'
@@ -59,7 +61,15 @@ class MdEditor extends React.Component {
 
   mdjs = null  
 
-  mdText = null
+  nodeMdText = null
+
+  nodeMdPreview = null
+
+  nodeMdPreviewWraper = null
+
+  scale = 0
+
+  hasContentChanged = true
   
   initialSelection = {
     isSelected: false,
@@ -273,6 +283,9 @@ class MdEditor extends React.Component {
   handleChange = (e) => {
     this.startLogger() 
     const value = e.target.value   
+    if (!this.hasContentChanged) {
+      this.hasContentChanged = true
+    }
     this._setMdText(value)
   }
 
@@ -280,6 +293,27 @@ class MdEditor extends React.Component {
     e.persist()    
     this.selection = {...this.selection, ...{isSelected: true}, ...this._getSelectionInfo(e)}
     // console.log('handleInputSelect', e, this.selection)
+  }
+
+  handleInputScroll = tool.throttle((e) => {
+    e.persist() 
+    this.hasContentChanged && this._setScrollValue()  
+    const {nodeMdPreview} = this    
+    this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale 
+  }, 1000/60) 
+
+  handlePreviewScroll = tool.throttle((e) => {
+    e.persist() 
+    this.hasContentChanged && this._setScrollValue()
+    this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+  }, 1000/60)
+
+  _setScrollValue = () => {
+    // 设置值，方便 scrollBy 操作
+    const {nodeMdText, nodeMdPreview, nodeMdPreviewWraper} = this
+    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
+    this.hasContentChanged = false
+    // console.log('this.scale', this.scale)    
   }
 
   _clearSelection = () => {
@@ -403,12 +437,13 @@ class MdEditor extends React.Component {
           ></ToolBar>          
           <textarea
             id="textarea"
-            ref={node => this.mdText = node}
+            ref={node => this.nodeMdText = node}
             value={text}
             className={'input'}
             wrap="hard"
             onChange={this.handleChange}
             onSelect={this.handleInputSelect}
+            onScroll={this.handleInputScroll}
           />
         </section>
       )
@@ -437,8 +472,16 @@ class MdEditor extends React.Component {
             }
           ></ToolBar>          
           {htmlType === 'render' ? 
-            <div className="html-wrap"><HtmlRender html={html}/></div>
-            : <div className={'html-code-wrap'}><HtmlCode html={html}/></div>
+            (<div className="html-wrap" 
+              ref={node => this.nodeMdPreviewWraper = node} 
+              onScroll={this.handlePreviewScroll}>
+              <HtmlRender html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)}/>
+            </div>)
+            : (<div className={'html-code-wrap'} 
+                ref={node => this.nodeMdPreviewWraper = ReactDOM.findDOMNode(node)}
+                onScroll={this.handlePreviewScroll}>
+                <HtmlCode html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)}/>
+              </div>)
           }  
         </section>
       )      

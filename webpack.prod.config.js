@@ -22,6 +22,9 @@ const config = {
     {
       react: 'react',    
     },
+    {
+      ['react-dom']: 'react-dom', 
+    },
     /^markdown-it.*$/i
   ],
   mode: 'production',
