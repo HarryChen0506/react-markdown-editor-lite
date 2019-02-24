@@ -2,8 +2,14 @@
 
 * a light-weight(size 66KB) Markdown editor of React component
 * use [markdown-it](https://github.com/markdown-it/markdown-it) as a parser
+* Support Markdown Syntax: bold, italic, etc.
+* Support UI configuration: show only editor or previewer area
+* Support synch scrolling with editor and previewer
 * 一款轻量的基于React的Markdown编辑器, 压缩后代码只有66KB
 * 使用markdown-it作为Markdown解析器
+* 界面可配置, 如只显示编辑区或预览区
+* 支持常用的markdown编辑功能，如加粗，斜体等等...
+* 支持编辑区和预览区同步滚动
 
 ## Demo
 
@@ -29,6 +35,15 @@ npm install rc-md2html --save
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
 
+## API
+
+### MdEditor.getMdValue () => String
+
+this api return a markdown content 
+
+### MdEditor.getHtmlValue () => String
+
+this api return a html text parsed by markdown-it
 
 ## Basic Usage
 
