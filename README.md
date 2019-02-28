@@ -33,6 +33,7 @@ npm install react-markdown-editor-lite --save
 | config.imageUrl | default image url | String | '' | |
 | config.linkUrl | default link url | String | '' | |
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
+| config.synchScroll | Does it support synch scroll? | Boolean | true | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
 
 ## API

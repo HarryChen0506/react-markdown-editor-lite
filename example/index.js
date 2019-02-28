@@ -47,7 +47,7 @@ class Demo extends React.Component {
                 md: true,
                 html: true
               },
-              imageUrl: 'https://octodex.github.com/images/minion.png'
+              imageUrl: 'https://octodex.github.com/images/minion.png',              
             }}
             onChange={this.handleEditorChange} 
           />  
