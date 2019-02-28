@@ -58,6 +58,12 @@ class Decorate {
       case 'hr':
         return `\n---\n`
         break  
+        case 'inlinecode':
+        return "`code`"
+        break  
+        case 'code':
+        return "```java\n code \n```"
+        break  
       case 'table':
         return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
         break  

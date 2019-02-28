@@ -20,8 +20,9 @@ import DropList from '../DropList'
 import Icon from '../Icon'
 import ToolBar from '../ToolBar'
 import _config from '../config.js'
+import hljs from 'highlight.js';
 import './index.less'
-
+import 'highlight.js/styles/github.css';
 export class HtmlRender extends React.Component {
   render() {
     return (      
@@ -111,7 +112,16 @@ class MdEditor extends React.Component {
     this.mdjs = new MarkdownIt({
       html: true,
       linkify: true,
-      typographer: true
+      typographer: true,
+      highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(lang, str).value;
+          } catch (__) {}
+        }
+    
+        return ''; // use external default escaping
+      }
     })
     // 插件
     this.mdjs.use(emoji)
@@ -191,6 +201,8 @@ class MdEditor extends React.Component {
       'order',
       'quote',
       'hr',
+      'inlinecode',
+      'code',
       'table',
       'image', 
       'link'
@@ -439,7 +451,11 @@ class MdEditor extends React.Component {
             <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul"/></span>    
             <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol"/></span>    
             <span className="button" title="quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left"/></span>    
-            <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize"/></span>    
+            <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>    
+            
+            <span className="button" title="inline_code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="extraicon-code"/></span>    
+            <span className="button" title="code" onClick={() => this.handleDecorate('code')}><Icon type="extraicon-codelibrary" /></span>  
+            
             <span className="button" title="table" onClick={() => this.handleDecorate('table')}><Icon type="icon-table"/></span>    
             
             <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
