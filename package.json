@@ -1,6 +1,6 @@
 {
   "name": "react-markdown-editor-lite",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "a light-weight Markdown editor based on markdown-it and React",
   "main": "./lib/react-markdown-editor-lite.min.js",
   "directories": {

@@ -45,8 +45,9 @@ class MdEditor extends React.Component {
   constructor(props) {
     super(props)    
     this.config = this.initConfig()
+      
     this.state = {
-      text: (this.props.value || '').replace(/↵/g,'\n'),
+      text: (this.formatString(this.props.value) || '').replace(/↵/g,'\n'),
       html: '',      
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
@@ -97,7 +98,7 @@ class MdEditor extends React.Component {
       return
     }   
     let { value } = nextProps    
-    const {text} = this.state
+    value = this.formatString(value)
     value = value && value.replace(/↵/g, '\n')    
     this.setState({
       text: value,
@@ -110,7 +111,8 @@ class MdEditor extends React.Component {
   }
 
   init = () => {
-    const { value } = this.props
+    let { value } = this.props
+    value = this.formatString(value)
     this.mdjs = new MarkdownIt({
       html: true,
       linkify: true,
@@ -138,6 +140,14 @@ class MdEditor extends React.Component {
     this.setState({
       html: this.renderHTML(value)
     })
+  }
+
+  formatString = (value) => {
+    if (typeof this.props.value !== 'string') {
+      console && console.error && console.error('The type of "value" must be String!')
+      return new String(value).toString()
+    } 
+    return value
   }
 
   initConfig = () => {
@@ -222,7 +232,7 @@ class MdEditor extends React.Component {
   }
 
   _getDecoratedText = (type) => {
-    const {text} = this.state
+    const {text = ''} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
     const afterContent = text.slice(selection.end, text.length)
@@ -243,8 +253,11 @@ class MdEditor extends React.Component {
     return result
   }
 
-  renderHTML = (markdownText = '') => { 
-    return this.mdjs.render(markdownText)
+  renderHTML = (markdownText) => { 
+    if (typeof markdownText === 'string' ) {
+      return this.mdjs.render(markdownText)
+    }
+    return ''
   }
 
   handleToggleFullScreen = () => {
