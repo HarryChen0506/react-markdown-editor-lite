@@ -62,7 +62,7 @@ class Decorate {
         return `\`${this.target}\``
         break  
       case 'code':
-        return `\n\`\`\` javascript \n${this.target}\n\`\`\`\n`
+        return `\n\`\`\` javascript\n${this.target}\n\`\`\`\n`
         break  
       case 'table':
         return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
