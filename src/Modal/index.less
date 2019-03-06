@@ -1,0 +1,80 @@
+.container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.dialog {
+  z-index: 1001;
+  text-align: center;
+  background: #fff;
+  position: absolute;
+  top: 100px;
+  left: 30%;
+  right: 30%;
+  text-align: center;
+  border-radius: 5px;
+}
+.dialog_header {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 16px;
+  font-weight: 500;
+}
+.dialog_body {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.dialog_buttons {
+  text-align: right;
+  padding: 0 10px;
+}
+.dialog_buttons > button {
+  margin: 0 5px;
+  border-radius: 3px;
+  outline: none;
+  width: 62px;
+  height: 32px;
+  cursor: pointer;
+}
+.dialog_buttons .btn-ok {
+  background: #408ff7;
+  color: #fff;
+}
+.dialog_buttons .btn-ok:hover {
+  background: #5ca7f8;
+  color: #fff;
+}
+.dialog_buttons .btn-cancel {
+  background: #fff;
+  color: #606060;
+  border: 1px solid #d9d9d9;
+}
+.dialog_buttons .btn-cancel:hover {
+  color: #408ff7;
+  border: 1px solid #408ff7;
+}
+
+.footer {
+  height: 60px;
+  line-height: 60px;
+  border-top: 1px solid #e8e8e8;
+}
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color:#dadada;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:#dadada;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:#dadada;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color:#dadada;
+}

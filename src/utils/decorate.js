@@ -65,7 +65,20 @@ class Decorate {
         return "```java\n code \n```"
         break  
       case 'table':
-        return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
+        const {row = 1, col = 1} = option;
+        let rowStr = ['|'];
+        let rowHeader = ['|'];
+        let colStr = '';
+        let allStr = '';
+        for (let i = 0; i < col; i++) {
+          rowHeader.push('--|');
+          rowStr.push('|')
+        }
+        for (let j = 0; j < row; j++) {
+          colStr = colStr + '\r\n' + rowStr.join('')
+        }
+        allStr = rowStr.join('') + '\r\n' + rowHeader.join('') + colStr;
+        return allStr;
         break  
       case 'image': 
         return `![${this.target}](${option.imageUrl || ''})`
