@@ -39,7 +39,7 @@ class Demo extends React.Component {
         <div className="editor-wrap" style={{marginTop: '30px'}}>
           <MdEditor 
             ref={node => this.mdEditor = node}
-            value={mock_content}
+            value={mock_content_1}
             style={{height: '500px', width: '100%'}}
             config={{
               view: {
