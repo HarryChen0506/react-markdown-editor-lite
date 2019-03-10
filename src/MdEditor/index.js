@@ -16,11 +16,12 @@ import tasklists from 'markdown-it-task-lists'
 import tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
-import NavigationBar from '../NavigationBar'
-import DropList from '../DropList'
-import HeaderList from '../HeaderList'
-import Icon from '../Icon'
-import ToolBar from '../ToolBar'
+import NavigationBar from '../components/NavigationBar'
+import DropList from '../components/DropList'
+import HeaderList from '../components/HeaderList'
+import TableList from '../components/TableList'
+import Icon from '../components/Icon'
+import ToolBar from '../components/ToolBar'
 import _config from '../config.js'
 
 import './index.less'
@@ -53,7 +54,8 @@ class MdEditor extends React.Component {
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
       dropButton: {
-        header: false
+        header: false,
+        table: false
       },
       fullScreen: false
     }
@@ -197,7 +199,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleDecorate = (type) => {
+  handleDecorate = (type, option) => {
     const clearList = [
       'h1', 
       'h2', 
@@ -223,16 +225,16 @@ class MdEditor extends React.Component {
       if (!this.selection.isSelected) {
         return
       }
-      const content = this._getDecoratedText(type)
+      const content = this._getDecoratedText(type, option)
       this._setMdText(content)
       this._clearSelection()
     } else {
-      const content = this._getDecoratedText(type)
+      const content = this._getDecoratedText(type, option)
       this._setMdText(content)
     }    
   }
 
-  _getDecoratedText = (type) => {
+  _getDecoratedText = (type, option) => {
     const {text = ''} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
@@ -248,7 +250,7 @@ class MdEditor extends React.Component {
         linkUrl: this.config.linkUrl
       })
     } else {
-      decoratedText = decorate.getDecoratedText(type)
+      decoratedText = decorate.getDecoratedText(type, option)
     }
     const result = beforeContent + `${decoratedText}` + afterContent
     return result
@@ -472,17 +474,21 @@ class MdEditor extends React.Component {
             <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
             <span className="button" title="inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed"/></span>    
             <span className="button" title="code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span> 
-            <span className="button" title="table" onClick={() => this.handleDecorate('table')}>
+            <span className="button" title="table"
+              onMouseEnter={() => this.showDropList('table', true)} 
+              onMouseLeave={() => this.showDropList('table', false)} 
+            >
               <Icon type="icon-table"/>
               <DropList
-                show={true}
+                show={dropButton.table}
+                onClose={() => {
+                  this.showDropList('table', false)
+                }}
                 render={() => {
                   return (
-                    <ul>
-                      <li className="drop-item">
-                        <span></span>
-                      </li>
-                    </ul>
+                    <TableList maxRow={5} maxCol={6} onSetTable={(option) => {
+                      this.handleDecorate('table', option)
+                    }}/>
                   )
                 }}
               />     
