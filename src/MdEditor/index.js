@@ -16,10 +16,12 @@ import tasklists from 'markdown-it-task-lists'
 import tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
-import NavigationBar from '../NavigationBar'
-import DropList from '../DropList'
-import Icon from '../Icon'
-import ToolBar from '../ToolBar'
+import NavigationBar from '../components/NavigationBar'
+import DropList from '../components/DropList'
+import HeaderList from '../components/HeaderList'
+import TableList from '../components/TableList'
+import Icon from '../components/Icon'
+import ToolBar from '../components/ToolBar'
 import _config from '../config.js'
 
 import './index.less'
@@ -52,7 +54,8 @@ class MdEditor extends React.Component {
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
       dropButton: {
-        header: false
+        header: false,
+        table: false
       },
       fullScreen: false
     }
@@ -196,7 +199,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleDecorate = (type) => {
+  handleDecorate = (type, option) => {
     const clearList = [
       'h1', 
       'h2', 
@@ -222,16 +225,16 @@ class MdEditor extends React.Component {
       if (!this.selection.isSelected) {
         return
       }
-      const content = this._getDecoratedText(type)
+      const content = this._getDecoratedText(type, option)
       this._setMdText(content)
       this._clearSelection()
     } else {
-      const content = this._getDecoratedText(type)
+      const content = this._getDecoratedText(type, option)
       this._setMdText(content)
     }    
   }
 
-  _getDecoratedText = (type) => {
+  _getDecoratedText = (type, option) => {
     const {text = ''} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
@@ -247,7 +250,7 @@ class MdEditor extends React.Component {
         linkUrl: this.config.linkUrl
       })
     } else {
-      decoratedText = decorate.getDecoratedText(type)
+      decoratedText = decorate.getDecoratedText(type, option)
     }
     const result = beforeContent + `${decoratedText}` + afterContent
     return result
@@ -454,17 +457,12 @@ class MdEditor extends React.Component {
                 }}
                 render={() => {
                   return (
-                    <ul>
-                      <li className="drop-item"><h1 onClick={() => this.handleDecorate('h1')}>H1</h1></li>  
-                      <li className="drop-item"><h2 onClick={() => this.handleDecorate('h2')}>H2</h2></li>  
-                      <li className="drop-item"><h3 onClick={() => this.handleDecorate('h3')}>H3</h3></li>  
-                      <li className="drop-item"><h4 onClick={() => this.handleDecorate('h4')}>H4</h4></li>  
-                      <li className="drop-item"><h5 onClick={() => this.handleDecorate('h5')}>H5</h5></li>  
-                      <li className="drop-item"><h6 onClick={() => this.handleDecorate('h6')}>H6</h6></li>  
-                    </ul>
+                    <HeaderList onSelectHeader={(header) => {
+                      this.handleDecorate(header)
+                    }}/>
                   )
                 }}
-              />        
+              />
             </span>
             <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold"/></span>
             <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic"/></span>            
@@ -476,7 +474,25 @@ class MdEditor extends React.Component {
             <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
             <span className="button" title="inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed"/></span>    
             <span className="button" title="code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span> 
-            <span className="button" title="table" onClick={() => this.handleDecorate('table')}><Icon type="icon-table"/></span> 
+            <span className="button" title="table"
+              onMouseEnter={() => this.showDropList('table', true)} 
+              onMouseLeave={() => this.showDropList('table', false)} 
+            >
+              <Icon type="icon-table"/>
+              <DropList
+                show={dropButton.table}
+                onClose={() => {
+                  this.showDropList('table', false)
+                }}
+                render={() => {
+                  return (
+                    <TableList maxRow={5} maxCol={6} onSetTable={(option) => {
+                      this.handleDecorate('table', option)
+                    }}/>
+                  )
+                }}
+              />     
+            </span> 
             <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
             <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
                                  
@@ -490,7 +506,7 @@ class MdEditor extends React.Component {
             <span className="button" title="full screen" onClick={this.handleToggleFullScreen}>
               {fullScreen ? <Icon type="icon-shrink"/>:<Icon type="icon-enlarge"/>}
             </span>
-          </div> 
+          </div>
         }
       />
     }

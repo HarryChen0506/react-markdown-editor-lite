@@ -65,7 +65,8 @@ class Decorate {
         return `\n\`\`\` javascript\n${this.target}\n\`\`\`\n`
         break  
       case 'table':
-        return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
+        // return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
+        return this.formatTableText(this.target, option)
         break  
       case 'image': 
         return `![${this.target}](${option.imageUrl || ''})`
@@ -76,6 +77,24 @@ class Decorate {
       default:
         return `${this.target}`
     }
+  }
+  formatTableText = (target, option) => {
+    const {row = 2, col = 2} = option
+    let rowHeader = ['|']
+    let rowData = ['|']
+    let rowDivision = ['|']
+    let colStr = ''
+    let result = ''
+    for (let i = 0; i <= col; i++) {
+      rowHeader.push(' Head |')      
+      rowDivision.push(' --- |')
+      rowData.push(' Data |')
+    }
+    for (let j = 0; j <= row; j++) {
+      colStr = colStr + '\n' + rowData.join('')
+    }
+    result = '\n' + rowHeader.join('') + '\n' + rowDivision.join('') + colStr + '\n'
+    return result
   }
 }
 
