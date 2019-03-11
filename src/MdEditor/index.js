@@ -203,7 +203,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleDecorate = (type, option) => {
+  handleDecorate = (type, option={}) => {
     const clearList = [
       'h1', 
       'h2', 

@@ -28,16 +28,16 @@ npm install react-markdown-editor-lite --save
 
 | Property | Description | Type | default | Remarks |
 | --- | --- | --- | --- | --- |
-| value | markdown content | String | '' |  |
-| style | component container style | Object | {height: '100%'} |  |
-| config | component config | Object | {view: {...}, logger: {...}} |  |
+| value | markdown content | String | '' | required |
+| style | component container style | Object | {height: '100%'} | not required |
+| config | component config | Object | {view: {...}, logger: {...}} | not required |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
 | config.imageUrl | default image url | String | '' | |
 | config.linkUrl | default link url | String | '' | |
 | config.table | table maximum value of row and column | Object | {maxRow: 4, maxCol: 6} | |
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | config.synchScroll | Does it support synch scroll? | Boolean | true | |
-| onChange | emitting when editor has changed | Function | ({html, md}) => {} |  |
+| onChange | emitting when editor has changed | Function | ({html, md}) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | Function | ({file, callback}) => {} | not required |
 
 ## API
