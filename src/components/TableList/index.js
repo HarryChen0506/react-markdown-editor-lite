@@ -11,7 +11,6 @@ class TableList extends React.Component {
       maxCol: maxCol,
       list: this.formatTableModel(maxRow, maxCol)
     }
-    console.log('state', this.state)
   }
 
   config = {

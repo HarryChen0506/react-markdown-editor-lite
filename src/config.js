@@ -14,7 +14,11 @@ const config = {
   },
   synchScroll: true,
   imageUrl: '',
-  linkUrl: ''
+  linkUrl: '',
+  table: {
+    maxRow: 4,
+    maxCol: 6
+  }
 }
 
 export default config

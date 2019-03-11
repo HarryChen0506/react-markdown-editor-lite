@@ -20,6 +20,7 @@ import NavigationBar from '../components/NavigationBar'
 import DropList from '../components/DropList'
 import HeaderList from '../components/HeaderList'
 import TableList from '../components/TableList'
+import InputFile from '../components/InputFile'
 import Icon from '../components/Icon'
 import ToolBar from '../components/ToolBar'
 import _config from '../config.js'
@@ -57,7 +58,8 @@ class MdEditor extends React.Component {
         header: false,
         table: false
       },
-      fullScreen: false
+      fullScreen: false,
+      table: this.config.table
     }
   } 
 
@@ -74,6 +76,8 @@ class MdEditor extends React.Component {
   nodeMdPreview = null
 
   nodeMdPreviewWraper = null
+
+  inputFile = null
 
   scale = 0
 
@@ -243,7 +247,7 @@ class MdEditor extends React.Component {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
-        imageUrl: this.config.imageUrl
+        imageUrl: option.imageUrl || this.config.imageUrl
       })
     } else if (type === 'link') {
       decoratedText = decorate.getDecoratedText(type, {
@@ -337,6 +341,22 @@ class MdEditor extends React.Component {
         })
       }
     }    
+  }
+
+  handleImageUpload = () => {
+    const {onImageUpload} = this.props
+    if (typeof onImageUpload === 'function') {
+      this.inputFile && this.inputFile.click()
+    } else {
+      this.handleDecorate('image')
+    }    
+  }
+
+  onImageChanged = (file) => {
+    const {onImageUpload} = this.props
+    onImageUpload(file, (imageUrl) => {
+      this.handleDecorate('image', {imageUrl})
+    })
   }
 
   handleChange = (e) => {
@@ -439,7 +459,7 @@ class MdEditor extends React.Component {
   }
 
   render() {    
-    const { view, dropButton, fullScreen } = this.state    
+    const { view, dropButton, fullScreen, table } = this.state    
     const renderNavigation = () => {
       return view.menu && 
       <NavigationBar 
@@ -477,7 +497,7 @@ class MdEditor extends React.Component {
             <span className="button" title="table"
               onMouseEnter={() => this.showDropList('table', true)} 
               onMouseLeave={() => this.showDropList('table', false)} 
-            >
+              >
               <Icon type="icon-table"/>
               <DropList
                 show={dropButton.table}
@@ -486,14 +506,21 @@ class MdEditor extends React.Component {
                 }}
                 render={() => {
                   return (
-                    <TableList maxRow={5} maxCol={6} onSetTable={(option) => {
+                    <TableList maxRow={table.maxRow} maxCol={table.maxCol} onSetTable={(option) => {
                       this.handleDecorate('table', option)
                     }}/>
                   )
                 }}
               />     
             </span> 
-            <span className="button" title="image" onClick={() => this.handleDecorate('image')}><Icon type="icon-photo"/></span> 
+            <span className="button" title="image" onClick={this.handleImageUpload} style={{position: 'relative'}}>
+              <Icon type="icon-photo"/>
+              <InputFile ref={(input) => { this.inputFile = input }} onChange={(e)=>{
+                e.persist() 
+                const file = e.target.files[0]
+                this.onImageChanged(file)
+              }} />
+            </span> 
             <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link"/></span>           
                                  
             <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash"/></span>            
