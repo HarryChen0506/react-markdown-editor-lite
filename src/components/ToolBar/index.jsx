@@ -5,7 +5,7 @@ class ToolBar extends React.Component {
   render() {
     return (
       <div className="tool-bar" style={this.props.style}>
-        {this.props.render}
+        {this.props.children}
       </div>
     )
   }

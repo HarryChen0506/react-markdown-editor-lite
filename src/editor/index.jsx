@@ -88,6 +88,11 @@ class MdEditor extends React.Component {
     this.handleUndo = this._handleUndo.bind(this)
     this.handleRedo = this._handleRedo.bind(this)
     this.handleToggleFullScreen = this._handleToggleFullScreen.bind(this)
+    this.handleToggleMenu = this._handleToggleMenu.bind(this)
+    this.handleToggleView = this._handleToggleView.bind(this)
+    this.handleMdPreview = this._handleMdPreview.bind(this)
+    this.handleHtmlPreview = this._handleHtmlPreview.bind(this)
+    this.hanldeToggleHtmlType = this._hanldeToggleHtmlType.bind(this)
 
     this.handleInputScroll = tool.throttle((e) => {
       const { synchScroll } = this.config
@@ -270,56 +275,46 @@ class MdEditor extends React.Component {
     })
   }
 
-  changeView(key = 'md', val = true) {
-    const view = {
-      ...this.state.view, ...{
-        [key]: val
-      }
-    }
+  changeView(to) {
+    const view = Object.assign({}, this.state.view, to)
     this.setState({
       view: view
-    }, () => {
     })
   }
 
-  handleToggleMenu() {
-    const { view } = this.state
-    this.changeView('menu', !view.menu)
+  _handleToggleMenu() {
+    this.changeView({
+      'menu': !this.state.view.menu
+    })
   }
 
-  handleToggleView(type) {
+  _handleToggleView(type) {
     if (type === 'md') {
-      const view = {
-        ...this.state.view, ...{
-          md: false,
-          html: true
-        }
-      }
-      this.setState({
-        view: view
+      this.changeView({
+        'md': false,
+        'html': true
       })
     } else {
-      const view = {
-        ...this.state.view, ...{
-          md: true,
-          html: false
-        }
-      }
-      this.setState({
-        view: view
+      this.changeView({
+        'md': true,
+        'html': false
       })
     }
   }
 
-  handleMdPreview() {
-    this.changeView('html', !this.state.view.html)
+  _handleMdPreview() {
+    this.changeView({
+      'html': !this.state.view.html
+    })
   }
 
-  handleHtmlPreview() {
-    this.changeView('md', !this.state.view.md)
+  _handleHtmlPreview() {
+    this.changeView({
+      'md': !this.state.view.md
+    })
   }
 
-  hanldeToggleHtmlType() {
+  _hanldeToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
       htmlType = 'source'
@@ -370,7 +365,7 @@ class MdEditor extends React.Component {
 
   _handleInputSelect(e) {
     e.persist()
-    this.selection = { ...this.selection, ...{ isSelected: true }, ...this._getSelectionInfo(e) }
+    this.selection = Object.assign({}, this.selection, { isSelected: true }, this._getSelectionInfo(e))
   }
 
   handleScrollEle(node) {
@@ -382,11 +377,10 @@ class MdEditor extends React.Component {
     const { nodeMdText, nodeMdPreview, nodeMdPreviewWraper } = this
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
     this.hasContentChanged = false
-    // console.log('this.scale', this.scale)    
   }
 
   _clearSelection() {
-    this.selection = { ...this.initialSelection }
+    this.selection = Object.assign({}, this.initialSelection)
   }
 
   _getSelectionInfo(e) {
@@ -519,20 +513,16 @@ class MdEditor extends React.Component {
       const res = []
       if (view.md) {
         res.push(
-          <section className={'sec-md'}>
-            <ToolBar
-              render={
-                <>
-                  <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
-                    {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
-                  </span>
-                  <span className="button" title={view.html ? 'preview' : 'column'} onClick={this.handleMdPreview}>
-                    {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
-                  </span>
-                  <span className="button" title={'toggle'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
-                </>
-              }
-            ></ToolBar>
+          <section className={'sec-md'} key="md">
+            <ToolBar>
+              <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+                {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
+              </span>
+              <span className="button" title={view.html ? 'preview' : 'column'} onClick={this.handleMdPreview}>
+                {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
+              </span>
+              <span className="button" title={'toggle'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
+            </ToolBar>
             <textarea
               id="textarea"
               ref={node => this.nodeMdText = node}
@@ -548,30 +538,25 @@ class MdEditor extends React.Component {
       }
       if (view.html) {
         res.push(
-          <section className={'sec-html'}>
-            <ToolBar
-              style={{ right: '20px' }}
-              render={
-                <>
-                  <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
-                    {view.menu ? <Icon type="icon-chevron-up" />
-                      : <Icon type="icon-chevron-down" />
-                    }
-                  </span>
-                  <span className="button" title={view.md ? 'preview' : 'column'} onClick={this.handleHtmlPreview}>
-                    {view.md ? <Icon type="icon-desktop" />
-                      : <Icon type="icon-columns" />
-                    }
-                  </span>
-                  <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
-                  <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
-                    {htmlType === 'render' ? <Icon type="icon-code" />
-                      : <Icon type="icon-eye" />
-                    }
-                  </span>
-                </>
-              }
-            ></ToolBar>
+          <section className={'sec-html'} key="html">
+            <ToolBar style={{ right: '20px' }}>
+              <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+                {view.menu ? <Icon type="icon-chevron-up" />
+                  : <Icon type="icon-chevron-down" />
+                }
+              </span>
+              <span className="button" title={view.md ? 'preview' : 'column'} onClick={this.handleHtmlPreview}>
+                {view.md ? <Icon type="icon-desktop" />
+                  : <Icon type="icon-columns" />
+                }
+              </span>
+              <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
+              <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
+                {htmlType === 'render' ? <Icon type="icon-code" />
+                  : <Icon type="icon-eye" />
+                }
+              </span>
+            </ToolBar>
             {htmlType === 'render' ?
               (<div className="html-wrap"
                 ref={node => this.nodeMdPreviewWraper = node}
