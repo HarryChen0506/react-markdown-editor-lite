@@ -92,7 +92,8 @@ class MdEditor extends React.Component {
     this.handleToggleView = this._handleToggleView.bind(this)
     this.handleMdPreview = this._handleMdPreview.bind(this)
     this.handleHtmlPreview = this._handleHtmlPreview.bind(this)
-    this.hanldeToggleHtmlType = this._hanldeToggleHtmlType.bind(this)
+    this.handleToggleHtmlType = this._handleToggleHtmlType.bind(this)
+    this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
     this.handleInputScroll = tool.throttle((e) => {
       const { synchScroll } = this.config
@@ -164,6 +165,7 @@ class MdEditor extends React.Component {
   initLogger() {
     this.logger = new Logger()
     this.startLogger()
+    this.logger.pushRecord(this.state.text)
   }
 
   startLogger() {
@@ -314,7 +316,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  _hanldeToggleHtmlType() {
+  _handleToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
       htmlType = 'source'
@@ -407,6 +409,28 @@ class MdEditor extends React.Component {
           html
         })
       })
+  }
+
+  _isKeyMatch(event, key, keyCode, withCtrl = false) {
+    if (event.ctrlKey !== withCtrl) {
+      return false
+    }
+    if (event.key) {
+      return event.key === key
+    } else {
+      return event.keyCode === keyCode
+    }
+  }
+
+  _handleonKeyDown(e) {
+    if (this._isKeyMatch(e, 'z', 90, true)) {
+      this._handleUndo()
+      e.preventDefault()
+    }
+    if (this._isKeyMatch(e, 'y', 89, true)) {
+      this._handleRedo()
+      e.preventDefault()
+    }
   }
 
   onEmit(output) {
@@ -551,7 +575,7 @@ class MdEditor extends React.Component {
                 }
               </span>
               <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
-              <span className="button" title="HTML code" onClick={this.hanldeToggleHtmlType}>
+              <span className="button" title="HTML code" onClick={this.handleToggleHtmlType}>
                 {htmlType === 'render' ? <Icon type="icon-code" />
                   : <Icon type="icon-eye" />
                 }
@@ -576,7 +600,7 @@ class MdEditor extends React.Component {
       return res
     }
     return (
-      <div className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style}>
+      <div className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleonKeyDown}>
         {renderNavigation()}
         <div className="editor-container">
           {renderContent()}
