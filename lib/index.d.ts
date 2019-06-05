@@ -8,9 +8,9 @@ declare namespace ReactMarkdownEditorLite {
     config?: {
       theme?: string;
       view?: {
-        menu: boolean;
-        md: boolean;
-        html: boolean;
+        menu?: boolean;
+        md?: boolean;
+        html?: boolean;
       },
       logger?: {
         interval: number;

@@ -1,6 +1,7 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack');
 const version = require("./package.json").version;
 const banner =
@@ -14,23 +15,20 @@ const config = {
     app: './src/index.js',
   },
   output: {
-    filename: 'react-markdown-editor-lite.min.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'lib'),
     libraryTarget: "umd"
-  },  
-  externals: [
-    {
-      react: 'react',    
+  },
+  externals: [{
+      react: 'react',
     },
     {
-      ['react-dom']: 'react-dom', 
-    },
-    /^markdown-it.*$/i
+      ['react-dom']: 'react-dom',
+    }
   ],
   mode: 'production',
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         loader: "babel-loader",
       },
@@ -45,28 +43,37 @@ const config = {
       {
         test: /\.less$/,
         use: [
-          'style-loader', 
-          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
           'postcss-loader',
           'less-loader'
         ]
       },
       {
-        test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/, 
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 20000,
-            }
+        test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 20000,
           }
-        ]
+        }]
       }
     ]
   },
   plugins: [
     new CleanWebpackPlugin(['lib']),
-    new webpack.BannerPlugin({banner, raw: false})
+    new webpack.BannerPlugin({
+      banner,
+      raw: false
+    }),
+    new CopyWebpackPlugin([{
+      from: 'src/index.d.ts'
+    }])
   ],
 };
 
