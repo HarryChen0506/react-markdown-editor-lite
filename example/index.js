@@ -26,11 +26,11 @@ class Demo extends React.Component {
     })
   }
 
-  handleEditorChange = ({html, text}) => {
+  handleEditorChange({html, text}) {
     // console.log('handleEditorChange', text)
   }
 
-  handleImageUpload = (file, callback) => {
+  handleImageUpload(file, callback) {
     const reader = new FileReader()
     reader.onload = () => {      
       const convertBase64UrlToBlob = (urlData) => {  
@@ -53,13 +53,13 @@ class Demo extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  handleGetMdValue = () => {
+  handleGetMdValue() {
     if (this.mdEditor) {
       alert(this.mdEditor.getMdValue())      
     }
   }
 
-  handleGetHtmlValue = () => {
+  handleGetHtmlValue() {
     if (this.mdEditor) {
       alert(this.mdEditor.getHtmlValue())      
     }

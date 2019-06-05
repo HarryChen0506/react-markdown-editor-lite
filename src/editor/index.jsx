@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import tool from '../utils/tool'
+import * as tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
 import NavigationBar from '../components/NavigationBar'
@@ -33,23 +33,6 @@ class HtmlCode extends React.Component {
 }
 
 class MdEditor extends React.Component {
-  constructor(props) {
-    super(props)    
-    this.config = this.initConfig()
-      
-    this.state = {
-      text: (this.formatString(this.props.value) || '').replace(/↵/g,'\n'),
-      html: '',      
-      view: this.config.view,
-      htmlType: 'render', // 'render' 'source'
-      dropButton: {
-        header: false,
-        table: false
-      },
-      fullScreen: false,
-      table: this.config.table
-    }
-  } 
 
   config = {}
 
@@ -82,6 +65,54 @@ class MdEditor extends React.Component {
 
   selection = {...this.initialSelection}
 
+  constructor(props) {
+    super(props)    
+    this.config = this.initConfig()
+    
+    this.state = {
+      text: (this.formatString(this.props.value) || '').replace(/↵/g,'\n'),
+      html: '',      
+      view: this.config.view,
+      htmlType: 'render', // 'render' 'source'
+      dropButton: {
+        header: false,
+        table: false
+      },
+      fullScreen: false,
+      table: this.config.table
+    }
+    this.handleChange = this._handleChange.bind(this)
+    this.handleInputSelect = this._handleInputSelect.bind(this)
+    this.handleImageUpload = this._handleImageUpload.bind(this)
+    this.handleEmpty = this._handleEmpty.bind(this)
+    this.handleUndo = this._handleUndo.bind(this)
+    this.handleRedo = this._handleRedo.bind(this)
+    this.handleToggleFullScreen = this._handleToggleFullScreen.bind(this)
+    
+    this.handleInputScroll = tool.throttle((e) => {
+      const {synchScroll} = this.config
+      if (!synchScroll) {
+        return
+      }
+      e.persist()    
+      if (this.willScrollEle === 'md') {
+        this.hasContentChanged && this._setScrollValue()  
+        this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+      }     
+    }, 1000/60)
+    this.handlePreviewScroll = tool.throttle((e) => {
+      const {synchScroll} = this.config
+      if (!synchScroll) {
+        return
+      }
+      e.persist()    
+      if (this.willScrollEle === 'html') { 
+        this.hasContentChanged && this._setScrollValue()
+        this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+      }    
+    }, 1000/60)
+  } 
+
   componentDidMount() {
     this.renderHTML(this.props.value || "")
     .then(html => {
@@ -113,13 +144,13 @@ class MdEditor extends React.Component {
     this.endLogger()
   }
 
-  init = () => {
+  init() {
     let { value } = this.props
     value = this.formatString(value)
     // 插件
   }
 
-  formatString = (value) => {
+  formatString(value) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
       return new String(value).toString()
@@ -127,16 +158,16 @@ class MdEditor extends React.Component {
     return value
   }
 
-  initConfig = () => {
+  initConfig() {
     return {..._config, ...this.props.config}
   }
 
-  initLogger = () => {
+  initLogger() {
     this.logger = new Logger()
     this.startLogger()
   }
 
-  startLogger = () => {    
+  startLogger() {    
     if (!this.loggerTimerId) {
       this.loggerTimerId = setInterval(() => {
         const {text} = this.state
@@ -149,31 +180,31 @@ class MdEditor extends React.Component {
     this.logger.cleanRedoList() 
   }
 
-  endLogger = () => {
+  endLogger() {
     if (this.loggerTimerId) {
       clearInterval(this.loggerTimerId)
       this.loggerTimerId = null
     }    
   }
 
-  handleGetLogger = () => {
+  handleGetLogger() {
     console.log('handleGetLogger', this.logger)
   }
 
-  handleUndo = () => {
+  _handleUndo() {
     this.logger.undo((last) => {
       this.endLogger()
       this._setMdText(last)
     })
   }
 
-  handleRedo = () => {
+  _handleRedo() {
     this.logger.redo((last) => {
       this._setMdText(last)
     })
   }
 
-  handleDecorate = (type, option={}) => {
+  handleDecorate(type, option={}) {
     const clearList = [
       'h1', 
       'h2', 
@@ -208,7 +239,7 @@ class MdEditor extends React.Component {
     }    
   }
 
-  _getDecoratedText = (type, option) => {
+  _getDecoratedText(type, option) {
     const {text = ''} = this.state
     const {selection} = this
     const beforeContent = text.slice(0, selection.start)
@@ -230,7 +261,7 @@ class MdEditor extends React.Component {
     return result
   }
 
-  renderHTML = (markdownText) => {
+  renderHTML(markdownText) {
     const res = this.props.renderHTML(markdownText)
     if (typeof(res) === "string") {
       return Promise.resolve(res)
@@ -239,14 +270,13 @@ class MdEditor extends React.Component {
     }
   }
 
-  handleToggleFullScreen = () => {
-    const {fullScreen} = this.state
+  _handleToggleFullScreen() {
     this.setState({
-      fullScreen: !fullScreen
+      fullScreen: !this.state.fullScreen
     })
   }
 
-  changeView = (key = 'md', val = true) =>{
+  changeView(key = 'md', val = true) {
     const view = {...this.state.view, ...{
       [key]: val
     }}
@@ -256,12 +286,12 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleToggleMenu = () => {
+  handleToggleMenu() {
     const {view} = this.state
     this.changeView('menu', !view.menu)
   }
 
-  handleToggleView = (type) => {
+  handleToggleView(type) {
     if (type === 'md') {
       const view = {...this.state.view, ...{
         md: false,
@@ -281,17 +311,17 @@ class MdEditor extends React.Component {
     }
   }
 
-  handleMdPreview = () => {
+  handleMdPreview() {
     const {view} = this.state
     this.changeView('html', !view.html)
   }
 
-  handleHtmlPreview = () => {
+  handleHtmlPreview() {
     const {view} = this.state
     this.changeView('md', !view.md)
   }
 
-  hanldeToggleHtmlType = () => {
+  hanldeToggleHtmlType() {
     let {htmlType} = this.state
     if (htmlType === 'render') {
       htmlType = 'source'
@@ -303,7 +333,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  handleEmpty = () => {
+  _handleEmpty() {
     if (window.confirm) {
       const result = window.confirm('Are you sure to empty markdown ?')
       if (result) {
@@ -315,7 +345,7 @@ class MdEditor extends React.Component {
     }    
   }
 
-  handleImageUpload = () => {
+  _handleImageUpload() {
     const {onImageUpload} = this.props
     if (typeof onImageUpload === 'function') {
       this.inputFile && this.inputFile.click()
@@ -324,14 +354,14 @@ class MdEditor extends React.Component {
     }    
   }
 
-  onImageChanged = (file) => {
+  onImageChanged(file) {
     const {onImageUpload} = this.props
     onImageUpload(file, (imageUrl) => {
       this.handleDecorate('image', {imageUrl})
     })
   }
 
-  handleChange = (e) => {
+  _handleChange(e) {
     this.startLogger() 
     const value = e.target.value   
     if (!this.hasContentChanged) {
@@ -340,41 +370,16 @@ class MdEditor extends React.Component {
     this._setMdText(value)
   }
 
-  handleInputSelect = (e) => {
+  _handleInputSelect(e) {
     e.persist()    
     this.selection = {...this.selection, ...{isSelected: true}, ...this._getSelectionInfo(e)}
-    // console.log('handleInputSelect', e, this.selection)
   }
 
-  handleScrollEle = (node) => {
+  handleScrollEle(node) {
     this.willScrollEle = node
   }
 
-  handleInputScroll = tool.throttle((e) => {
-    const {synchScroll} = this.config
-    if (!synchScroll) {
-      return
-    }
-    e.persist()    
-    if (this.willScrollEle === 'md') {
-      this.hasContentChanged && this._setScrollValue()  
-      this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
-    }     
-  }, 1000/60) 
-
-  handlePreviewScroll = tool.throttle((e) => {
-    const {synchScroll} = this.config
-    if (!synchScroll) {
-      return
-    }
-    e.persist()    
-    if (this.willScrollEle === 'html') { 
-      this.hasContentChanged && this._setScrollValue()
-      this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
-    }    
-  }, 1000/60)
-
-  _setScrollValue = () => {
+  _setScrollValue() {
     // 设置值，方便 scrollBy 操作
     const {nodeMdText, nodeMdPreview, nodeMdPreviewWraper} = this
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
@@ -382,11 +387,11 @@ class MdEditor extends React.Component {
     // console.log('this.scale', this.scale)    
   }
 
-  _clearSelection = () => {
+  _clearSelection() {
     this.selection = {...this.initialSelection}
   }
 
-  _getSelectionInfo = (e) => {
+  _getSelectionInfo(e) {
     const source = e.srcElement || e.target
     const start = source.selectionStart
     const end = source.selectionEnd
@@ -395,7 +400,7 @@ class MdEditor extends React.Component {
     return selection
   }
 
-  _setMdText = (value = '') => {
+  _setMdText(value = '') {
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
     const text = value.replace(/↵/g,'\n')
@@ -414,20 +419,20 @@ class MdEditor extends React.Component {
     })
   }
 
-  onEmit = (output) => {
+  onEmit(output) {
     const { onChange } = this.props;
     onChange && onChange(output)
   }  
 
-  getMdValue = () => {    
+  getMdValue() {    
     return this.state.text
   }
 
-  getHtmlValue = () => {
+  getHtmlValue() {
     return this.state.html
   }
 
-  showDropList = (type = 'header', flag) => {
+  showDropList(type = 'header', flag) {
     const {dropButton} = this.state
     this.setState({
       dropButton: {...dropButton, [type]: flag}

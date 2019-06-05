@@ -90,7 +90,7 @@ export default class Demo extends React.Component {
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
   }
-  handleImageUpload = (file, callback) => {
+  handleImageUpload(file, callback) {
     const reader = new FileReader()
     reader.onload = () => {      
       const convertBase64UrlToBlob = (urlData) => {  
@@ -112,10 +112,10 @@ export default class Demo extends React.Component {
     }
     reader.readAsDataURL(file)
   }
-  handleGetMdValue = () => {   
+  handleGetMdValue() {   
     this.mdEditor && alert(this.mdEditor.getMdValue())      
   }
-  handleGetHtmlValue = () => {    
+  handleGetHtmlValue() {    
     this.mdEditor && alert(this.mdEditor.getHtmlValue())      
   }
   render() {
