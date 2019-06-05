@@ -29,7 +29,7 @@ const config = {
   mode: 'production',
   module: {
     rules: [{
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         loader: "babel-loader",
       },
       {
@@ -64,6 +64,9 @@ const config = {
         }]
       }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
     new CleanWebpackPlugin(['lib']),
