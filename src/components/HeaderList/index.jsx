@@ -3,11 +3,7 @@ import React from 'react'
 import './index.less'
 
 class HeaderList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleHeader = this._handleHeader.bind(this);
-  }
-  _handleHeader(header) {
+  handleHeader(header) {
     const { onSelectHeader } = this.props
     typeof onSelectHeader === 'function' && onSelectHeader(header)
   }
