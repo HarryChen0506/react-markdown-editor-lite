@@ -68,6 +68,13 @@
     "webpack-dev-server": "^3.1.14",
     "markdown-it": "^8.4.2"
   },
-  "dependencies": {
-  }
+  "dependencies": {},
+  "browserslist": [
+    "defaults",
+    "not ie < 11",
+    "last 2 versions",
+    "> 1%",
+    "iOS 7",
+    "last 3 iOS versions"
+  ]
 }
