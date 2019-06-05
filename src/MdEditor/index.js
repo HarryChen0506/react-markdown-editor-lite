@@ -1,17 +1,6 @@
 // markdown editor 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MarkdownIt from 'markdown-it'
-import emoji from 'markdown-it-emoji'
-import subscript from 'markdown-it-sub'
-import superscript from 'markdown-it-sup'
-import footnote from 'markdown-it-footnote'
-import deflist from 'markdown-it-deflist'
-import abbreviation from 'markdown-it-abbr'
-import insert from 'markdown-it-ins'
-import mark from 'markdown-it-mark'
-import tasklists from 'markdown-it-task-lists'
-// import hljs from 'highlight.js'
 
 import tool from '../utils/tool'
 import Logger from '../utils/logger'
@@ -26,7 +15,6 @@ import ToolBar from '../components/ToolBar'
 import _config from '../config.js'
 
 import './index.less'
-// import 'highlight.js/styles/github.css'
 
 export class HtmlRender extends React.Component {
   render() {
@@ -95,7 +83,12 @@ class MdEditor extends React.Component {
   selection = {...this.initialSelection}
 
   componentDidMount() {
-    this.init()
+    this.renderHTML(this.props.value || "")
+    .then(html => {
+      this.setState({
+        html: html
+      })
+    })
     this.initLogger()
   }
 
@@ -107,9 +100,12 @@ class MdEditor extends React.Component {
     let { value } = nextProps    
     value = this.formatString(value)
     value = value && value.replace(/↵/g, '\n')    
-    this.setState({
-      text: value,
-      html: this.renderHTML(value)
+    this.renderHTML(value)
+    .then(html => {
+      this.setState({
+        text: value,
+        html: html
+      })
     })
   }
 
@@ -120,33 +116,7 @@ class MdEditor extends React.Component {
   init = () => {
     let { value } = this.props
     value = this.formatString(value)
-    this.mdjs = new MarkdownIt({
-      html: true,
-      linkify: true,
-      typographer: true,
-      // highlight: function (str, lang) {
-      //   if (lang && hljs.getLanguage(lang)) {
-      //     try {
-      //       return hljs.highlight(lang, str).value
-      //     } catch (__) {}
-      //   }    
-      //   return '' // use external default escaping
-      // }
-    })
     // 插件
-    this.mdjs.use(emoji)
-    .use(subscript)
-    .use(superscript)
-    .use(footnote)
-    .use(deflist)
-    .use(abbreviation)
-    .use(insert)
-    .use(mark)
-    .use(tasklists, { enabled: this.taskLists })
-
-    this.setState({
-      html: this.renderHTML(value)
-    })
   }
 
   formatString = (value) => {
@@ -260,11 +230,13 @@ class MdEditor extends React.Component {
     return result
   }
 
-  renderHTML = (markdownText) => { 
-    if (typeof markdownText === 'string' ) {
-      return this.mdjs.render(markdownText)
+  renderHTML = (markdownText) => {
+    const res = this.props.renderHTML(markdownText)
+    if (typeof(res) === "string") {
+      return Promise.resolve(res)
+    } else {
+      return res
     }
-    return ''
   }
 
   handleToggleFullScreen = () => {
@@ -427,14 +399,18 @@ class MdEditor extends React.Component {
     // console.log('value', {value: value.replace(/[\n]/g,'\\n')})
     // const text = value.replace(/[\n]/g,'\\n')
     const text = value.replace(/↵/g,'\n')
-    const html = this.renderHTML(text)
     this.setState({
-      html,
       text: value
     })
-    this.onEmit({
-      text,
-      html
+    this.renderHTML(text)
+    .then(html => {
+      this.setState({
+        html
+      })
+      this.onEmit({
+        text,
+        html
+      })
     })
   }
 

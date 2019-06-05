@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import MarkdownIt from 'markdown-it'
 import MdEditor from '../src/index.js'
 // import MdEditor from '../lib/react-markdown-editor-lite.min.js'
 import content  from './content.js'
@@ -8,9 +9,22 @@ import './index.less'
 const mock_content_1 = "### Hello :-)\n "
 const mock_content = content
 
+
 class Demo extends React.Component {
 
   mdEditor = null
+
+  mdit = null
+
+  constructor(props) {
+    super(props)
+
+    this.mdit = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true
+    })
+  }
 
   handleEditorChange = ({html, text}) => {
     // console.log('handleEditorChange', text)
@@ -64,6 +78,7 @@ class Demo extends React.Component {
             ref={node => this.mdEditor = node}
             value={mock_content}
             style={{height: '500px', width: '100%'}}
+            renderHTML={(text) => this.mdit.render(text)}
             config={{
               view: {
                 menu: true,
