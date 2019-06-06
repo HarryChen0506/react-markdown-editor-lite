@@ -2,7 +2,7 @@
   "name": "react-markdown-editor-lite",
   "version": "0.3.9",
   "description": "a light-weight Markdown editor based on markdown-it and React",
-  "main": "./lib/react-markdown-editor-lite.min.js",
+  "main": "./lib/index.js",
   "directories": {
     "example": "example",
     "lib": "lib",
@@ -42,6 +42,7 @@
     "babel-polyfill": "^6.26.0",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^1.0.1",
+    "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^2.1.0",
     "file-loader": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
@@ -55,6 +56,7 @@
     "karma-webpack": "^3.0.5",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "markdown-it": "^8.4.2",
     "mocha": "^5.2.0",
     "postcss-loader": "^2.1.6",
     "react": "^16.8.1",
@@ -67,17 +69,13 @@
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14"
   },
-  "dependencies": {
-    "highlight.js": "^9.15.6",
-    "markdown-it": "^8.4.2",
-    "markdown-it-abbr": "^1.0.4",
-    "markdown-it-deflist": "^2.0.3",
-    "markdown-it-emoji": "^1.4.0",
-    "markdown-it-footnote": "^3.0.1",
-    "markdown-it-ins": "^2.0.0",
-    "markdown-it-mark": "^2.0.0",
-    "markdown-it-sub": "^1.0.0",
-    "markdown-it-sup": "^1.0.0",
-    "markdown-it-task-lists": "^2.1.1"
-  }
+  "dependencies": {},
+  "browserslist": [
+    "defaults",
+    "not ie < 11",
+    "last 2 versions",
+    "> 1%",
+    "iOS 7",
+    "last 3 iOS versions"
+  ]
 }

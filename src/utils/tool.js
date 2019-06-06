@@ -1,5 +1,4 @@
-
-function deepClone (obj) {
+export function deepClone (obj) {
   if (!obj || typeof obj !== 'object') {
     return obj
   }
@@ -19,34 +18,29 @@ function deepClone (obj) {
   return objArray
 }
 
-const tool = {  
-  isEmpty: function (obj) {
-    // 判断字符是否为空的方法
-    if (typeof obj === 'undefined' || obj === null || obj === '') {
+export function isEmpty(obj) {
+  // 判断字符是否为空的方法
+  if (typeof obj === 'undefined' || obj === null || obj === '') {
+    return true
+  }
+  return false
+}
+export function isRepeat(arr) {
+  var hash = {}
+  for (var i in arr) {
+    if (hash[arr[i]]) {
       return true
     }
-    return false
-  },
-  isRepeat: function (arr) {
-    var hash = {}
-    for (var i in arr) {
-      if (hash[arr[i]]) {
-        return true
-      }
-      hash[arr[i]] = true
-    }
-    return false
-  }, 
-  deepClone: deepClone,
-  throttle: function (func, deltaX) {
-    let lastCalledAt = new Date().getTime()
-    return function() {
-      if(new Date().getTime() - lastCalledAt >= deltaX) {
-        func.apply(this, arguments)
-        lastCalledAt = new Date().getTime()
-      }
+    hash[arr[i]] = true
+  }
+  return false
+}
+export function throttle(func, deltaX) {
+  let lastCalledAt = new Date().getTime()
+  return function() {
+    if(new Date().getTime() - lastCalledAt >= deltaX) {
+      func.apply(this, arguments)
+      lastCalledAt = new Date().getTime()
     }
   }
 }
-
-export default tool

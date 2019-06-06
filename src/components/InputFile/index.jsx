@@ -5,27 +5,25 @@ import './index.less'
 class InputFile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-    }
   }
 
-  click = () => {
+  click() {
     if (this.locked) {
       return
-    } 
+    }
     this.locked = true
     this.input.value = ''
     this.input.click()
     this.timerId && clearTimeout(this.timerId)
     this.timerId = setTimeout(() => { this.locked = false }, 200)
-  }  
+  }
 
-  componentWillUnmount () {    
+  componentWillUnmount() {
     this.timerId && clearTimeout(this.timerId)
   }
 
-  render() { 
-    return ( 
+  render() {
+    return (
       <input type="file"
         ref={(el) => { this.input = el }}
         style={{
