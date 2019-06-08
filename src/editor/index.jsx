@@ -249,6 +249,7 @@ class MdEditor extends React.Component {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
+        target: option.target || "",
         imageUrl: option.imageUrl || this.config.imageUrl
       })
     } else if (type === 'link') {
@@ -352,7 +353,7 @@ class MdEditor extends React.Component {
   onImageChanged(file) {
     const { onImageUpload } = this.props
     onImageUpload(file, (imageUrl) => {
-      this.handleDecorate('image', { imageUrl })
+      this.handleDecorate('image', { target: file.name, imageUrl })
     })
   }
 
