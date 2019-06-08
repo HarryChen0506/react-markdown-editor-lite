@@ -179,9 +179,26 @@ export default class Demo extends React.Component {
 }
 ```
 
-## References / Thanks
+## Using in Next.js
 
-Big thanks to [markdown-it](https://github.com/markdown-it/markdown-it) authors
+```js
+import dynamic from 'next/dynamic'
+
+const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
+  ssr: false
+});
+
+export default function() {
+  return (      
+    <div style="height: 500px">
+      <MdEditor
+        value=""
+        renderHTML={/* Render function */}
+      />                
+    </div>
+  )
+}
+```
 
 ## License
 
