@@ -19,7 +19,7 @@ import './index.less'
 export class HtmlRender extends React.Component {
   render() {
     return (
-      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={'custom-html-style'} />
+      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
     )
   }
 }
@@ -27,7 +27,7 @@ export class HtmlRender extends React.Component {
 class HtmlCode extends React.Component {
   render() {
     return (
-      <textarea className="html-code" value={this.props.html} onChange={() => { }}></textarea>
+      <textarea className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
     )
   }
 }
@@ -552,7 +552,7 @@ class MdEditor extends React.Component {
               id="textarea"
               ref={node => this.nodeMdText = node}
               value={text}
-              className={'input'}
+              className={`input ${this.config.markdownClass || ""}`}
               wrap="hard"
               onChange={this.handleChange}
               onSelect={this.handleInputSelect}
@@ -587,12 +587,12 @@ class MdEditor extends React.Component {
                 ref={node => this.nodeMdPreviewWraper = node}
                 onMouseOver={() => this.handleScrollEle('html')}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlRender html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlRender html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
               </div>)
               : (<div className={'html-code-wrap'}
                 ref={node => this.nodeMdPreviewWraper = ReactDOM.findDOMNode(node)}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlCode html={html} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlCode html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
               </div>)
             }
           </section>

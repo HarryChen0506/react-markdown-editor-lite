@@ -34,6 +34,8 @@ npm install react-markdown-editor-lite --save
 | style | component container style | Object | {height: '100%'} | not required |
 | config | component config | Object | {view: {...}, logger: {...}} | not required |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
+| config.htmlClass | Html section class attribute | String | `<Empty string>` |  |
+| config.markdownClass | Markdown section class attribute | String | `<Empty string>` |  |
 | config.imageUrl | default image url | String | '' | |
 | config.linkUrl | default link url | String | '' | |
 | config.table | table maximum value of row and column | Object | {maxRow: 4, maxCol: 6} | |

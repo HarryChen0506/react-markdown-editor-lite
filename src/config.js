@@ -9,6 +9,8 @@ const config = {
     md: true,
     html: true
   },
+  htmlClass: '',
+  markdownClass: '',
   logger: {
     interval: 3000
   },
