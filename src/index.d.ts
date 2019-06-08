@@ -17,6 +17,7 @@ declare namespace ReactMarkdownEditorLite {
       },
       synchScroll?: boolean;
       imageUrl?: string;
+      imageAccept?: string;
       linkUrl?: string;
       table?: {
         maxRow: number;

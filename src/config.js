@@ -14,6 +14,7 @@ const config = {
   },
   synchScroll: true,
   imageUrl: '',
+  imageAccept: '',
   linkUrl: '',
   table: {
     maxRow: 4,

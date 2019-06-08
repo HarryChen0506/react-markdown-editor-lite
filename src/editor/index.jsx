@@ -511,7 +511,7 @@ class MdEditor extends React.Component {
               </span>
               <span className="button" title="image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                 <Icon type="icon-photo" />
-                <InputFile ref={(input) => { this.inputFile = input }} onChange={(e) => {
+                <InputFile accept={this.config.imageAccept || ""} ref={(input) => { this.inputFile = input }} onChange={(e) => {
                   e.persist()
                   const file = e.target.files[0]
                   this.onImageChanged(file)
