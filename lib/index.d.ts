@@ -11,12 +11,15 @@ declare namespace ReactMarkdownEditorLite {
         menu: boolean;
         md: boolean;
         html: boolean;
-      },
+      };
+      htmlClass?: string;
+      markdownClass?: string;
       logger?: {
         interval: number;
-      },
+      };
       synchScroll?: boolean;
       imageUrl?: string;
+      imageAccept?: string;
       linkUrl?: string;
       table?: {
         maxRow: number;
