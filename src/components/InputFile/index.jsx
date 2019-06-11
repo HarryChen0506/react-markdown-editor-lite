@@ -26,6 +26,7 @@ class InputFile extends React.Component {
     return (
       <input type="file"
         ref={(el) => { this.input = el }}
+        accept={this.props.accept}
         style={{
           position: 'absolute',
           zIndex: -1,

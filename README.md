@@ -34,11 +34,14 @@ npm install react-markdown-editor-lite --save
 | style | component container style | Object | {height: '100%'} | not required |
 | config | component config | Object | {view: {...}, logger: {...}} | not required |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
+| config.htmlClass | Html section class attribute | String | `<Empty string>` |  |
+| config.markdownClass | Markdown section class attribute | String | `<Empty string>` |  |
 | config.imageUrl | default image url | String | '' | |
 | config.linkUrl | default link url | String | '' | |
 | config.table | table maximum value of row and column | Object | {maxRow: 4, maxCol: 6} | |
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | config.synchScroll | Does it support synch scroll? | Boolean | true | |
+| config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
 | renderHTML | Render markdown text to HTML. You can return either string and Promise | (text: string) => string | Promise | none | **required** |
@@ -176,9 +179,26 @@ export default class Demo extends React.Component {
 }
 ```
 
-## References / Thanks
+## Using in Next.js
 
-Big thanks to [markdown-it](https://github.com/markdown-it/markdown-it) authors
+```js
+import dynamic from 'next/dynamic'
+
+const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
+  ssr: false
+});
+
+export default function() {
+  return (      
+    <div style="height: 500px">
+      <MdEditor
+        value=""
+        renderHTML={/* Render function */}
+      />                
+    </div>
+  )
+}
+```
 
 ## License
 
