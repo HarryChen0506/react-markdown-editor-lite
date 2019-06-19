@@ -103,6 +103,7 @@ class MdEditor extends React.Component {
       e.persist()
       if (this.willScrollEle === 'md') {
         this.hasContentChanged && this._setScrollValue()
+        if (this.nodeMdPreviewWraper && this.nodeMdText)
         this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
       }
     }, 1000 / 60)
@@ -114,6 +115,7 @@ class MdEditor extends React.Component {
       e.persist()
       if (this.willScrollEle === 'html') {
         this.hasContentChanged && this._setScrollValue()
+        if (this.nodeMdText && this.nodeMdPreviewWraper)
         this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
       }
     }, 1000 / 60)
@@ -377,7 +379,7 @@ class MdEditor extends React.Component {
 
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText, nodeMdPreview, nodeMdPreviewWraper } = this
+    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper ={} } = this
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
     this.hasContentChanged = false
   }
