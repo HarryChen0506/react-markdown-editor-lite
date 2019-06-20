@@ -1,11 +1,10 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
 const webpack = require('webpack')
 
 const config = {
   entry: {
-    app: './example/index.js',
+    app: './example/index.jsx',
   },
   output: {
     filename: '[name].bundle.js',
@@ -16,20 +15,19 @@ const config = {
   devServer: {
     contentBase: path.join(__dirname, './dist'),
     port: '8080',
-    host: '0.0.0.0',  //支持ip来访问页面，否则只能通过localhost:8080来访问
-    historyApiFallback: true,  //所有404页面能跳转到index.html
+    host: '0.0.0.0', //支持ip来访问页面，否则只能通过localhost:8080来访问
+    historyApiFallback: true, //所有404页面能跳转到index.html
     hot: true
   },
   module: {
-    rules: [
-      {
-        test: /\.js$/,
+    rules: [{
+        test: /\.(js|jsx)$/,
         loader: "babel-loader",
       },
       {
         test: /\.css$/,
         use: [
-          'style-loader',          
+          'style-loader',
           'css-loader',
           'postcss-loader'
         ]
@@ -37,24 +35,30 @@ const config = {
       {
         test: /\.less$/,
         use: [
-          'style-loader', 
-          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
           'postcss-loader',
           'less-loader'
         ]
-      },      
+      },
       {
-        test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/, 
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000
-            }
+        test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000
           }
-        ]
+        }]
       }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
     // new CleanWebpackPlugin(['dist']),    
