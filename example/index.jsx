@@ -1,10 +1,21 @@
-import MarkdownIt from 'markdown-it';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MdEditor from '../src/index.js';
 // import MdEditor from '../lib/react-markdown-editor-lite.min.js'
+import MarkdownIt from 'markdown-it';
+import emoji from 'markdown-it-emoji'
+import subscript from 'markdown-it-sub'
+import superscript from 'markdown-it-sup'
+import footnote from 'markdown-it-footnote'
+import deflist from 'markdown-it-deflist'
+import abbreviation from 'markdown-it-abbr'
+import insert from 'markdown-it-ins'
+import mark from 'markdown-it-mark'
+import tasklists from 'markdown-it-task-lists'
+import hljs from 'highlight.js'
 import content from './content.js';
 import './index.less';
+import 'highlight.js/styles/default.css'
 const mock_content = content
 
 
@@ -12,23 +23,40 @@ class Demo extends React.Component {
 
   mdEditor = null
 
-  mdit = null
+  mdParser = null
 
   constructor(props) {
     super(props)
-
-    this.mdit = new MarkdownIt({
+    // 初始化一个解析器
+    this.mdParser = new MarkdownIt({
       html: true,
       linkify: true,
-      typographer: true
+      typographer: true,
+      highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(lang, str).value
+          } catch (__) {}
+        }    
+        return '' // use external default escaping
+      }
     })
+    .use(emoji)
+    .use(subscript)
+    .use(superscript)
+    .use(footnote)
+    .use(deflist)
+    .use(abbreviation)
+    .use(insert)
+    .use(mark)
+    .use(tasklists, { enabled: this.taskLists })
   }
 
-  handleEditorChange({ html, text }) {
+  handleEditorChange = ({ html, text }) => {
     // console.log('handleEditorChange', text)
   }
 
-  handleImageUpload(file, callback) {
+  handleImageUpload = (file, callback) => {
     const reader = new FileReader()
     reader.onload = () => {
       const convertBase64UrlToBlob = (urlData) => {
@@ -45,19 +73,20 @@ class Demo extends React.Component {
       setTimeout(() => {
         // setTimeout 模拟oss异步上传图片
         // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-        callback('https://avatars0.githubusercontent.com/u/21263805?s=40&v=4')
+        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=40&v=4'
+        callback(url)
       }, 1000)
     }
     reader.readAsDataURL(file)
   }
 
-  handleGetMdValue() {
+  handleGetMdValue = () => {
     if (this.mdEditor) {
       alert(this.mdEditor.getMdValue())
     }
   }
 
-  handleGetHtmlValue() {
+  handleGetHtmlValue = () => {
     if (this.mdEditor) {
       alert(this.mdEditor.getHtmlValue())
     }
@@ -76,7 +105,7 @@ class Demo extends React.Component {
             ref={node => this.mdEditor = node}
             value={mock_content}
             style={{ height: '500px', width: '100%' }}
-            renderHTML={(text) => this.mdit.render(text)}
+            renderHTML={(text) => this.mdParser.render(text)}
             config={{
               view: {
                 menu: true,
@@ -107,8 +136,7 @@ class Demo extends React.Component {
             }}
             onChange={this.handleEditorChange} 
           />  
-        </div>  */}
-
+        </div> */}
       </div>
     )
   }
