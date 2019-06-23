@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MdEditor from '../src/index.js';
-// import MdEditor from '../lib/react-markdown-editor-lite.min.js'
+// import MdEditor from '../lib/index.js'
 import MarkdownIt from 'markdown-it';
 import emoji from 'markdown-it-emoji'
 import subscript from 'markdown-it-sub'
@@ -13,13 +13,12 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
-import content from './content.js';
-import './index.less';
 import 'highlight.js/styles/atom-one-light.css'
 // import 'highlight.js/styles/github.css'
+import content from './content.js';
+import './index.less';
 
-const mock_content = content
-
+const MOCK_DATA = content
 
 class Demo extends React.Component {
 
@@ -75,7 +74,7 @@ class Demo extends React.Component {
       setTimeout(() => {
         // setTimeout 模拟oss异步上传图片
         // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=40&v=4'
+        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
         callback(url)
       }, 1000)
     }
@@ -105,7 +104,7 @@ class Demo extends React.Component {
         <div className="editor-wrap" style={{ marginTop: '30px' }}>
           <MdEditor
             ref={node => this.mdEditor = node}
-            value={mock_content}
+            value={MOCK_DATA}
             style={{ height: '500px', width: '100%' }}
             renderHTML={(text) => this.mdParser.render(text)}
             config={{
@@ -126,7 +125,7 @@ class Demo extends React.Component {
         </div>
         {/* <div style={{marginTop: '30px'}}>
           <MdEditor
-            value={mock_content_1}
+            value={MOCK_DATA}
             style={{height: '200px', width: '100%'}}
             config={{
               view: {
