@@ -15,7 +15,9 @@ import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
 import content from './content.js';
 import './index.less';
-import 'highlight.js/styles/default.css'
+import 'highlight.js/styles/atom-one-light.css'
+// import 'highlight.js/styles/github.css'
+
 const mock_content = content
 
 
@@ -27,7 +29,7 @@ class Demo extends React.Component {
 
   constructor(props) {
     super(props)
-    // 初始化一个解析器
+    // initial a parser
     this.mdParser = new MarkdownIt({
       html: true,
       linkify: true,

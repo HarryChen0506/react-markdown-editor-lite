@@ -103,8 +103,9 @@ class MdEditor extends React.Component {
       e.persist()
       if (this.willScrollEle === 'md') {
         this.hasContentChanged && this._setScrollValue()
-        if (this.nodeMdPreviewWraper && this.nodeMdText)
-        this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+        if (this.nodeMdPreviewWraper && this.nodeMdText) {
+          this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+        }
       }
     }, 1000 / 60)
     this.handlePreviewScroll = tool.throttle((e) => {
@@ -266,12 +267,19 @@ class MdEditor extends React.Component {
   }
 
   renderHTML(markdownText) {
+    if (!this.props.renderHTML) {
+      console.error('renderHTML props must be required!')
+      return
+    }
     const res = this.props.renderHTML(markdownText)
-    if (typeof (res) === "string") {
+    if (typeof res === "string") {
       return Promise.resolve(res)
-    } else {
+    } else if (typeof res === "function"){
+      return Promise.resolve(res())
+    } else if (typeof res === 'object' && typeof res.then === 'function') {
       return res
     }
+    return res
   }
 
   _handleToggleFullScreen() {
@@ -379,7 +387,7 @@ class MdEditor extends React.Component {
 
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper ={} } = this
+    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper = {} } = this
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
     this.hasContentChanged = false
   }

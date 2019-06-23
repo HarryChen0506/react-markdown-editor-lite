@@ -44,7 +44,7 @@ npm install react-markdown-editor-lite --save
 | config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
-| renderHTML | Render markdown text to HTML. You can return either string and Promise | (text: string) => string | Promise | none | **required** |
+| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string| function | Promise | none | **required** |
 
 ## API
 
@@ -55,6 +55,12 @@ this api return a markdown content
 ### MdEditor.getHtmlValue () => String
 
 this api return a html text
+
+## Custom Markdown Parser
+we recommend using [markdown-it](https://github.com/markdown-it/markdown-it) as markown parser, because it surrpot configurable syntax and has many community-written plugins.You can use any other parser instead of markdown-it.
+```
+npm install markdown-it --save
+```
 
 ## Basic Usage
 
@@ -67,12 +73,12 @@ import ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
 
-const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
-  mdit = null
+  mdEditor = null
   constructor(props) {
     super(props)
-    this.mdit = new MarkdownIt(/* Markdown-it options */)
+    this.mdEditor = new MarkdownIt(/* Markdown-it options */)
   }
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
@@ -81,8 +87,8 @@ export default class Demo extends React.Component {
     return (      
       <div style="height: 500px">
         <MdEditor
-          value={mock_content}
-          renderHTML={(text) => this.mdit.render(text)}
+          value={MOCK_DATA}
+          renderHTML={(text) => this.mdEditor.render(text)}
           onChange={this.handleEditorChange} 
         />                
       </div>
@@ -99,14 +105,49 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
+import emoji from 'markdown-it-emoji'
+import subscript from 'markdown-it-sub'
+import superscript from 'markdown-it-sup'
+import footnote from 'markdown-it-footnote'
+import deflist from 'markdown-it-deflist'
+import abbreviation from 'markdown-it-abbr'
+import insert from 'markdown-it-ins'
+import mark from 'markdown-it-mark'
+import tasklists from 'markdown-it-task-lists'
+import hljs from 'highlight.js'
+import './index.less';
+import 'highlight.js/styles/atom-one-light.css'
+// import 'highlight.js/styles/github.css'
 
-const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
   mdEditor = null
-  mdit = null
+  mdParser = null
   constructor(props) {
     super(props)
-    this.mdit = new MarkdownIt(/* Markdown-it options */)
+    // initial a parser
+    this.mdParser = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true,
+      highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(lang, str).value
+          } catch (__) {}
+        }    
+        return '' // use external default escaping
+      }
+    })
+    .use(emoji)
+    .use(subscript)
+    .use(superscript)
+    .use(footnote)
+    .use(deflist)
+    .use(abbreviation)
+    .use(insert)
+    .use(mark)
+    .use(tasklists, { enabled: this.taskLists })
     this.renderHTML = this.renderHTML.bind(this)
   }
   handleEditorChange({html, md}) {
@@ -138,7 +179,7 @@ export default class Demo extends React.Component {
     // 模拟异步渲染Markdown
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(this.mdit.render(text))
+        resolve(this.mdParser.render(text))
       }, 1000)
     })
   }
@@ -158,7 +199,7 @@ export default class Demo extends React.Component {
         <section style="height: 500px">
           <MdEditor 
             ref={node => this.mdEditor = node}
-            value={mock_content}
+            value={MOCK_DATA}
             style={{height: '400px'}}
             renderHTML={this.renderHTML}
             config={{
@@ -199,6 +240,10 @@ export default function() {
   )
 }
 ```
+
+## Authors
+- HarryChen0506 [github/HarryChen0506](https://github.com/HarryChen0506)
+- sylingd [github/sylingd](https://github.com/sylingd)
 
 ## License
 
