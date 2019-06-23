@@ -44,7 +44,7 @@ npm install react-markdown-editor-lite --save
 | config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
 | onChange | emitting when editor has changed | Function | ({html, md}) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
-| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string| function | Promise | none | **required** |
+| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string|function|Promise | none | **required** |
 
 ## API
 
@@ -57,7 +57,7 @@ this api return a markdown content
 this api return a html text
 
 ## Custom Markdown Parser
-we recommend using [markdown-it](https://github.com/markdown-it/markdown-it) as markown parser, because it surrpot configurable syntax and has many community-written plugins.You can use any other parser instead of markdown-it.
+we recommend using [markdown-it](https://github.com/markdown-it/markdown-it) as markown parser, because it supports configurable syntax and has many community-written plugins.You can use any other parser instead of markdown-it.
 ```
 npm install markdown-it --save
 ```
@@ -75,10 +75,10 @@ import MarkdownIt from 'markdown-it'
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
-  mdEditor = null
+  mdParser = null
   constructor(props) {
     super(props)
-    this.mdEditor = new MarkdownIt(/* Markdown-it options */)
+    this.mdParser = new MarkdownIt(/* Markdown-it options */)
   }
   handleEditorChange ({html, md}) {    
     console.log('handleEditorChange', html, md)
@@ -88,7 +88,7 @@ export default class Demo extends React.Component {
       <div style="height: 500px">
         <MdEditor
           value={MOCK_DATA}
-          renderHTML={(text) => this.mdEditor.render(text)}
+          renderHTML={(text) => this.mdParser.render(text)}
           onChange={this.handleEditorChange} 
         />                
       </div>
@@ -115,9 +115,9 @@ import insert from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
-import './index.less';
 import 'highlight.js/styles/atom-one-light.css'
 // import 'highlight.js/styles/github.css'
+import './index.less';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
@@ -183,11 +183,11 @@ export default class Demo extends React.Component {
       }, 1000)
     })
   }
-  handleGetMdValue() {   
+  handleGetMdValue = () => {   
     this.mdEditor && alert(this.mdEditor.getMdValue())      
   }
-  handleGetHtmlValue() {    
-    this.mdEditor && alert(this.mdEditor.getHtmlValue())      
+  handleGetHtmlValue = () => {    
+    this.mdEditor && alert(this.mdEditor.getHtmlValue())
   }
   render() {
     return (      
