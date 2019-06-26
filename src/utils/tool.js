@@ -37,8 +37,8 @@ export function isRepeat(arr) {
 }
 export function throttle(func, deltaX) {
   let lastCalledAt = new Date().getTime()
-  return function() {
-    if(new Date().getTime() - lastCalledAt >= deltaX) {
+  return () => {
+    if (new Date().getTime() - lastCalledAt >= deltaX) {
       func.apply(this, arguments)
       lastCalledAt = new Date().getTime()
     }

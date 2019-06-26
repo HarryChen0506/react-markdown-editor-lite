@@ -1,5 +1,5 @@
 // markdown editor 
-import React from 'react'
+import * as React from 'react'
 import ReactDOM from 'react-dom'
 
 import * as tool from '../utils/tool'
@@ -12,67 +12,94 @@ import TableList from '../components/TableList'
 import InputFile from '../components/InputFile'
 import Icon from '../components/Icon'
 import ToolBar from '../components/ToolBar'
-import _config from '../config.js'
+
+import { Preview } from './preview';
+import HtmlRender from './htmlRender';
+import HtmlCode from './htmlCode';
+import defultConfig from './defaultConfig';
 
 import './index.less'
 
-export class HtmlRender extends React.Component {
-  render() {
-    return (
-      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
-    )
+interface EditorConfig {
+  theme?: string;
+  view?: {
+    menu: boolean;
+    md: boolean;
+    html: boolean;
+  };
+  htmlClass?: string;
+  markdownClass?: string;
+  logger?: {
+    interval: number;
+  };
+  synchScroll?: boolean;
+  imageUrl?: string;
+  imageAccept?: string;
+  linkUrl?: string;
+  table?: {
+    maxRow: number;
+    maxCol: number;
   }
 }
 
-class HtmlCode extends React.Component {
-  render() {
-    return (
-      <textarea className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
-    )
-  }
+interface EditorProps extends EditorConfig {
+  value: string;
+  renderHTML: (text: string) => string | Promise<string>;
+  style?: React.CSSProperties;
+  config?: any;
+  // Configs
+  onChange?: (data: {
+    text: string;
+    html: string;
+  }) => void;
+  onImageUpload?: (file: File, callback: (url: string) => void) => void;
 }
 
-class MdEditor extends React.Component {
+class Editor extends React.Component<EditorProps, any> {
+  static defaultProps = defultConfig;
 
-  config = {}
+  private config: EditorConfig;
 
-  logger = {}
+  private logger: Logger;
 
-  loggerTimerId = null
+  private loggerTimerId?: number;
 
-  mdjs = null
+  private nodeMdText: React.RefObject<HTMLTextAreaElement>;
+  private nodeMdPreview: React.RefObject<Preview>;
+  private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
+  private inputFile: React.RefObject<InputFile>;
 
-  nodeMdText = null
+  private scale = 0
 
-  nodeMdPreview = null
+  private willScrollEle = '' // 即将滚动的元素 md html
 
-  nodeMdPreviewWraper = null
+  private hasContentChanged = true
 
-  inputFile = null
-
-  scale = 0
-
-  willScrollEle = '' // 即将滚动的元素 md html
-
-  hasContentChanged = true
-
-  initialSelection = {
+  private initialSelection = {
     isSelected: false,
     start: 0,
     end: 0,
     text: ''
   }
 
-  selection = { ...this.initialSelection }
+  private selection = { ...this.initialSelection }
 
-  constructor(props) {
-    super(props)
-    this.config = this.initConfig()
+
+  private handleInputScroll: () => void;
+  private handlePreviewScroll: () => void;
+  constructor(props: any) {
+    super(props);
+
+    if (this.props.config) {
+      // Config polyfill
+      //
+    }
+    this.config = defultConfig;
 
     this.state = {
       text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
       html: '',
-      view: this.config.view,
+      view: this.props.view,
       htmlType: 'render', // 'render' 'source'
       dropButton: {
         header: false,
@@ -81,21 +108,27 @@ class MdEditor extends React.Component {
       fullScreen: false,
       table: this.config.table
     }
-    this.handleChange = this._handleChange.bind(this)
-    this.handleInputSelect = this._handleInputSelect.bind(this)
-    this.handleImageUpload = this._handleImageUpload.bind(this)
-    this.handleEmpty = this._handleEmpty.bind(this)
-    this.handleUndo = this._handleUndo.bind(this)
-    this.handleRedo = this._handleRedo.bind(this)
-    this.handleToggleFullScreen = this._handleToggleFullScreen.bind(this)
-    this.handleToggleMenu = this._handleToggleMenu.bind(this)
-    this.handleToggleView = this._handleToggleView.bind(this)
-    this.handleMdPreview = this._handleMdPreview.bind(this)
-    this.handleHtmlPreview = this._handleHtmlPreview.bind(this)
-    this.handleToggleHtmlType = this._handleToggleHtmlType.bind(this)
-    this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
-    this.handleInputScroll = tool.throttle((e) => {
+    this.nodeMdText = React.createRef();
+    this.nodeMdPreview = React.createRef();
+    this.nodeMdPreviewWraper = React.createRef();
+    this.inputFile = React.createRef();
+
+    this.handleChange = this.handleChange.bind(this)
+    this.handleInputSelect = this.handleInputSelect.bind(this)
+    this.handleImageUpload = this.handleImageUpload.bind(this)
+    this.handleEmpty = this.handleEmpty.bind(this)
+    this.handleUndo = this.handleUndo.bind(this)
+    this.handleRedo = this.handleRedo.bind(this)
+    this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this)
+    this.handleToggleMenu = this.handleToggleMenu.bind(this)
+    this.handleToggleView = this.handleToggleView.bind(this)
+    this.handleMdPreview = this.handleMdPreview.bind(this)
+    this.handleHtmlPreview = this.handleHtmlPreview.bind(this)
+    this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this)
+    this.handleonKeyDown = this.handleonKeyDown.bind(this)
+
+    this.handleInputScroll = tool.throttle((e: any) => {
       const { synchScroll } = this.config
       if (!synchScroll) {
         return
@@ -103,12 +136,12 @@ class MdEditor extends React.Component {
       e.persist()
       if (this.willScrollEle === 'md') {
         this.hasContentChanged && this._setScrollValue()
-        if (this.nodeMdPreviewWraper && this.nodeMdText) {
-          this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+        if (this.nodeMdPreviewWraper.current && this.nodeMdText.current) {
+          this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scale
         }
       }
     }, 1000 / 60)
-    this.handlePreviewScroll = tool.throttle((e) => {
+    this.handlePreviewScroll = tool.throttle((e: any) => {
       const { synchScroll } = this.config
       if (!synchScroll) {
         return
@@ -116,10 +149,13 @@ class MdEditor extends React.Component {
       e.persist()
       if (this.willScrollEle === 'html') {
         this.hasContentChanged && this._setScrollValue()
-        if (this.nodeMdText && this.nodeMdPreviewWraper)
-        this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+        if (this.nodeMdText.current && this.nodeMdPreviewWraper.current)
+          this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scale
       }
     }, 1000 / 60)
+
+    // init Logger
+    this.logger = new Logger();
   }
 
   componentDidMount() {
@@ -132,7 +168,7 @@ class MdEditor extends React.Component {
     this.initLogger()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: EditorProps) {
     if (nextProps.value === this.props.value) {
       // console.log('value not change')
       return
@@ -153,7 +189,7 @@ class MdEditor extends React.Component {
     this.endLogger()
   }
 
-  formatString(value) {
+  formatString(value: string) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
       return new String(value).toString()
@@ -161,19 +197,14 @@ class MdEditor extends React.Component {
     return value
   }
 
-  initConfig() {
-    return { ..._config, ...this.props.config }
-  }
-
   initLogger() {
-    this.logger = new Logger()
     this.startLogger()
     this.logger.pushRecord(this.state.text)
   }
 
   startLogger() {
     if (!this.loggerTimerId) {
-      this.loggerTimerId = setInterval(() => {
+      this.loggerTimerId = window.setInterval(() => {
         const { text } = this.state
         if (this.logger.getLastRecord() !== text) {
           this.logger.pushRecord(text)
@@ -187,7 +218,7 @@ class MdEditor extends React.Component {
   endLogger() {
     if (this.loggerTimerId) {
       clearInterval(this.loggerTimerId)
-      this.loggerTimerId = null
+      this.loggerTimerId = undefined
     }
   }
 
@@ -195,14 +226,14 @@ class MdEditor extends React.Component {
     console.log('handleGetLogger', this.logger)
   }
 
-  _handleUndo() {
+  handleUndo() {
     this.logger.undo((last) => {
       this.endLogger()
       this._setMdText(last)
     })
   }
 
-  _handleRedo() {
+  handleRedo() {
     this.logger.redo((last) => {
       this._setMdText(last)
     })
@@ -266,23 +297,20 @@ class MdEditor extends React.Component {
     return result
   }
 
-  renderHTML(markdownText) {
+  renderHTML(markdownText: string): Promise<string> {
     if (!this.props.renderHTML) {
-      console.error('renderHTML props must be required!')
-      return
+      console.error('renderHTML props is required!')
+      return Promise.resolve("");
     }
     const res = this.props.renderHTML(markdownText)
-    if (typeof res === "string") {
-      return Promise.resolve(res)
-    } else if (typeof res === "function"){
-      return Promise.resolve(res())
-    } else if (typeof res === 'object' && typeof res.then === 'function') {
-      return res
+    if (typeof res === 'object' && typeof res.then === 'function') {
+      return res;
+    } else {
+      return Promise.resolve(res);
     }
-    return res
   }
 
-  _handleToggleFullScreen() {
+  handleToggleFullScreen() {
     this.setState({
       fullScreen: !this.state.fullScreen
     })
@@ -295,13 +323,13 @@ class MdEditor extends React.Component {
     })
   }
 
-  _handleToggleMenu() {
+  handleToggleMenu() {
     this.changeView({
       'menu': !this.state.view.menu
     })
   }
 
-  _handleToggleView(type) {
+  handleToggleView(type) {
     if (type === 'md') {
       this.changeView({
         'md': false,
@@ -315,19 +343,19 @@ class MdEditor extends React.Component {
     }
   }
 
-  _handleMdPreview() {
+  handleMdPreview() {
     this.changeView({
       'html': !this.state.view.html
     })
   }
 
-  _handleHtmlPreview() {
+  handleHtmlPreview() {
     this.changeView({
       'md': !this.state.view.md
     })
   }
 
-  _handleToggleHtmlType() {
+  handleToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
       htmlType = 'source'
@@ -339,7 +367,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  _handleEmpty() {
+  handleEmpty() {
     if (window.confirm) {
       const result = window.confirm('Are you sure to empty markdown ?')
       if (result) {
@@ -351,7 +379,7 @@ class MdEditor extends React.Component {
     }
   }
 
-  _handleImageUpload() {
+  handleImageUpload() {
     const { onImageUpload } = this.props
     if (typeof onImageUpload === 'function') {
       this.inputFile && this.inputFile.click()
@@ -367,7 +395,7 @@ class MdEditor extends React.Component {
     })
   }
 
-  _handleChange(e) {
+  handleChange(e) {
     this.startLogger()
     const value = e.target.value
     if (!this.hasContentChanged) {
@@ -376,7 +404,7 @@ class MdEditor extends React.Component {
     this._setMdText(value)
   }
 
-  _handleInputSelect(e) {
+  handleInputSelect(e) {
     e.persist()
     this.selection = Object.assign({}, this.selection, { isSelected: true }, this._getSelectionInfo(e))
   }
@@ -433,13 +461,13 @@ class MdEditor extends React.Component {
     }
   }
 
-  _handleonKeyDown(e) {
+  handleonKeyDown(e) {
     if (this._isKeyMatch(e, 'z', 90, true)) {
-      this._handleUndo()
+      this.handleUndo()
       e.preventDefault()
     }
     if (this._isKeyMatch(e, 'y', 89, true)) {
-      this._handleRedo()
+      this.handleRedo()
       e.preventDefault()
     }
   }
@@ -512,7 +540,7 @@ class MdEditor extends React.Component {
                   }}
                   render={() => {
                     return (
-                      <TableList maxRow={table.maxRow} maxCol={table.maxCol} onSetTable={(option) => {
+                      <TableList maxRow={table.maxRow} maxCol={table.maxCol} onSetTable={(option: any) => {
                         this.handleDecorate('table', option)
                       }} />
                     )
@@ -521,7 +549,7 @@ class MdEditor extends React.Component {
               </span>
               <span className="button" title="image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                 <Icon type="icon-photo" />
-                <InputFile accept={this.config.imageAccept || ""} ref={(input) => { this.inputFile = input }} onChange={(e) => {
+                <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: any) => {
                   e.persist()
                   const file = e.target.files[0]
                   this.onImageChanged(file)
@@ -560,7 +588,7 @@ class MdEditor extends React.Component {
             </ToolBar>
             <textarea
               id="textarea"
-              ref={node => this.nodeMdText = node}
+              ref={this.nodeMdText}
               value={text}
               className={`input ${this.config.markdownClass || ""}`}
               wrap="hard"
@@ -594,15 +622,15 @@ class MdEditor extends React.Component {
             </ToolBar>
             {htmlType === 'render' ?
               (<div className="html-wrap"
-                ref={node => this.nodeMdPreviewWraper = node}
+                ref={this.nodeMdPreviewWraper}
                 onMouseOver={() => this.handleScrollEle('html')}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlRender html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlRender html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
               </div>)
               : (<div className={'html-code-wrap'}
-                ref={node => this.nodeMdPreviewWraper = ReactDOM.findDOMNode(node)}
+                ref={this.nodeMdPreviewWraper}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlCode html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlCode html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
               </div>)
             }
           </section>
@@ -620,5 +648,5 @@ class MdEditor extends React.Component {
     )
   }
 }
-MdEditor.HtmlRender = HtmlRender
-export default MdEditor
+
+export default Editor;

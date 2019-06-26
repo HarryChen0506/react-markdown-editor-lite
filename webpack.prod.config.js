@@ -12,10 +12,10 @@ const banner =
   " */\n";
 const config = {
   entry: {
-    app: './src/index.js',
+    app: './src/index.ts',
   },
   output: {
-    filename: 'index.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'lib'),
     libraryTarget: "umd"
   },
@@ -29,6 +29,13 @@ const config = {
   mode: 'production',
   module: {
     rules: [{
+        test: /\.ts(x?)$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: "ts-loader"
+        }]
+      },
+      {
         test: /\.(js|jsx)$/,
         loader: "babel-loader",
       },
@@ -54,6 +61,12 @@ const config = {
           'less-loader'
         ]
       },
+      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader"
+      },
       {
         test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/,
         use: [{
@@ -66,17 +79,14 @@ const config = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   plugins: [
     new CleanWebpackPlugin(['lib']),
     new webpack.BannerPlugin({
       banner,
       raw: false
-    }),
-    new CopyWebpackPlugin([{
-      from: 'src/index.d.ts'
-    }])
+    })
   ],
 };
 

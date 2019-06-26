@@ -1,8 +1,4 @@
-/**
- * config
- */
-
-const config = {
+export default {
   theme : 'default',
   view: {
     menu: true,
@@ -22,6 +18,4 @@ const config = {
     maxRow: 4,
     maxCol: 6
   }
-}
-
-export default config
+};
