@@ -13,9 +13,7 @@ import InputFile from '../components/InputFile'
 import Icon from '../components/Icon'
 import ToolBar from '../components/ToolBar'
 
-import { Preview } from './preview';
-import HtmlRender from './htmlRender';
-import HtmlCode from './htmlCode';
+import { HtmlRender, HtmlCode } from './preview';
 import defultConfig from './defaultConfig';
 
 import './index.less'
@@ -65,7 +63,7 @@ class Editor extends React.Component<EditorProps, any> {
   private loggerTimerId?: number;
 
   private nodeMdText: React.RefObject<HTMLTextAreaElement>;
-  private nodeMdPreview: React.RefObject<Preview>;
+  private nodeMdPreview?: HtmlCode | HtmlRender;
   private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
   private inputFile: React.RefObject<InputFile>;
 
@@ -110,7 +108,6 @@ class Editor extends React.Component<EditorProps, any> {
     }
 
     this.nodeMdText = React.createRef();
-    this.nodeMdPreview = React.createRef();
     this.nodeMdPreviewWraper = React.createRef();
     this.inputFile = React.createRef();
 
@@ -230,16 +227,16 @@ class Editor extends React.Component<EditorProps, any> {
     this.logger.undo((last) => {
       this.endLogger()
       this._setMdText(last)
-    })
+    });
   }
 
   handleRedo() {
-    this.logger.redo((last) => {
+    this.logger.redo(last => {
       this._setMdText(last)
-    })
+    });
   }
 
-  handleDecorate(type, option = {}) {
+  handleDecorate(type: string, option: any = {}) {
     const clearList = [
       'h1',
       'h2',
@@ -260,41 +257,40 @@ class Editor extends React.Component<EditorProps, any> {
       'table',
       'image',
       'link'
-    ]
+    ];
     if (clearList.indexOf(type) > -1) {
       if (!this.selection.isSelected) {
-        return
+        return;
       }
       const content = this._getDecoratedText(type, option)
-      this._setMdText(content)
-      this._clearSelection()
+      this._setMdText(content);
+      this._clearSelection();
     } else {
       const content = this._getDecoratedText(type, option)
-      this._setMdText(content)
+      this._setMdText(content);
     }
   }
 
-  _getDecoratedText(type, option) {
-    const { text = '' } = this.state
-    const { selection } = this
-    const beforeContent = text.slice(0, selection.start)
-    const afterContent = text.slice(selection.end, text.length)
-    const decorate = new Decorate(selection.text)
-    let decoratedText = ''
+  _getDecoratedText(type: string, option: any) {
+    const { text = '' } = this.state;
+    const { selection } = this;
+    const beforeContent = text.slice(0, selection.start);
+    const afterContent = text.slice(selection.end, text.length);
+    let decoratedText = '';
     if (type === 'image') {
-      decoratedText = decorate.getDecoratedText(type, {
+      decoratedText = Decorate(selection.text, type, {
         target: option.target || "",
         imageUrl: option.imageUrl || this.config.imageUrl
-      })
+      });
     } else if (type === 'link') {
-      decoratedText = decorate.getDecoratedText(type, {
+      decoratedText = Decorate(selection.text, type, {
         linkUrl: this.config.linkUrl
-      })
+      });
     } else {
-      decoratedText = decorate.getDecoratedText(type, option)
+      decoratedText = Decorate(selection.text, type, option);
     }
-    const result = beforeContent + `${decoratedText}` + afterContent
-    return result
+    const result = beforeContent + `${decoratedText}` + afterContent;
+    return result;
   }
 
   renderHTML(markdownText: string): Promise<string> {
@@ -313,68 +309,68 @@ class Editor extends React.Component<EditorProps, any> {
   handleToggleFullScreen() {
     this.setState({
       fullScreen: !this.state.fullScreen
-    })
+    });
   }
 
-  changeView(to) {
+  changeView(to: any) {
     const view = Object.assign({}, this.state.view, to)
     this.setState({
       view: view
-    })
+    });
   }
 
   handleToggleMenu() {
     this.changeView({
       'menu': !this.state.view.menu
-    })
+    });
   }
 
-  handleToggleView(type) {
+  handleToggleView(type: "md" | "html") {
     if (type === 'md') {
       this.changeView({
         'md': false,
         'html': true
-      })
+      });
     } else {
       this.changeView({
         'md': true,
         'html': false
-      })
+      });
     }
   }
 
   handleMdPreview() {
     this.changeView({
       'html': !this.state.view.html
-    })
+    });
   }
 
   handleHtmlPreview() {
     this.changeView({
       'md': !this.state.view.md
-    })
+    });
   }
 
   handleToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
-      htmlType = 'source'
+      htmlType = 'source';
     } else if (htmlType === 'source') {
-      htmlType = 'render'
+      htmlType = 'render';
     }
     this.setState({
       htmlType: htmlType
-    })
+    });
   }
 
   handleEmpty() {
     if (window.confirm) {
-      const result = window.confirm('Are you sure to empty markdown ?')
+      const result = window.confirm('Are you sure to empty markdown ?');
       if (result) {
         this.setState({
           text: '',
           html: ''
-        })
+        });
       }
     }
   }
@@ -382,86 +378,94 @@ class Editor extends React.Component<EditorProps, any> {
   handleImageUpload() {
     const { onImageUpload } = this.props
     if (typeof onImageUpload === 'function') {
-      this.inputFile && this.inputFile.click()
+      this.inputFile.current && this.inputFile.current.click();
     } else {
-      this.handleDecorate('image')
+      this.handleDecorate('image');
     }
   }
 
-  onImageChanged(file) {
-    const { onImageUpload } = this.props
-    onImageUpload(file, (imageUrl) => {
-      this.handleDecorate('image', { target: file.name, imageUrl })
-    })
+  onImageChanged(file: File) {
+    if (this.props.onImageUpload) {
+      this.props.onImageUpload(file, imageUrl => {
+        this.handleDecorate('image', {
+          target: file.name,
+          imageUrl
+        });
+      })
+    }
   }
 
-  handleChange(e) {
-    this.startLogger()
-    const value = e.target.value
+  handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    this.startLogger();
+    const value = e.target.value;
     if (!this.hasContentChanged) {
-      this.hasContentChanged = true
+      this.hasContentChanged = true;
     }
-    this._setMdText(value)
+    this._setMdText(value);
   }
 
-  handleInputSelect(e) {
-    e.persist()
-    this.selection = Object.assign({}, this.selection, { isSelected: true }, this._getSelectionInfo(e))
+  handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+    e.persist();
+    this.selection = Object.assign({}, this.selection, {
+      isSelected: true
+    }, this._getSelectionInfo(e));
   }
 
-  handleScrollEle(node) {
+  handleScrollEle(node: "md" | "html") {
     this.willScrollEle = node
   }
 
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper = {} } = this
-    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
-    this.hasContentChanged = false
+    if (!this.nodeMdText.current || !this.nodeMdPreview || !this.nodeMdPreviewWraper.current) {
+      return;
+    }
+    this.scale = (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight) / (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight);
+    this.hasContentChanged = false;
   }
 
   _clearSelection() {
     this.selection = Object.assign({}, this.initialSelection)
   }
 
-  _getSelectionInfo(e) {
-    const source = e.srcElement || e.target
-    const start = source.selectionStart
-    const end = source.selectionEnd
-    const text = (source.value || '').slice(start, end)
-    const selection = { start, end, text }
-    return selection
+  _getSelectionInfo(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+    const event = e.nativeEvent;
+    const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
+    const start = source.selectionStart;
+    const end = source.selectionEnd;
+    const text = (source.value || '').slice(start, end);
+    return { start, end, text };
   }
 
-  _setMdText(value = '') {
-    const text = value.replace(/↵/g, '\n')
+  _setMdText(value: string = '') {
+    const text = value.replace(/↵/g, '\n');
     this.setState({
       text: value
-    })
+    });
     this.renderHTML(text)
       .then(html => {
         this.setState({
           html
-        })
+        });
         this.onEmit({
           text,
           html
-        })
+        });
       })
   }
 
-  _isKeyMatch(event, key, keyCode, withCtrl = false) {
+  _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withCtrl: boolean = false) {
     if (event.ctrlKey !== withCtrl) {
-      return false
+      return false;
     }
     if (event.key) {
-      return event.key === key
+      return event.key === key;
     } else {
-      return event.keyCode === keyCode
+      return event.keyCode === keyCode;
     }
   }
 
-  handleonKeyDown(e) {
+  handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (this._isKeyMatch(e, 'z', 90, true)) {
       this.handleUndo()
       e.preventDefault()
@@ -472,24 +476,23 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  onEmit(output) {
-    const { onChange } = this.props;
-    onChange && onChange(output)
+  onEmit(output: { text: string; html: string }) {
+    this.props.onChange && this.props.onChange(output)
   }
 
-  getMdValue() {
+  getMdValue(): string {
     return this.state.text
   }
 
-  getHtmlValue() {
+  getHtmlValue(): string {
     return this.state.html
   }
 
-  showDropList(type = 'header', flag) {
-    const { dropButton } = this.state
+  showDropList(type: "header" | "table", flag: boolean) {
+    const { dropButton } = this.state;
     this.setState({
       dropButton: { ...dropButton, [type]: flag }
-    })
+    });
   }
 
   render() {
@@ -625,12 +628,12 @@ class Editor extends React.Component<EditorProps, any> {
                 ref={this.nodeMdPreviewWraper}
                 onMouseOver={() => this.handleScrollEle('html')}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlRender html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
+                <HtmlRender html={html} className={this.config.htmlClass} ref={(instance: HtmlRender) => this.nodeMdPreview = instance} />
               </div>)
               : (<div className={'html-code-wrap'}
                 ref={this.nodeMdPreviewWraper}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlCode html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
+                <HtmlCode html={html} className={this.config.htmlClass} ref={(instance: HtmlCode) => this.nodeMdPreview = instance} />
               </div>)
             }
           </section>
