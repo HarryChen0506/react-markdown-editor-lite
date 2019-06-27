@@ -1,4 +1,4 @@
-export function deepClone (obj) {
+export function deepClone(obj) {
   if (!obj || typeof obj !== 'object') {
     return obj
   }

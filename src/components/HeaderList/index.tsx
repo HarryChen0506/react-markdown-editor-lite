@@ -2,10 +2,14 @@
 import React from 'react'
 import './index.less'
 
-class HeaderList extends React.Component {
-  handleHeader(header) {
-    const { onSelectHeader } = this.props
-    typeof onSelectHeader === 'function' && onSelectHeader(header)
+interface HeaderListProps {
+  onSelectHeader: (header: string) => void;
+}
+
+class HeaderList extends React.Component<HeaderListProps, any> {
+  handleHeader(header: string) {
+    const { onSelectHeader } = this.props;
+    typeof onSelectHeader === 'function' && onSelectHeader(header);
   }
   render() {
     return (

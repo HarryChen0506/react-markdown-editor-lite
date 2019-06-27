@@ -1,9 +1,13 @@
 // navigationBar
 import React from 'react'
-class NavigationBar extends React.Component {
-  constructor(props) {
-    super(props)
-  }
+
+interface NavigationBarProps {
+  left?: JSX.Element;
+  middle?: JSX.Element;
+  right?: JSX.Element;
+}
+
+class NavigationBar extends React.Component<NavigationBarProps, any> {
   render() {
     return (
       <div className={'rc-md-navigation'}>
@@ -20,4 +24,5 @@ class NavigationBar extends React.Component {
     )
   }
 }
+
 export default NavigationBar

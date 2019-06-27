@@ -14,9 +14,9 @@ import Icon from '../components/Icon'
 import ToolBar from '../components/ToolBar'
 
 import { HtmlRender, HtmlCode } from './preview';
-import defultConfig from './defaultConfig';
 
 import './index.less'
+import defaultConfig from './defaultConfig';
 
 interface EditorConfig {
   theme?: string;
@@ -54,7 +54,7 @@ interface EditorProps extends EditorConfig {
 }
 
 class Editor extends React.Component<EditorProps, any> {
-  static defaultProps = defultConfig;
+  static defaultProps = defaultConfig;
 
   private config: EditorConfig;
 
@@ -89,10 +89,10 @@ class Editor extends React.Component<EditorProps, any> {
     super(props);
 
     if (this.props.config) {
-      // Config polyfill
+      // TODO: Config polyfill
       //
     }
-    this.config = defultConfig;
+    this.config = defaultConfig;
 
     this.state = {
       text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
@@ -206,7 +206,7 @@ class Editor extends React.Component<EditorProps, any> {
         if (this.logger.getLastRecord() !== text) {
           this.logger.pushRecord(text)
         }
-      }, this.config.logger.interval)
+      }, this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval)
     }
     // 清空redo历史
     this.logger.cleanRedoList()
@@ -514,7 +514,7 @@ class Editor extends React.Component<EditorProps, any> {
                   }}
                   render={() => {
                     return (
-                      <HeaderList onSelectHeader={(header) => {
+                      <HeaderList onSelectHeader={(header: string) => {
                         this.handleDecorate(header)
                       }} />
                     )
@@ -552,10 +552,11 @@ class Editor extends React.Component<EditorProps, any> {
               </span>
               <span className="button" title="image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                 <Icon type="icon-photo" />
-                <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: any) => {
-                  e.persist()
-                  const file = e.target.files[0]
-                  this.onImageChanged(file)
+                <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  e.persist();
+                  if (e.target.files && e.target.files.length > 0) {
+                    this.onImageChanged(e.target.files[0]);
+                  }
                 }} />
               </span>
               <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>

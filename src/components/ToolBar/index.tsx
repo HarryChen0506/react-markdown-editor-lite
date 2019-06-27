@@ -1,7 +1,11 @@
 import React from 'react'
 import './index.less'
 
-class ToolBar extends React.Component {
+interface ToolBarProps {
+  style?: React.CSSProperties;
+}
+
+class ToolBar extends React.Component<ToolBarProps, any> {
   render() {
     return (
       <div className="tool-bar" style={this.props.style}>
