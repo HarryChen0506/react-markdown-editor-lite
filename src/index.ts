@@ -1,3 +1,1 @@
-import MdEditor from './editor'
-
-export default MdEditor;
+export { default } from './editor';

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "lib": [
@@ -11,13 +10,15 @@
     "outDir": "./lib/",
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmit": true,
+    "noEmit": false,
     "preserveConstEnums": true,
     "removeComments": false,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext",
+    "target": "es6",
     "declaration": true
-  }
+  },
+  "exclude": ["./lib", "./example"],
+  "include": ["./src"]
 }

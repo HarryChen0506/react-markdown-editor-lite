@@ -1,7 +1,5 @@
 // markdown editor 
 import * as React from 'react'
-import ReactDOM from 'react-dom'
-
 import * as tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
@@ -137,7 +135,7 @@ class Editor extends React.Component<EditorProps, any> {
           this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scale
         }
       }
-    }, 1000 / 60)
+    }, 1000 / 60).bind(this);
     this.handlePreviewScroll = tool.throttle((e: any) => {
       const { synchScroll } = this.config
       if (!synchScroll) {
@@ -149,7 +147,7 @@ class Editor extends React.Component<EditorProps, any> {
         if (this.nodeMdText.current && this.nodeMdPreviewWraper.current)
           this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scale
       }
-    }, 1000 / 60)
+    }, 1000 / 60).bind(this);
 
     // init Logger
     this.logger = new Logger();

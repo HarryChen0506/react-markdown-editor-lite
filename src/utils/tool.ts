@@ -1,8 +1,8 @@
-export function deepClone(obj) {
+export function deepClone(obj: any) {
   if (!obj || typeof obj !== 'object') {
     return obj
   }
-  let objArray = Array.isArray(obj) ? [] : {}
+  let objArray: any = Array.isArray(obj) ? [] : {}
   if (obj && typeof obj === 'object') {
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
@@ -18,16 +18,17 @@ export function deepClone(obj) {
   return objArray
 }
 
-export function isEmpty(obj) {
+export function isEmpty(obj: any) {
   // 判断字符是否为空的方法
   if (typeof obj === 'undefined' || obj === null || obj === '') {
     return true
   }
   return false
 }
-export function isRepeat(arr) {
-  var hash = {}
-  for (var i in arr) {
+
+export function isRepeat(arr: any[]) {
+  const hash: any = {};
+  for (const i in arr) {
     if (hash[arr[i]]) {
       return true
     }
@@ -35,9 +36,10 @@ export function isRepeat(arr) {
   }
   return false
 }
-export function throttle(func, deltaX) {
+
+export function throttle(func: any, deltaX: number) {
   let lastCalledAt = new Date().getTime()
-  return () => {
+  return function(this: any) {
     if (new Date().getTime() - lastCalledAt >= deltaX) {
       func.apply(this, arguments)
       lastCalledAt = new Date().getTime()

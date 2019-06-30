@@ -1,15 +1,12 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack');
 const version = require("./package.json").version;
 const banner =
-  "/**\n" +
-  " * react-markdown-editor-lite v" + version + "\n" +
-  " * https://github.com/HarryChen0506/react-markdown-editor-lite\n" +
-  " * MIT License\n" +
-  " */\n";
+  "react-markdown-editor-lite v" + version + "\n" +
+  "https://github.com/HarryChen0506/react-markdown-editor-lite\n" +
+  "MIT License";
 const config = {
   entry: {
     app: './src/index.ts',
