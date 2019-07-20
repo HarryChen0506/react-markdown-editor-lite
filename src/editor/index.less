@@ -219,7 +219,7 @@
     line-height: 28px;
     padding-left: 36px
   }
-  ul li {
+  li {
     margin-bottom: 8px;
     line-height: 1.7;
   }
@@ -238,7 +238,7 @@
     font-size: 14px;
     line-height: 28px;
     border-radius: 0;
-    overflow-x: hidden;
+    overflow-x: auto;
     word-break: break-word;
   }
   
@@ -257,19 +257,18 @@
   }
   
   blockquote {
+    position: relative;
     margin: 16px 0;
-    // background-color: #ffedcc;
+    padding: 5px 8px 5px 30px;
     background: none repeat scroll 0 0 rgba(102,128,153,.05);
     border: none;
-    padding: 5px 8px 5px 30px;
     color: #333;
-    position: relative;
     border-left: 10px solid #D6DBDF;
   }
 
   img, video {
     max-width: 100%;
-    max-height: 668px;
+    // max-height: 668px;
   }
   
   table {
@@ -289,6 +288,19 @@
     white-space: normal
   }
 
+  table tr {
+    border: 1px solid #efefef
+  }
+  
+  table tr:nth-child(2n) {
+    background-color: transparent
+  }
+
+  // table td, table th {
+  //   min-width: 80px;
+  //   max-width: 430px
+  // }
+
   table th {
     text-align: center;
     font-weight: 700;
@@ -298,14 +310,6 @@
     word-break: break-word;
   }
   
-  table tr {
-    border: 1px solid #efefef
-  }
-  
-  table tr:nth-child(2n) {
-    background-color: transparent
-  }
-  
   table td {
     border: 1px solid #efefef;
     text-align: left;
@@ -313,10 +317,4 @@
     word-break: break-word;
     min-width: 60px;
   }
-  
-  // table td, table th {
-  //   min-width: 80px;
-  //   max-width: 430px
-  // }
-
 }
