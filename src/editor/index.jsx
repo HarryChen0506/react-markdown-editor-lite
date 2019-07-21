@@ -117,7 +117,7 @@ class MdEditor extends React.Component {
       if (this.willScrollEle === 'html') {
         this.hasContentChanged && this._setScrollValue()
         if (this.nodeMdText && this.nodeMdPreviewWraper)
-        this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+          this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
       }
     }, 1000 / 60)
   }
@@ -274,7 +274,7 @@ class MdEditor extends React.Component {
     const res = this.props.renderHTML(markdownText)
     if (typeof res === "string") {
       return Promise.resolve(res)
-    } else if (typeof res === "function"){
+    } else if (typeof res === "function") {
       return Promise.resolve(res())
     } else if (typeof res === 'object' && typeof res.then === 'function') {
       return res
@@ -587,7 +587,7 @@ class MdEditor extends React.Component {
               </span>
               <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
               <span className="button" title="HTML code" onClick={this.handleToggleHtmlType}>
-                {htmlType === 'render' ? <Icon type="icon-code" />
+                {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
                 }
               </span>
@@ -611,7 +611,10 @@ class MdEditor extends React.Component {
       return res
     }
     return (
-      <div className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleonKeyDown}>
+      <div 
+        className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
+        style={this.props.style} onKeyDown={this.handleonKeyDown}
+      >
         {renderNavigation()}
         <div className="editor-container">
           {renderContent()}

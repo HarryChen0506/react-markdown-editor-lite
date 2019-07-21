@@ -5,7 +5,7 @@ import './font.less'
 class Icon extends React.Component {
   render() {   
     return ( 
-      <span className={this.props.type} ></span>
+      <span className={'rmel-'+ this.props.type} ></span>
     )
   }
 }
