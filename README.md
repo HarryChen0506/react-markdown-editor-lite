@@ -18,7 +18,7 @@
 ## Demo
 
 online demo [https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-3-6.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v-0-3-6.PNG?raw=true)
 
 ## Install
 
@@ -68,8 +68,8 @@ Use markdown-it as markdown parser
 
 ```js
 'use strict';
-import React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
 
@@ -101,8 +101,8 @@ export default class Demo extends React.Component {
 
 ```js
 'use strict';
-import React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'

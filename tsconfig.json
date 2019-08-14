@@ -19,6 +19,6 @@
     "target": "es6",
     "declaration": true
   },
-  "exclude": ["./lib", "./example"],
+  "exclude": ["./lib", "./image"],
   "include": ["./src"]
 }
