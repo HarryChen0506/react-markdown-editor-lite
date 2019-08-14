@@ -42,7 +42,7 @@ npm install react-markdown-editor-lite --save
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | config.synchScroll | Does it support synch scroll? | Boolean | true | |
 | config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
-| onChange | emitting when editor has changed | Function | ({html, md}) => {} | not required |
+| onChange | emitting when editor has changed | Function | ({html, text}) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string\|function\|Promise | none | **required** |
 
@@ -80,8 +80,8 @@ export default class Demo extends React.Component {
     super(props)
     this.mdParser = new MarkdownIt(/* Markdown-it options */)
   }
-  handleEditorChange ({html, md}) {    
-    console.log('handleEditorChange', html, md)
+  handleEditorChange ({html, text}) {    
+    console.log('handleEditorChange', html, text)
   }
   render() {
     return (      
@@ -150,8 +150,8 @@ export default class Demo extends React.Component {
     .use(tasklists, { enabled: this.taskLists })
     this.renderHTML = this.renderHTML.bind(this)
   }
-  handleEditorChange({html, md}) {
-    console.log('handleEditorChange', html, md)
+  handleEditorChange({html, text}) {
+    console.log('handleEditorChange', html, text)
   }
   handleImageUpload(file, callback) {
     const reader = new FileReader()
