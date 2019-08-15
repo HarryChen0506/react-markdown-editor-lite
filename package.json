@@ -37,6 +37,7 @@
     "@types/markdown-it": "^0.0.8",
     "@types/react": "^16.8.22",
     "@types/react-dom": "^16.8.4",
+    "dts-bundle": "^0.7.3",
     "markdown-it": "^8.4.2",
     "mocha": "^5.2.0",
     "react": "^16.9.0",
