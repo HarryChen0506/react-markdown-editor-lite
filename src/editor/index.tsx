@@ -16,6 +16,8 @@ import { HtmlRender, HtmlCode } from './preview';
 import './index.less'
 import defaultConfig from './defaultConfig';
 
+const merge: any = require('merge');
+
 interface EditorConfig {
   theme?: string;
   view?: {
@@ -86,11 +88,11 @@ class Editor extends React.Component<EditorProps, any> {
   constructor(props: any) {
     super(props);
 
+    let config = defaultConfig;
     if (this.props.config) {
-      // TODO: Config polyfill
-      //
+      config = merge(config, this.props.config);
     }
-    this.config = defaultConfig;
+    this.config = config;
 
     this.state = {
       text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
