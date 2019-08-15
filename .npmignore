@@ -7,7 +7,6 @@
 # Code and libs
 src/
 image/
-node_modules/
 coverage/
 .idea/
 .vscode/
@@ -34,7 +33,6 @@ coverage/
 
 # OS generated files #
 ######################
-.DS_Store
  *.swp
 .DS_Store?
 ._*
