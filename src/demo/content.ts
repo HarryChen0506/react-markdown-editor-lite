@@ -1,237 +1,182 @@
-const content = `# h1 Heading 8-)
-## h2 Heading
-### h3 Heading
-#### h4 Heading
-##### h5 Heading
-###### h6 Heading
+const content =  `
+# 手把手教你写一个markdown编辑器
+### 前言
+>笔者在18年年末的时候接到一个开发任务——搭建一个AI项目的开放平台，其中的产品文档为转化为HTML格式的markdown文档。考虑到文档的即时更新，将文档信息做成了Ajax接口的形式。因此管理后台只需将textarea表单的内容通过markdown解析器进行HTML格式转化，然后将markdown内容和经转化的HTML文档都保存到数据库即可。
+> 基本需求完成后，为了更好的用户体验，考虑将常用的编辑功能添加进来。改进版不仅支持了常用的文本编辑功能，还实现的UI界面的配置化，自定义语法解析器。本着造福伸手党的目的，以及积累些开源经验，笔者将该react 组件 [react-markdown-editor-lite](https://github.com/HarryChen0506/react-markdown-editor-lite) 进行了封装改造，并且发布到了开源社区。
 
+### 预览
+在线体验 [https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
 
-## Horizontal Rules
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-3-6.PNG?raw=true)
 
-___
+### 特点
+* 轻量、基于React
+* UI可配置, 如只显示编辑区或预览区
+* 支持自定义markdown语法解析器,语法高亮等
+* 支持常用的markdown编辑功能，如加粗，斜体等等...
+* 支持编辑区和预览区同步滚动
 
----
+### 开发心得
 
-***
+- 文本编辑
 
+  大多数常见的编辑器，包括富文本编辑器，利用了某些元素如div的contenteditable属性，配合selection、range、execCommand等API，实现了富文本编辑功能。这里面的实现比较复杂，所以有了"[为什么都说富文本编辑器是天坑？](https://www.zhihu.com/question/38699645)"这个说法。
 
-## Typographic replacements
+  而markdown编辑器，核心的处理内容为简单语法的纯文本，复杂度相对来说比较低，并且input标签自带onSelect事件，可以很方便的获取选择信息（选择起始位置和选择文本值），因此要想实现编辑功能，只需将要改动的内容进行文本转换，然后进行重新拼接首尾，大功告成。
+  
+- markdown解析
 
-Enable typographer option to see result.
+  考察了几个社区流行的markdown解析器，比较流行的有[markdown](https://www.npmjs.com/package/markdown), [markdown-it](https://www.npmjs.com/package/markdown-it), [marked](https://www.npmjs.com/package/marked) 等等。综合考虑扩展性以及稳定性，笔者推荐使用markdown-it作为markdown的词法解析器，因为该解析器有比较多的插件，并且支持语法高亮。
 
-(c) (C) (r) (R) (tm) (TM) (p) (P) +-
+- 同步滚动
 
-test.. test... test..... test?..... test!....
+  当选择分栏编辑的时候，滚动左侧的编辑区，右侧的预览区能自动滚动到对应的区域。方案参考了《[手把手教你用 100行代码实现基于 react的 markdown 输入 + 即时预览在线编辑器（一）](https://github.com/accforgit/blog-data/blob/master/%E5%9C%A8%E7%BA%BF%E7%BC%96%E8%BE%91%E5%99%A8/README/README1.md)》。只需先计算出输入框容器元素与预览框容器元素之间最大scroll范围的比例值，然后根据主动滚动元素自身的scrollTop做相应的比例换算，即可知道对方区域的scrollTop值。
 
-!!!!!! ???? ,,  -- ---
-
-"Smartypants, double quotes" and 'single quotes'
-
-
-## Emphasis
-
-**This is bold text**
-
-__This is bold text__
-
-*This is italic text*
-
-_This is italic text_
-
-~~Strikethrough~~
-
-
-## Blockquotes
-
-> Blockquotes test
- - nest
-> Blockquotes can also be nested...
->> ...by using additional greater-than signs right next to each other...
-> > > ...or with spaces between arrows.
-
-
-## Lists
-
-Unordered
-
-+ Create a list by starting a line with \`+\`, \`-\`, or \`*\`
-+ Sub-lists are made by indenting 2 spaces:
-  - Marker character change forces new list start:
-    * Ac tristique libero volutpat at
-    + Facilisis in pretium nisl aliquet
-    - Nulla volutpat aliquam velit
-+ Very easy!
-
-Ordered
-
-1. Lorem ipsum dolor sit amet
-2. Consectetur adipiscing elit
-3. Integer molestie lorem at massa
-
-
-1. You can use sequential numbers...
-1. ...or keep all the numbers as \`1.\`
-
-Start numbering with offset:
-
-57. foo
-1. bar
-
-
-## Code
-
-Inline \`code\`
-
-Indented code
-
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
-
-
-Block code "fences"
+- 关于UI
+ 
+  - 项目的字体库选择了Font Awesome风格，并且只选取了项目所需要的一些图标。
+  - 编辑器的整体css均可通过全局覆盖的形式进行自定义。目前暂时只支持灰色主题。
+  - 编辑器的显示区域包括菜单栏，编辑器，预览区，工具栏，通过配置组件的config属性，可以选择默认的展示区域。
+  
+### Install
 
 \`\`\`
-Sample text here...
+npm install react-markdown-editor-lite --save
 \`\`\`
 
-Syntax highlighting
+### Props
+
+| Property | Description | Type | default | Remarks |
+| --- | --- | --- | --- | --- |
+| value | markdown content | String | '' | required |
+| style | component container style | Object | {height: '100%'} | not required |
+
+### Example
 
 \`\`\` js
-var foo = function (bar) {
-  return bar++;
-};
+'use strict';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import MdEditor from 'react-markdown-editor-lite'
+import MarkdownIt from 'markdown-it'
+import emoji from 'markdown-it-emoji'
+import subscript from 'markdown-it-sub'
+import superscript from 'markdown-it-sup'
+import footnote from 'markdown-it-footnote'
+import deflist from 'markdown-it-deflist'
+import abbreviation from 'markdown-it-abbr'
+import insert from 'markdown-it-ins'
+import mark from 'markdown-it-mark'
+import tasklists from 'markdown-it-task-lists'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/atom-one-light.css'
+// import 'highlight.js/styles/github.css'
+import './index.less';
 
-console.log(foo(5));
+const MOCK_DATA = "Love it or leave it."
+export default class Demo extends React.Component {
+  mdEditor = null
+  mdParser = null
+  constructor(props) {
+    super(props)
+    // initial a parser
+    this.mdParser = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true,
+      highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(lang, str).value
+          } catch (__) {}
+        }    
+        return '' // use external default escaping
+      }
+    })
+    .use(emoji)
+    .use(subscript)
+    .use(superscript)
+    .use(footnote)
+    .use(deflist)
+    .use(abbreviation)
+    .use(insert)
+    .use(mark)
+    .use(tasklists, { enabled: this.taskLists })
+    this.renderHTML = this.renderHTML.bind(this)
+  }
+  handleEditorChange({html, md}) {
+    console.log('handleEditorChange', html, md)
+  }
+  handleImageUpload(file, callback) {
+    const reader = new FileReader()
+    reader.onload = () => {      
+      const convertBase64UrlToBlob = (urlData) => {  
+        let arr = urlData.split(','), mime = arr[0].match(/:(.*?);/)[1]
+        let bstr = atob(arr[1])
+        let n = bstr.length
+        let u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        return new Blob([u8arr], {type:mime})
+      }
+      const blob = convertBase64UrlToBlob(reader.result)
+      setTimeout(() => {
+        // setTimeout 模拟异步上传图片
+        // 当异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
+        callback('https://avatars0.githubusercontent.com/u/21263805?s=40&v=4')
+      }, 1000)
+    }
+    reader.readAsDataURL(file)
+  }
+  renderHTML(text) {
+    // 模拟异步渲染Markdown
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(this.mdParser.render(text))
+      }, 1000)
+    })
+  }
+  handleGetMdValue = () => {   
+    this.mdEditor && alert(this.mdEditor.getMdValue())      
+  }
+  handleGetHtmlValue = () => {    
+    this.mdEditor && alert(this.mdEditor.getHtmlValue())
+  }
+  render() {
+    return (      
+      <div>
+        <nav>
+          <button onClick={this.handleGetMdValue} >getMdValue</button>  
+          <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>  
+        </nav>
+        <section style="height: 500px">
+          <MdEditor 
+            ref={node => this.mdEditor = node}
+            value={MOCK_DATA}
+            style={{height: '400px'}}
+            renderHTML={this.renderHTML}
+            config={{
+              view: {
+                menu: true,
+                md: true,
+                html: true
+              },
+              imageUrl: 'https://octodex.github.com/images/minion.png'
+            }}
+            onChange={this.handleEditorChange} 
+            onImageUpload={this.handleImageUpload}
+          />
+        </section>                        
+      </div>      
+    )
+  }
+}
 \`\`\`
 
-## Tables
+### 最后
 
-| Option | Description |
-| ------ | ----------- |
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
-| ext    | extension to be used for dest files. |
+   欢迎大家使用和反馈，[项目地址](https://github.com/HarryChen0506/react-markdown-editor-lite) (https://github.com/HarryChen0506/react-markdown-editor-lite)， 你的点赞将是我莫大的动力😊
 
-Right aligned columns
-
-| Option | Description |
-| ------:| -----------:|
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
-| ext    | extension to be used for dest files. |
-
-
-## Links
-
-[link text](http://dev.nodeca.com)
-
-[link with title](http://nodeca.github.io/pica/demo/ "title text!")
-
-Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
-
-
-## Images
-
-![Minion](https://octodex.github.com/images/minion.png)
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
-
-Like links, Images also have a footnote style syntax
-
-![Alt text][id]
-
-With a reference later in the document defining the URL location:
-
-[id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
-
-
-## Plugins
-
-The killer feature of \`markdown-it\` is very effective support of
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
-
-
-### [Emojies](https://github.com/markdown-it/markdown-it-emoji)
-
-> Classic markup: :wink: :crush: :cry: :tear: :laughing: :yum:
->
-> Shortcuts (emoticons): :-) :-( 8-) ;)
-
-see [how to change output](https://github.com/markdown-it/markdown-it-emoji#change-output) with twemoji.
-
-
-### [Subscript](https://github.com/markdown-it/markdown-it-sub) / [Superscript](https://github.com/markdown-it/markdown-it-sup)
-
-- 19^th^
-- H~2~O
-
-
-### [\<ins>](https://github.com/markdown-it/markdown-it-ins)
-
-++Inserted text++
-
-
-### [\<mark>](https://github.com/markdown-it/markdown-it-mark)
-
-==Marked text==
-
-
-### [Footnotes](https://github.com/markdown-it/markdown-it-footnote)
-
-Footnote 1 link[^first].
-
-Footnote 2 link[^second].
-
-Inline footnote^[Text of inline footnote] definition.
-
-Duplicated footnote reference[^second].
-
-[^first]: Footnote **can have markup**
-
-    and multiple paragraphs.
-
-[^second]: Footnote text.
-
-
-### [Definition lists](https://github.com/markdown-it/markdown-it-deflist)
-
-Term 1
-
-:   Definition 1
-with lazy continuation.
-
-Term 2 with *inline markup*
-
-:   Definition 2
-
-        { some code, part of Definition 2 }
-
-    Third paragraph of definition 2.
-
-_Compact style:_
-
-Term 1
-  ~ Definition 1
-
-Term 2
-  ~ Definition 2a
-  ~ Definition 2b
-
-
-### [Abbreviations](https://github.com/markdown-it/markdown-it-abbr)
-
-This is HTML abbreviation example.
-
-It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
-
-*[HTML]: Hyper Text Markup Language
-
-### [Custom containers](https://github.com/markdown-it/markdown-it-container)
-
-::: warning
-*here be dragons*
-:::
 `
-
 export default content

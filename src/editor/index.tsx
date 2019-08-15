@@ -40,7 +40,7 @@ interface EditorConfig {
 
 interface EditorProps extends EditorConfig {
   value: string;
-  renderHTML: (text: string) => string | Promise<string>;
+  renderHTML: (text: string) => string | Promise<string> | (() => string);
   style?: React.CSSProperties;
   config?: any;
   // Configs
@@ -297,11 +297,14 @@ class Editor extends React.Component<EditorProps, any> {
       return Promise.resolve("");
     }
     const res = this.props.renderHTML(markdownText)
-    if (typeof res === 'object' && typeof res.then === 'function') {
+    if (typeof res === "string") {
+      return Promise.resolve(res)
+    } else if (typeof res === "function") {
+      return Promise.resolve(res() as string)
+    } else if (typeof res === 'object' && typeof res.then === 'function') {
       return res;
-    } else {
-      return Promise.resolve(res);
     }
+    return Promise.resolve("");
   }
 
   handleToggleFullScreen() {
@@ -617,7 +620,7 @@ class Editor extends React.Component<EditorProps, any> {
               </span>
               <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
               <span className="button" title="HTML code" onClick={this.handleToggleHtmlType}>
-                {htmlType === 'render' ? <Icon type="icon-code" />
+                {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
                 }
               </span>
@@ -641,7 +644,10 @@ class Editor extends React.Component<EditorProps, any> {
       return res
     }
     return (
-      <div className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleonKeyDown}>
+      <div 
+        className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
+        style={this.props.style} onKeyDown={this.handleonKeyDown}
+      >
         {renderNavigation()}
         <div className="editor-container">
           {renderContent()}
