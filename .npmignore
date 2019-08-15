@@ -1,6 +1,14 @@
+# Configures
+.editorconfig
+.browserslistrc
+.gitignore
+.npmignore
+
+# Code and libs
+src/
+image/
 node_modules/
 coverage/
-lib/
 .idea/
 .vscode/
 ~*
