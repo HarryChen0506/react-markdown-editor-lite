@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "nowa2 server",
-    "prod": "nowa2 build",
+    "build": "nowa2 build",
+    "prod": "nowa2 build -o",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

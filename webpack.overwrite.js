@@ -1,5 +1,14 @@
 const webpack = require('webpack');
 
+function hasArgument(name) {
+  for (const it of process.argv) {
+    if (it === `-${name}`) {
+      return true;
+    }
+  }
+  return false;
+}
+
 module.exports = config => {
   // 这里可以进行 webpack config 的配置的最终覆盖
   if (config.module && config.module.rules) {
@@ -18,7 +27,7 @@ module.exports = config => {
     "react-dom": "window.ReactDOM"
   };
   // 不生成bundle分析
-  if (config.mode === 'production') {
+  if (config.mode === 'production' && hasArgument('o')) {
     for (const k in config.plugins) {
       const it = config.plugins[k];
       if (typeof(it) === 'object' && it.__proto__.constructor.name === 'BundleAnalyzerPlugin') {
