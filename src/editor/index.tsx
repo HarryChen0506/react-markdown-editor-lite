@@ -200,14 +200,6 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private startLogger() {
-    if (!this.loggerTimerId) {
-      this.loggerTimerId = window.setInterval(() => {
-        const { text } = this.state
-        if (this.logger.getLastRecord() !== text) {
-          this.logger.pushRecord(text)
-        }
-      }, this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval)
-    }
     // 清空redo历史
     this.logger.cleanRedoList()
   }
@@ -395,11 +387,23 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    this.startLogger();
     const value = e.target.value;
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
     }
+    // 历史记录
+    this.startLogger();
+    if (this.loggerTimerId) {
+      window.clearTimeout(this.loggerTimerId);
+      this.loggerTimerId = 0;
+    }
+    this.loggerTimerId = window.setTimeout(() => {
+      if (this.logger.getLastRecord() !== value) {
+        this.logger.pushRecord(value);
+      }
+      window.clearTimeout(this.loggerTimerId);
+      this.loggerTimerId = 0;
+    }, this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval);
     this._setMdText(value);
   }
 
@@ -454,7 +458,7 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withCtrl: boolean = false) {
-    if (event.ctrlKey !== withCtrl) {
+    if (event.ctrlKey !== withCtrl && event.metaKey !== withCtrl) {
       return false;
     }
     if (event.key) {
