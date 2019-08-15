@@ -22,10 +22,6 @@ module.exports = config => {
       }]
     });
   }
-  config.externals = {
-    react: "window.React",
-    "react-dom": "window.ReactDOM"
-  };
   // 不生成bundle分析
   if (config.mode === 'production' && hasArgument('o')) {
     for (const k in config.plugins) {
