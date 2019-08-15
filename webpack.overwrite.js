@@ -1,4 +1,7 @@
 const webpack = require('webpack');
+const dts = require('dts-bundle');
+const fs = require('fs');
+const glob = require('glob');
 
 function hasArgument(name) {
   for (const it of process.argv) {
@@ -9,8 +12,16 @@ function hasArgument(name) {
   return false;
 }
 
+function tryRemoveDir(dir) {
+  fs.rmdir(dir, (err) => {
+    if (err === null) {
+      tryRemoveDir(dir.substr(0, dir.lastIndexOf('/')));
+    }
+  });
+}
+
 module.exports = config => {
-  // 这里可以进行 webpack config 的配置的最终覆盖
+  // 启用静态文件支持
   if (config.module && config.module.rules) {
     config.module.rules.push({
       test: /\.(png|svg|jpg|gif|eot|woff|ttf)$/,
@@ -31,6 +42,34 @@ module.exports = config => {
         break;
       }
     }
+  }
+  // 聚合d.ts文件
+  if (config.mode === 'production' && config.plugins) {
+    config.plugins.push({
+      apply: (compiler) => {
+        compiler.hooks.afterEmit.tap('BundleDTS', () => {
+          dts.bundle({
+            name: "react-markdown-editor-lite",
+            main: "lib/index.d.ts",
+            baseDir: "lib",
+            out: "temp_dts.tmp",
+            newLine: "\n",
+            indent: "  ",
+            verbose: true
+          });
+          console.log('bundle dts finished');
+          // 移除其他d.ts文件
+          glob("./lib/**/*.d.ts", null, function (er, files) {
+            files.forEach(it => {
+              fs.unlinkSync(it);
+              tryRemoveDir(it.substr(0, it.lastIndexOf('/')));
+            });
+            // 改名回来
+            fs.renameSync('./lib/temp_dts.tmp', './lib/index.d.ts');
+          });
+        });
+      }
+    })
   }
   return config;
 };
