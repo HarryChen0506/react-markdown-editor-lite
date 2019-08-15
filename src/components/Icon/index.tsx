@@ -9,7 +9,7 @@ interface IconProps {
 class Icon extends React.Component<IconProps, any> {
   render() {   
     return ( 
-      <span className={this.props.type}></span>
+      <span className={`rmel-${this.props.type}`}></span>
     )
   }
 }
