@@ -153,7 +153,7 @@ class Editor extends React.Component<EditorProps, any> {
     this.logger = new Logger();
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.renderHTML(this.props.value || "")
       .then(html => {
         this.setState({
@@ -163,7 +163,7 @@ class Editor extends React.Component<EditorProps, any> {
     this.initLogger()
   }
 
-  componentWillReceiveProps(nextProps: EditorProps) {
+  public componentWillReceiveProps(nextProps: EditorProps) {
     if (nextProps.value === this.props.value) {
       // console.log('value not change')
       return
@@ -180,11 +180,11 @@ class Editor extends React.Component<EditorProps, any> {
       })
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.endLogger()
   }
 
-  formatString(value: string) {
+  private formatString(value: string) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
       return new String(value).toString()
@@ -192,12 +192,12 @@ class Editor extends React.Component<EditorProps, any> {
     return value
   }
 
-  initLogger() {
+  private initLogger() {
     this.startLogger()
     this.logger.pushRecord(this.state.text)
   }
 
-  startLogger() {
+  private startLogger() {
     if (!this.loggerTimerId) {
       this.loggerTimerId = window.setInterval(() => {
         const { text } = this.state
@@ -210,31 +210,27 @@ class Editor extends React.Component<EditorProps, any> {
     this.logger.cleanRedoList()
   }
 
-  endLogger() {
+  private endLogger() {
     if (this.loggerTimerId) {
       clearInterval(this.loggerTimerId)
       this.loggerTimerId = undefined
     }
   }
 
-  handleGetLogger() {
-    console.log('handleGetLogger', this.logger)
-  }
-
-  handleUndo() {
+  private handleUndo() {
     this.logger.undo((last) => {
       this.endLogger()
       this._setMdText(last)
     });
   }
 
-  handleRedo() {
+  private handleRedo() {
     this.logger.redo(last => {
       this._setMdText(last)
     });
   }
 
-  handleDecorate(type: string, option: any = {}) {
+  private handleDecorate(type: string, option: any = {}) {
     const clearList = [
       'h1',
       'h2',
@@ -269,7 +265,7 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  _getDecoratedText(type: string, option: any) {
+  private _getDecoratedText(type: string, option: any) {
     const { text = '' } = this.state;
     const { selection } = this;
     const beforeContent = text.slice(0, selection.start);
@@ -291,7 +287,7 @@ class Editor extends React.Component<EditorProps, any> {
     return result;
   }
 
-  renderHTML(markdownText: string): Promise<string> {
+  private renderHTML(markdownText: string): Promise<string> {
     if (!this.props.renderHTML) {
       console.error('renderHTML props is required!')
       return Promise.resolve("");
@@ -307,26 +303,26 @@ class Editor extends React.Component<EditorProps, any> {
     return Promise.resolve("");
   }
 
-  handleToggleFullScreen() {
+  private handleToggleFullScreen() {
     this.setState({
       fullScreen: !this.state.fullScreen
     });
   }
 
-  changeView(to: any) {
+  private changeView(to: any) {
     const view = Object.assign({}, this.state.view, to)
     this.setState({
       view: view
     });
   }
 
-  handleToggleMenu() {
+  private handleToggleMenu() {
     this.changeView({
       'menu': !this.state.view.menu
     });
   }
 
-  handleToggleView(type: "md" | "html") {
+  private handleToggleView(type: "md" | "html") {
     if (type === 'md') {
       this.changeView({
         'md': false,
@@ -340,19 +336,19 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  handleMdPreview() {
+  private handleMdPreview() {
     this.changeView({
       'html': !this.state.view.html
     });
   }
 
-  handleHtmlPreview() {
+  private handleHtmlPreview() {
     this.changeView({
       'md': !this.state.view.md
     });
   }
 
-  handleToggleHtmlType() {
+  private handleToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
       htmlType = 'source';
@@ -364,7 +360,7 @@ class Editor extends React.Component<EditorProps, any> {
     });
   }
 
-  handleEmpty() {
+  private handleEmpty() {
     if (window.confirm) {
       const result = window.confirm('Are you sure to empty markdown ?');
       if (result) {
@@ -376,7 +372,7 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  handleImageUpload() {
+  private handleImageUpload() {
     const { onImageUpload } = this.props
     if (typeof onImageUpload === 'function') {
       this.inputFile.current && this.inputFile.current.click();
@@ -385,7 +381,7 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  onImageChanged(file: File) {
+  private onImageChanged(file: File) {
     if (this.props.onImageUpload) {
       this.props.onImageUpload(file, imageUrl => {
         this.handleDecorate('image', {
@@ -396,7 +392,7 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+  private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     this.startLogger();
     const value = e.target.value;
     if (!this.hasContentChanged) {
@@ -405,18 +401,18 @@ class Editor extends React.Component<EditorProps, any> {
     this._setMdText(value);
   }
 
-  handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+  private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
     e.persist();
     this.selection = Object.assign({}, this.selection, {
       isSelected: true
     }, this._getSelectionInfo(e));
   }
 
-  handleScrollEle(node: "md" | "html") {
+  private handleScrollEle(node: "md" | "html") {
     this.willScrollEle = node
   }
 
-  _setScrollValue() {
+  private _setScrollValue() {
     // 设置值，方便 scrollBy 操作
     if (!this.nodeMdText.current || !this.nodeMdPreview || !this.nodeMdPreviewWraper.current) {
       return;
@@ -425,11 +421,11 @@ class Editor extends React.Component<EditorProps, any> {
     this.hasContentChanged = false;
   }
 
-  _clearSelection() {
+  private _clearSelection() {
     this.selection = Object.assign({}, this.initialSelection)
   }
 
-  _getSelectionInfo(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+  private _getSelectionInfo(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
     const event = e.nativeEvent;
     const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
     const start = source.selectionStart;
@@ -438,7 +434,7 @@ class Editor extends React.Component<EditorProps, any> {
     return { start, end, text };
   }
 
-  _setMdText(value: string = '') {
+  private _setMdText(value: string = '') {
     const text = value.replace(/↵/g, '\n');
     this.setState({
       text: value
@@ -455,7 +451,7 @@ class Editor extends React.Component<EditorProps, any> {
       })
   }
 
-  _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withCtrl: boolean = false) {
+  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withCtrl: boolean = false) {
     if (event.ctrlKey !== withCtrl) {
       return false;
     }
@@ -466,7 +462,7 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+  private handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (this._isKeyMatch(e, 'z', 90, true)) {
       this.handleUndo()
       e.preventDefault()
@@ -477,26 +473,26 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  onEmit(output: { text: string; html: string }) {
+  private onEmit(output: { text: string; html: string }) {
     this.props.onChange && this.props.onChange(output)
   }
 
-  getMdValue(): string {
+  public getMdValue(): string {
     return this.state.text
   }
 
-  getHtmlValue(): string {
+  public getHtmlValue(): string {
     return this.state.html
   }
 
-  showDropList(type: "header" | "table", flag: boolean) {
+  private showDropList(type: "header" | "table", flag: boolean) {
     const { dropButton } = this.state;
     this.setState({
       dropButton: { ...dropButton, [type]: flag }
     });
   }
 
-  render() {
+  public render() {
     const { view, dropButton, fullScreen, table } = this.state
     const renderNavigation = () => {
       return view.menu &&
