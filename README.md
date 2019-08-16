@@ -135,7 +135,7 @@ export default class Demo extends React.Component {
           try {
             return hljs.highlight(lang, str).value
           } catch (__) {}
-        }    
+        }
         return '' // use external default escaping
       }
     })

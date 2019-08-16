@@ -16,7 +16,7 @@ import { HtmlRender, HtmlCode } from './preview';
 import './index.less'
 import defaultConfig from './defaultConfig';
 
-const merge: any = require('merge');
+const mergeConfig: any = require('../utils/mergeConfig');
 
 interface EditorConfig {
   theme?: string;
@@ -54,7 +54,9 @@ interface EditorProps extends EditorConfig {
 }
 
 class Editor extends React.Component<EditorProps, any> {
-  static defaultProps = defaultConfig;
+  static defaultProps = {
+    value: ""
+  };
 
   private config: EditorConfig;
 
@@ -88,16 +90,12 @@ class Editor extends React.Component<EditorProps, any> {
   constructor(props: any) {
     super(props);
 
-    let config = defaultConfig;
-    if (this.props.config) {
-      config = merge(config, this.props.config);
-    }
-    this.config = config;
+    this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
       text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
       html: '',
-      view: this.props.view,
+      view: this.config.view,
       htmlType: 'render', // 'render' 'source'
       dropButton: {
         header: false,
