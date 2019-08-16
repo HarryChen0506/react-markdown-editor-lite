@@ -71,7 +71,7 @@ class Editor extends React.Component<EditorProps, any> {
 
   private scale = 0
 
-  private willScrollEle = '' // 即将滚动的元素 md html
+  private willScrollEle: "md" | "html" | "" = '' // 即将滚动的元素 md html
 
   private hasContentChanged = true
 

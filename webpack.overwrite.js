@@ -66,6 +66,14 @@ module.exports = config => {
             });
             // 改名回来
             fs.renameSync('./lib/temp_dts.tmp', './lib/index.d.ts');
+            // 移除掉文件中的less引用
+            let content = fs.readFileSync('./lib/index.d.ts', {
+              encoding: "utf8"
+            });
+            content = content.replace(/(\s*)import '(.*?)\.less';/gi, "");
+            fs.writeFileSync('./lib/index.d.ts', content, {
+              encoding: "utf8"
+            });
           });
         });
       }
