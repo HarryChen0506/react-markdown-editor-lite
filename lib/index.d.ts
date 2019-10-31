@@ -30,7 +30,7 @@ declare namespace ReactMarkdownEditorLite {
     onChange?: (data: {
       text: string;
       html: string;
-    }) => void;
+    }, event: any) => void;
     onImageUpload?: (file: File, callback: (url: string) => void) => void;
   }
   class MdEditor extends React.Component<MdEditorProps, any> {
