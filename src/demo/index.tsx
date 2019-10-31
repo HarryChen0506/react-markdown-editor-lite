@@ -33,8 +33,8 @@ class Demo extends React.Component {
     })
   }
 
-  handleEditorChange = (it: any) => {
-    console.log('handleEditorChange', it)
+  handleEditorChange = (it: { text: string, html: string }, event: any) => {
+    console.log('handleEditorChange', it.text, it.html, event);
   }
 
   handleImageUpload = (file: File, callback: (url: string) => void) => {

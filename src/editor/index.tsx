@@ -20,6 +20,7 @@ const mergeConfig: any = require('../utils/mergeConfig');
 
 interface EditorConfig {
   theme?: string;
+  name?: string;
   view?: {
     menu: boolean;
     md: boolean;
@@ -49,7 +50,7 @@ interface EditorProps extends EditorConfig {
   onChange?: (data: {
     text: string;
     html: string;
-  }) => void;
+  }, event?: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onImageUpload?: (file: File, callback: (url: string) => void) => void;
 }
 
@@ -385,6 +386,8 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    e.persist();
+    this.startLogger();
     const value = e.target.value;
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
@@ -402,7 +405,7 @@ class Editor extends React.Component<EditorProps, any> {
       window.clearTimeout(this.loggerTimerId);
       this.loggerTimerId = 0;
     }, this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval);
-    this._setMdText(value);
+    this._setMdText(value, e);
   }
 
   private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
@@ -438,7 +441,7 @@ class Editor extends React.Component<EditorProps, any> {
     return { start, end, text };
   }
 
-  private _setMdText(value: string = '') {
+  private _setMdText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>) {
     const text = value.replace(/↵/g, '\n');
     this.setState({
       text: value
@@ -448,10 +451,9 @@ class Editor extends React.Component<EditorProps, any> {
         this.setState({
           html
         });
-        this.onEmit({
-          text,
-          html
-        });
+        if (this.props.onChange) {
+          this.props.onChange({ text, html }, event);
+        }
       })
   }
 
@@ -475,10 +477,6 @@ class Editor extends React.Component<EditorProps, any> {
       this.handleRedo()
       e.preventDefault()
     }
-  }
-
-  private onEmit(output: { text: string; html: string }) {
-    this.props.onChange && this.props.onChange(output)
   }
 
   public getMdValue(): string {
@@ -594,6 +592,7 @@ class Editor extends React.Component<EditorProps, any> {
             <textarea
               id="textarea"
               ref={this.nodeMdText}
+              name={this.props.name || "textarea"}
               value={text}
               className={`input ${this.config.markdownClass || ""}`}
               wrap="hard"
