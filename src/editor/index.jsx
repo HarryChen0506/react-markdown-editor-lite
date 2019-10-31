@@ -368,6 +368,7 @@ class MdEditor extends React.Component {
   }
 
   _handleChange(e) {
+    e.persist();
     this.startLogger()
     const value = e.target.value
     if (!this.hasContentChanged) {
