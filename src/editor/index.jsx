@@ -560,6 +560,7 @@ class MdEditor extends React.Component {
             </ToolBar>
             <textarea
               id="textarea"
+              name={this.props.name || ""}
               ref={node => this.nodeMdText = node}
               value={text}
               className={`input ${this.config.markdownClass || ""}`}
