@@ -368,12 +368,13 @@ class MdEditor extends React.Component {
   }
 
   _handleChange(e) {
+    e.persist();
     this.startLogger()
     const value = e.target.value
     if (!this.hasContentChanged) {
       this.hasContentChanged = true
     }
-    this._setMdText(value)
+    this._setMdText(value, e)
   }
 
   _handleInputSelect(e) {
@@ -405,7 +406,7 @@ class MdEditor extends React.Component {
     return selection
   }
 
-  _setMdText(value = '') {
+  _setMdText(value = '', e) {
     const text = value.replace(/↵/g, '\n')
     this.setState({
       text: value
@@ -417,7 +418,8 @@ class MdEditor extends React.Component {
         })
         this.onEmit({
           text,
-          html
+          html,
+          e
         })
       })
   }
