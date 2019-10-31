@@ -419,8 +419,7 @@ class MdEditor extends React.Component {
         this.onEmit({
           text,
           html,
-          e
-        })
+        }, e)
       })
   }
 
@@ -446,9 +445,9 @@ class MdEditor extends React.Component {
     }
   }
 
-  onEmit(output) {
+  onEmit(output, event) {
     const { onChange } = this.props;
-    onChange && onChange(output)
+    typeof onChange === 'function' && onChange(output, event)
   }
 
   getMdValue() {

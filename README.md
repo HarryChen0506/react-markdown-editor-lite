@@ -31,6 +31,7 @@ npm install react-markdown-editor-lite --save
 | Property | Description | Type | default | Remarks |
 | --- | --- | --- | --- | --- |
 | value | markdown content | String | '' | required |
+| name | the name prop of textarea | String | 'textarea' | not required |
 | style | component container style | Object | {height: '100%'} | not required |
 | config | component config | Object | {view: {...}, logger: {...}} | not required |
 | config.view | component UI | Object | {menu: true, md: true, html: true} |  |
@@ -42,7 +43,7 @@ npm install react-markdown-editor-lite --save
 | config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
 | config.synchScroll | Does it support synch scroll? | Boolean | true | |
 | config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
-| onChange | emitting when editor has changed | Function | ({html, text}) => {} | not required |
+| onChange | emitting when editor has changed | Function | ({html, text}, event) => {} | not required |
 | onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string\|function\|Promise | none | **required** |
 
@@ -150,8 +151,8 @@ export default class Demo extends React.Component {
     .use(tasklists, { enabled: this.taskLists })
     this.renderHTML = this.renderHTML.bind(this)
   }
-  handleEditorChange({html, text}) {
-    console.log('handleEditorChange', html, text)
+  handleEditorChange({html, text}, event) {
+    console.log('handleEditorChange', html, text, event)
   }
   handleImageUpload(file, callback) {
     const reader = new FileReader()

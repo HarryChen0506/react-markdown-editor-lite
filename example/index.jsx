@@ -54,8 +54,8 @@ class Demo extends React.Component {
     .use(tasklists, { enabled: this.taskLists })
   }
 
-  handleEditorChange = ({ html, text }) => {
-    // console.log('handleEditorChange', text)
+  handleEditorChange = ({ html, text}, event) => {
+    console.log('handleEditorChange', event)
   }
 
   handleImageUpload = (file, callback) => {
