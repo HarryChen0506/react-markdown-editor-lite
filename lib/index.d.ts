@@ -2,6 +2,7 @@ import * as React from 'react';
 
 declare namespace ReactMarkdownEditorLite {
   export interface MdEditorProps {
+    name: string;
     value: string;
     renderHTML: (text: string) => string | Promise;
     style?: React.HTMLAttributes.style;
