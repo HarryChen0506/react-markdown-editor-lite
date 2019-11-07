@@ -1,4 +1,4 @@
-export default function(defaultConfig, ...configs) {
+export default function(defaultConfig: any, ...configs: any[]) {
   const res = Object.assign({}, defaultConfig);
   configs.forEach(conf => {
     // only object

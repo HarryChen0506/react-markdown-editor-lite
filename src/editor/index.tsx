@@ -15,8 +15,7 @@ import { HtmlRender, HtmlCode } from './preview';
 
 import './index.less'
 import defaultConfig from './defaultConfig';
-
-const mergeConfig: any = require('../utils/mergeConfig');
+import mergeConfig from '../utils/mergeConfig';
 
 interface EditorConfig {
   theme?: string;
