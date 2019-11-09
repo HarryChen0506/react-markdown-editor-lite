@@ -4,8 +4,8 @@ declare namespace ReactMarkdownEditorLite {
   export interface MdEditorProps {
     name: string;
     value: string;
-    renderHTML: (text: string) => string | Promise;
-    style?: React.HTMLAttributes.style;
+    renderHTML: (text: string) => string | Promise<string>;
+    style?: React.CSSProperties;
     config?: {
       theme?: string;
       view?: {
