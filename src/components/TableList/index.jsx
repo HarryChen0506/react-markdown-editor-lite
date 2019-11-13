@@ -1,8 +1,8 @@
 // TableList
-import React from 'react'
+import React, { Component } from 'react'
 import './index.less'
 
-class TableList extends React.Component {
+class TableList extends Component {
   config = {
     padding: 3,
     width: 20,

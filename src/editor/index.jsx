@@ -1,7 +1,5 @@
-// markdown editor 
-import React from 'react'
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-
 import * as tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
@@ -16,7 +14,7 @@ import _config from '../config.js'
 
 import './index.less'
 
-export class HtmlRender extends React.Component {
+export class HtmlRender extends Component {
   render() {
     return (
       <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
@@ -24,7 +22,7 @@ export class HtmlRender extends React.Component {
   }
 }
 
-class HtmlCode extends React.Component {
+class HtmlCode extends Component {
   render() {
     return (
       <textarea className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
@@ -32,7 +30,7 @@ class HtmlCode extends React.Component {
   }
 }
 
-class MdEditor extends React.Component {
+export class MdEditor extends Component {
 
   config = {}
 
@@ -533,6 +531,7 @@ class MdEditor extends React.Component {
               <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
               <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
               <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
+              <span>123</span>
             </div>
           }
           right={
@@ -613,7 +612,7 @@ class MdEditor extends React.Component {
       return res
     }
     return (
-      <div 
+      <div
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
         style={this.props.style} onKeyDown={this.handleonKeyDown}
       >
@@ -626,4 +625,5 @@ class MdEditor extends React.Component {
   }
 }
 MdEditor.HtmlRender = HtmlRender
+
 export default MdEditor

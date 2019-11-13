@@ -1,8 +1,8 @@
 // DropList
-import React from 'react'
+import React, { Component } from 'react'
 import './index.less'
 
-class DropList extends React.Component {
+class DropList extends Component {
   constructor(props) {
     super(props);
     this.handleClose = this._handleClose.bind(this);

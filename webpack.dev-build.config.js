@@ -1,7 +1,7 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack');
 const version = require("./package.json").version;
 const banner =
@@ -12,20 +12,12 @@ const banner =
   " */\n";
 const config = {
   entry: {
-    app: './src/index',
+    app: './example/index.jsx',
   },
   output: {
-    filename: 'index.js',
-    path: path.resolve(__dirname, 'lib'),
-    libraryTarget: "umd"
+    filename: '[name].[hash].js',
+    path: path.resolve(__dirname, 'dist'),
   },
-  externals: [{
-      react: 'react',
-    },
-    {
-      ['react-dom']: 'react-dom',
-    }
-  ],
   mode: 'production',
   module: {
     rules: [{
@@ -69,14 +61,11 @@ const config = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    new CleanWebpackPlugin(['lib']),
-    new webpack.BannerPlugin({
-      banner,
-      raw: false
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, './public/index.html'),
+      filename: 'index.html',
     }),
-    new CopyWebpackPlugin([{
-      from: 'src/index.d.ts'
-    }])
   ],
 };
 

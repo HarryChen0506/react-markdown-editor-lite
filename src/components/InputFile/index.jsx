@@ -1,8 +1,8 @@
 // TableList
-import React from 'react'
+import React, { Component } from 'react'
 import './index.less'
 
-class InputFile extends React.Component {
+class InputFile extends Component {
   constructor(props) {
     super(props)
   }

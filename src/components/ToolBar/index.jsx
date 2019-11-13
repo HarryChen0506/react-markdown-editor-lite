@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { Component } from 'react'
 import './index.less'
 
-class ToolBar extends React.Component {
+class ToolBar extends Component {
   render() {
     return (
       <div className="tool-bar" style={this.props.style}>
