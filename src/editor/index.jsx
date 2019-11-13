@@ -387,7 +387,7 @@ export class MdEditor extends Component {
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
     const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper = {} } = this
-    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight)
+    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight + 35) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight + 35)
     this.hasContentChanged = false
   }
 
@@ -531,7 +531,6 @@ export class MdEditor extends Component {
               <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
               <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
               <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
-              <span>123</span>
             </div>
           }
           right={
