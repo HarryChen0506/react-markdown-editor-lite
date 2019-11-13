@@ -1,5 +1,4 @@
-
-.rc-md-editor {  
+.rc-md-editor {
   height: 100%;
   min-height: 0;
   padding-bottom: 1px;
@@ -31,14 +30,14 @@
         color: #1890FF;
       }
     }
-  }  
+  }
   .editor-container {
     flex: 1;
-    display: flex;  
-    width: 100%; 
+    display: flex;
+    width: 100%;
     min-height: 0;
     .sec-md {
-      flex: 1; 
+      flex: 1;
       position: relative;
       min-height: 0;
       min-width: 0;
@@ -46,13 +45,12 @@
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 20px 15px 15px 15px;        
+        padding: 20px 15px 15px 15px;
         overflow-y: scroll;
         border: none;
         resize: none;
         outline: none;
-        min-height: 0;
-        // background: rgb(248, 248, 248);        
+        min-height: 0; // background: rgb(248, 248, 248);        
         background: #fff;
         color: #333;
         font-size: 14px;
@@ -65,14 +63,28 @@
       min-height: 0;
       min-width: 0;
       margin-left: 20px;
-      padding-right: 15px;
-      padding-bottom: 15px;
-      .html-wrap {  
+      .html-wrap {
         height: 100%;
         box-sizing: border-box;
         padding-top: 20px;
-        overflow: auto;        
-      }   
+        padding-right: 15px;
+        padding-bottom: 15px;
+        overflow: auto;
+        // &::-webkit-scrollbar {
+        //   width: 8px;
+        //   background-color: transparent;
+        // }
+        // &::-webkit-scrollbar-track {
+        //   background-color: transparent;
+        //   border: none;
+        // }
+        // &::-webkit-scrollbar-thumb {
+        //   border: none;
+        //   border-radius: 4px;
+        // }
+        // &::-webkit-scrollbar-thumb:hover {
+        // }
+      }
       .html-code-wrap {
         height: 100%;
         box-sizing: border-box;
@@ -82,20 +94,19 @@
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 20px 15px 15px 15px;        
+        padding: 20px 15px 15px 15px;
         border: none;
         resize: none;
         outline: none;
         min-height: 200px;
-        background: #fff;        
+        background: #fff;
         color: #333;
         font-size: 14px;
         line-height: 20px;
-      } 
+      }
     }
-  }  
+  }
 }
-
 
 // navigationBar 
 .rc-md-navigation {
@@ -105,14 +116,14 @@
   border-bottom: 1px solid #ddd;
   font-size: 16px;
   background: #f1f1f1;
-  user-select: none;    
+  user-select: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   .navigation-nav {
     display: flex;
     flex-direction: row;
-    align-items:center;
+    align-items: center;
     justify-content: center;
     font-size: 14px;
     color: #666;
@@ -127,7 +138,7 @@
       height: 28px;
       margin-right: 5px;
       display: inline-block;
-      cursor: pointer;     
+      cursor: pointer;
       line-height: 28px;
       text-align: center;
       color: #999;
@@ -136,12 +147,24 @@
       }
     }
   }
-  ul, li {
-    list-style: none; 
+  ul,
+  li {
+    list-style: none;
     margin: 0;
-    padding:0;
+    padding: 0;
   }
-  h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5,
+  .h6 {
     font-family: inherit;
     font-weight: 500;
     color: inherit;
@@ -170,8 +193,8 @@
 }
 
 // 自定义htmL样式
-.custom-html-style {  
-  color: #333; 
+.custom-html-style {
+  color: #333;
   h1 {
     font-size: 32px;
     padding: 0px;
@@ -180,7 +203,6 @@
     margin: 32px 0;
     line-height: 1.2;
   }
-  
   h2 {
     font-size: 24px;
     padding: 0px 0;
@@ -189,7 +211,6 @@
     margin: 24px 0;
     line-height: 1.7;
   }
-  
   h3 {
     font-size: 18px;
     margin: 18px 0;
@@ -197,26 +218,22 @@
     line-height: 1.7;
     border: none;
   }
-  
   p {
     font-size: 14px;
     line-height: 1.7;
     margin: 8px 0;
   }
-  
   a {
     color: #0052d9
   }
-  
   a:hover {
     text-decoration: none
   }
-  
   strong {
     font-weight: 700
   }
-
-  ol, ul {
+  ol,
+  ul {
     font-size: 14px;
     line-height: 28px;
     padding-left: 36px
@@ -225,14 +242,12 @@
     margin-bottom: 8px;
     line-height: 1.7;
   }
-
   hr {
     margin-top: 20px;
     margin-bottom: 20px;
     border: 0;
     border-top: 1px solid #eee;
   }
-  
   pre {
     display: block;
     background-color: #f5f5f5;
@@ -243,7 +258,6 @@
     overflow-x: auto;
     word-break: break-word;
   }
-  
   code {
     background-color: #f5f5f5;
     border-radius: 0;
@@ -253,26 +267,23 @@
     overflow-x: auto;
     word-break: normal;
   }
-  
-  code:after, code:before {
+  code:after,
+  code:before {
     letter-spacing: 0
   }
-  
   blockquote {
     position: relative;
     margin: 16px 0;
     padding: 5px 8px 5px 30px;
-    background: none repeat scroll 0 0 rgba(102,128,153,.05);
+    background: none repeat scroll 0 0 rgba(102, 128, 153, .05);
     border: none;
     color: #333;
     border-left: 10px solid #D6DBDF;
   }
-
-  img, video {
-    max-width: 100%;
-    // max-height: 668px;
+  img,
+  video {
+    max-width: 100%; // max-height: 668px;
   }
-  
   table {
     font-size: 14px;
     line-height: 1.7;
@@ -283,26 +294,21 @@
     border-spacing: 0;
     box-sizing: border-box;
   }
-
-  table td, table th {
+  table td,
+  table th {
     word-break: break-all;
     word-wrap: break-word;
     white-space: normal
   }
-
   table tr {
     border: 1px solid #efefef
   }
-  
   table tr:nth-child(2n) {
     background-color: transparent
-  }
-
-  // table td, table th {
+  } // table td, table th {
   //   min-width: 80px;
   //   max-width: 430px
   // }
-
   table th {
     text-align: center;
     font-weight: 700;
@@ -311,7 +317,6 @@
     background-color: #f5f7fa;
     word-break: break-word;
   }
-  
   table td {
     border: 1px solid #efefef;
     text-align: left;

@@ -1,3 +1,8 @@
-import MdEditor from './editor'
+import { MdEditor, HtmlRender } from './editor/index.jsx'
 
-export default MdEditor;
+export {
+  MdEditor,
+  HtmlRender
+}
+
+export default MdEditor

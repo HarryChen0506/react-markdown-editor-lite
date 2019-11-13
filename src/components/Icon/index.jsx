@@ -1,11 +1,11 @@
 // Icon
-import React from 'react'
+import React, { Component } from 'react'
 import './font.less'
 
-class Icon extends React.Component {
-  render() {   
-    return ( 
-      <span className={'rmel-'+ this.props.type} ></span>
+class Icon extends Component {
+  render() {
+    return (
+      <span className={'rmel-' + this.props.type} ></span>
     )
   }
 }

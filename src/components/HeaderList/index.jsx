@@ -1,8 +1,8 @@
 // HeaderList
-import React from 'react'
+import React, { Component } from 'react'
 import './index.less'
 
-class HeaderList extends React.Component {
+class HeaderList extends Component {
   handleHeader(header) {
     const { onSelectHeader } = this.props
     typeof onSelectHeader === 'function' && onSelectHeader(header)

@@ -1,6 +1,6 @@
 // navigationBar
-import React from 'react'
-class NavigationBar extends React.Component {
+import React, { Component } from 'react'
+class NavigationBar extends Component {
   constructor(props) {
     super(props)
   }
