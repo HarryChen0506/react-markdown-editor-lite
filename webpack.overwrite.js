@@ -55,7 +55,8 @@ module.exports = config => {
             out: "temp_dts.tmp",
             newLine: "\n",
             indent: "  ",
-            verbose: true
+            verbose: true,
+            outputAsModuleFolder: true
           });
           console.log('bundle dts finished');
           // 移除其他d.ts文件

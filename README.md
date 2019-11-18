@@ -68,11 +68,13 @@ npm install markdown-it --save
 Use markdown-it as markdown parser
 
 ```js
+// Fist: import react, react-markdown-editor-lite, and a markdown parser you like
 'use strict';
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
+import 'react-markdown-editor-lite/index.css';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
