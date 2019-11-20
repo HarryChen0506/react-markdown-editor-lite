@@ -257,7 +257,7 @@ class MdEditor extends React.Component {
       })
     } else if (type === 'link') {
       decoratedText = decorate.getDecoratedText(type, {
-        linkUrl: this.config.linkUrl
+        linkUrl: option.linkUrl || this.config.linkUrl
       })
     } else {
       decoratedText = decorate.getDecoratedText(type, option)
