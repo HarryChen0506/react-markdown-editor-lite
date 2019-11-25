@@ -36,7 +36,7 @@ class Decorate {
         return `++${this.target}++`
       case 'strikethrough':
         return `~~${this.target}~~`
-      case 'unorder':
+      case 'unordered':
         return `\n- ${this.target}\n`
       case 'order':
         return `\n1. ${this.target}\n`
