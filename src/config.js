@@ -7,7 +7,8 @@ const config = {
   view: {
     menu: true,
     md: true,
-    html: true
+    html: true,
+    fullScreen: true
   },
   htmlClass: '',
   markdownClass: '',
@@ -21,7 +22,8 @@ const config = {
   table: {
     maxRow: 4,
     maxCol: 6
-  }
+  },
+  clearTip: 'Are you sure you want to clear your markdown ?'
 }
 
 export default config
