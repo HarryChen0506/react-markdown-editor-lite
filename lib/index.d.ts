@@ -12,6 +12,7 @@ declare namespace ReactMarkdownEditorLite {
         menu: boolean;
         md: boolean;
         html: boolean;
+        fullScreen: boolean;
       };
       htmlClass?: string;
       markdownClass?: string;
@@ -25,13 +26,15 @@ declare namespace ReactMarkdownEditorLite {
       table?: {
         maxRow: number;
         maxCol: number;
-      }
+      },
+      clearTip?: string;
     }
     onChange?: (data: {
       text: string;
       html: string;
     }, event: any) => void;
     onImageUpload?: (file: File, callback: (url: string) => void) => void;
+    onBeforeClear?: () => boolean | Promise<boolean>;
   }
   class MdEditor extends React.Component<MdEditorProps, any> {
   }

@@ -338,14 +338,32 @@ export class MdEditor extends Component {
   }
 
   _handleEmpty() {
-    if (window.confirm) {
-      //TODO: Allow custom confirm message
-      const result = window.confirm('Are you sure you want to clear your markdown?')
-      if (result) {
+    const { onBeforeClear } = this.props
+    const clearText = () => {
+      this.setState({
+        text: '',
+        html: ''
+      })
+    }
+    if (typeof onBeforeClear === 'function') {
+      const res = onBeforeClear()
+      if (typeof res === 'object' && typeof res.then === 'function') {
+        res.then((toClear) => {
+          if (toClear) {
+            clearText()
+          }
+        })
+      } else if (res === true) {
         this.setState({
           text: '',
           html: ''
         })
+      }
+    } else if (window.confirm) {
+      //TODO: Allow custom confirm message
+      const result = window.confirm(this.config.clearTip)
+      if (result) {
+        clearText()
       }
     }
   }
@@ -536,9 +554,11 @@ export class MdEditor extends Component {
           }
           right={
             <div className="button-wrap">
-              <span className="button" title="Full screen" onClick={this.handleToggleFullScreen}>
-                {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
-              </span>
+              {view.fullScreen &&
+                <span className="button" title="Full screen" onClick={this.handleToggleFullScreen}>
+                  {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
+                </span>
+              }
             </div>
           }
         />
@@ -586,7 +606,7 @@ export class MdEditor extends Component {
                   : <Icon type="icon-columns" />
                 }
               </span>
-              <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
+              <span className="button" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
               <span className="button" title="Show HTML" onClick={this.handleToggleHtmlType}>
                 {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
