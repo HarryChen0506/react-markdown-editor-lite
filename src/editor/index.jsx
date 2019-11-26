@@ -94,8 +94,8 @@ export class MdEditor extends Component {
     this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
     this.handleInputScroll = tool.throttle((e) => {
-      const { syncScroll } = this.config
-      if (!syncScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('rightFollowLeft')) {
         return
       }
       e.persist()
@@ -107,8 +107,8 @@ export class MdEditor extends Component {
       }
     }, 1000 / 60)
     this.handlePreviewScroll = tool.throttle((e) => {
-      const { syncScroll } = this.config
-      if (!syncScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('leftFollowRight')) {
         return
       }
       e.persist()
@@ -360,7 +360,6 @@ export class MdEditor extends Component {
         })
       }
     } else if (window.confirm) {
-      //TODO: Allow custom confirm message
       const result = window.confirm(this.config.clearTip)
       if (result) {
         clearText()

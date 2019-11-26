@@ -87,7 +87,7 @@ class Demo extends React.Component {
       const result = window.confirm('Are you sure you want to clear your markdown :-)')
       const toClear = result ? true : false
       resolve(toClear)
-      // example code
+      // custom confirm message pseudo code
       // YourCustomDialog.open(() => {
       //   // confirm callback
       //   resolve(true)
@@ -136,6 +136,7 @@ class Demo extends React.Component {
                 maxCol: 6
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
+              syncScrollMode: ['rightFollowLeft'],
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}

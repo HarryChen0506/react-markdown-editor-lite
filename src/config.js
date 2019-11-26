@@ -15,7 +15,8 @@ const config = {
   logger: {
     interval: 3000
   },
-  syncScroll: true,
+  // syncScroll: true,
+  syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
   imageUrl: '',
   imageAccept: '',
   linkUrl: '',
