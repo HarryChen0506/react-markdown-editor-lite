@@ -39,18 +39,20 @@ yarn add react-markdown-editor-lite
 | name | the name prop of textarea | String | 'textarea' |  |
 | style | Inline styles for the component container | Object | `{height: '100%'}` |  |
 | config | Configuration object for the editor | Object | See config.js for defaults |  |
-| config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true}` |  |
+| config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true, fullScreen: true}` |  |
 | config.htmlClass | className of preview pane | String | `''` |  |
 | config.markdownClass | className of editorpane | String | `''` |  |
 | config.imageUrl | default image url | String | `''` | DEBUG USE ONLY |
 | config.linkUrl | default link url | String | `''` | DEBUG USE ONLY |
 | config.table | Max amount of rows and columns that a table created through the toolbar can have | Object | `{maxRow: 4, maxCol: 6}` | |
 | config.logger | How often to log events for undo/redo ms | Object | `{interval: 3000}` | |
-| config.syncScroll | Enable scroll sync between editor and preview | Boolean | true | |
+| config.syncScrollMode | Scroll sync mode between editor and preview | Array | `['rightFollowLeft', 'leftFollowRight']` | |
+| config.clearTip | default clear tip| String | `'Are you sure you want to clear your markdown ?'` | |
 | config.imageAccept | Accepted file extensions for images, list of comma seperated values i.e `.jpg,.png` | String | `''` | |
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
+| onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | See detail in src/editor/index.jsx |  |
 
 ## API
 
@@ -177,7 +179,8 @@ export default class Demo extends React.Component {
       setTimeout(() => {
         // setTimeout 模拟异步上传图片
         // 当异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-        callback('https://avatars0.githubusercontent.com/u/21263805?s=40&v=4')
+        const uploadedUrl = 'https://avatars0.githubusercontent.com/u/21263805?s=40&v=4'
+        callback(uploadedUrl)
       }, 1000)
     }
     reader.readAsDataURL(file)
@@ -188,6 +191,21 @@ export default class Demo extends React.Component {
       setTimeout(() => {
         resolve(this.mdParser.render(text))
       }, 1000)
+    })
+  }
+  onBeforeClear = () => {
+    return new Promise((resolve, reject) => {
+      const result = window.confirm('Are you sure you want to clear your markdown :-)')
+      const toClear = result ? true : false
+      resolve(toClear)
+      // custom confirm dialog pseudo code
+      // YourCustomDialog.open(() => {
+      //   // confirm callback
+      //   resolve(true)
+      // }, () => {
+      //   // cancel callback
+      //   resolve(false)
+      // })
     })
   }
   handleGetMdValue = () => {   
@@ -213,12 +231,14 @@ export default class Demo extends React.Component {
               view: {
                 menu: true,
                 md: true,
-                html: true
+                html: true,
+                fullScreen: true
               },
               imageUrl: 'https://octodex.github.com/images/minion.png'
             }}
             onChange={this.handleEditorChange} 
             onImageUpload={this.handleImageUpload}
+            onBeforeClear={this.onBeforeClear}
           />
         </section>                        
       </div>      

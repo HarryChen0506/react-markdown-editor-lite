@@ -62,7 +62,19 @@ export class MdEditor extends Component {
   }
 
   selection = { ...this.initialSelection }
-
+  static defaultProps = {
+    onBeforeClear: function () {
+      return new Promise((resolve) => {
+        if (window.confirm && typeof window.confirm === 'function') {
+          const result = window.confirm(this.config.clearTip)
+          const toClear = result ? true : false
+          resolve(toClear)
+        } else {
+          resolve(true)
+        }
+      })
+    }
+  }
   constructor(props) {
     super(props)
     this.config = this.initConfig()
@@ -94,8 +106,8 @@ export class MdEditor extends Component {
     this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
     this.handleInputScroll = tool.throttle((e) => {
-      const { syncScroll } = this.config
-      if (!syncScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('rightFollowLeft')) {
         return
       }
       e.persist()
@@ -107,8 +119,8 @@ export class MdEditor extends Component {
       }
     }, 1000 / 60)
     this.handlePreviewScroll = tool.throttle((e) => {
-      const { syncScroll } = this.config
-      if (!syncScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('leftFollowRight')) {
         return
       }
       e.persist()
@@ -346,7 +358,7 @@ export class MdEditor extends Component {
       })
     }
     if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear()
+      const res = onBeforeClear.call(this)
       if (typeof res === 'object' && typeof res.then === 'function') {
         res.then((toClear) => {
           if (toClear) {
@@ -358,12 +370,6 @@ export class MdEditor extends Component {
           text: '',
           html: ''
         })
-      }
-    } else if (window.confirm) {
-      //TODO: Allow custom confirm message
-      const result = window.confirm(this.config.clearTip)
-      if (result) {
-        clearText()
       }
     }
   }
