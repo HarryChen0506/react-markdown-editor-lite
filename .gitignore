@@ -12,6 +12,10 @@ node_modules/
 dist/
 dist/*
 
+# lib
+lib/
+lib/*
+
 # karma
 coverage/
 coverage/*
