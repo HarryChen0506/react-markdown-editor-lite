@@ -1,12 +1,12 @@
 # react-markdown-editor-lite
 
-* A light-weight(size 69KB) Markdown editor of React component
-* Support TypeScript
-* Support custom markdown parser
-* Support Markdown Syntax: bold, italic, etc.
-* Support UI configuration: show only editor or previewer area
-* Support image upload
-* Support synch scrolling with editor and previewer
+* A light-weight(69KB) Markdown editor of React component
+* Supports TypeScript
+* Supports custom markdown parser
+* Full markdown support
+* Full control over UI
+* Supports image upload
+* Supports synced scrolling between editor and preview
 * 一款轻量的基于React的Markdown编辑器, 压缩后代码只有69KB
 * 支持TypeScript
 * 支持自定义Markdown解析器
@@ -17,55 +17,61 @@
 
 ## Demo
 
-online demo [https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-4-6.PNG?raw=true)
+Online demo <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
+<!-- ![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-4-6.PNG?raw=true) -->
 
 ## Install
 
+### Npm
 ```
 npm install react-markdown-editor-lite --save
+```
+### Yarn
+```
+yarn add react-markdown-editor-lite
 ```
 
 ## Props
 
-| Property | Description | Type | default | Remarks |
+| Property | Description | Type | default | Notes |
 | --- | --- | --- | --- | --- |
-| value | markdown content | String | '' | required |
-| name | the name prop of textarea | String | 'textarea' | not required |
-| style | component container style | Object | {height: '100%'} | not required |
-| config | component config | Object | {view: {...}, logger: {...}} | not required |
-| config.view | component UI | Object | {menu: true, md: true, html: true} |  |
-| config.htmlClass | Html section class attribute | String | `<Empty string>` |  |
-| config.markdownClass | Markdown section class attribute | String | `<Empty string>` |  |
-| config.imageUrl | default image url | String | '' | |
-| config.linkUrl | default link url | String | '' | |
-| config.table | table maximum value of row and column | Object | {maxRow: 4, maxCol: 6} | |
-| config.logger | logger in order to undo or redo | Object | {interval: 3000} | |
-| config.synchScroll | Does it support synch scroll? | Boolean | true | |
-| config.imageAccept | Accept image extensions, such as `.jpg,.png` | String | `<Empty string>` | |
-| onChange | emitting when editor has changed | Function | ({html, text}, event) => {} | not required |
-| onImageUpload | when image uploaded, callback emitting will get image markdown text | (file: File, callback: (url: string) => void) => void; | ({file, callback}) => {} | not required |
-| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | (text: string) => string\|function\|Promise | none | **required** |
+| value | Markdown content | String | `''` | **required** |
+| name | the name prop of textarea | String | 'textarea' |  |
+| style | Inline styles for the component container | Object | `{height: '100%'}` |  |
+| config | Configuration object for the editor | Object | See config.js for defaults |  |
+| config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true}` |  |
+| config.htmlClass | className of preview pane | String | `''` |  |
+| config.markdownClass | className of editorpane | String | `''` |  |
+| config.imageUrl | default image url | String | `''` | DEBUG USE ONLY |
+| config.linkUrl | default link url | String | `''` | DEBUG USE ONLY |
+| config.table | Max amount of rows and columns that a table created through the toolbar can have | Object | `{maxRow: 4, maxCol: 6}` | |
+| config.logger | How often to log events for undo/redo ms | Object | `{interval: 3000}` | |
+| config.syncScroll | Enable scroll sync between editor and preview | Boolean | true | |
+| config.imageAccept | Accepted file extensions for images, list of comma seperated values i.e `.jpg,.png` | String | `''` | |
+| onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
+| onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
+| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
 
 ## API
 
 ### MdEditor.getMdValue () => String
 
-this api return a markdown content 
+Get the markdown content as a string
 
 ### MdEditor.getHtmlValue () => String
 
-this api return a html text
+Get the content of the editor as html
 
-## Custom Markdown Parser
-we recommend using [markdown-it](https://github.com/markdown-it/markdown-it) as markown parser, because it supports configurable syntax and has many community-written plugins.You can use any other parser instead of markdown-it.
+## Markdown Parser
+We recommend using [markdown-it](https://github.com/markdown-it/markdown-it) as markown parser because it supports configurable syntax and has many community-written plugins. However, you can use any markdown parser you please.
+
 ```
 npm install markdown-it --save
 ```
 
 ## Basic Usage
 
-Use markdown-it as markdown parser
+Using markdown-it as the markdown parser
 
 ```js
 'use strict';
@@ -98,7 +104,7 @@ export default class Demo extends React.Component {
 }
 ```
 
-## More Example
+## More complicated example
 
 ```js
 'use strict';
@@ -221,7 +227,7 @@ export default class Demo extends React.Component {
 }
 ```
 
-## Using in Next.js
+## Usage in Next.js
 
 ```js
 import dynamic from 'next/dynamic'

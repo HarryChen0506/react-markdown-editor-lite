@@ -19,7 +19,7 @@ declare namespace ReactMarkdownEditorLite {
       logger?: {
         interval: number;
       };
-      synchScroll?: boolean;
+      syncScroll?: boolean;
       imageUrl?: string;
       imageAccept?: string;
       linkUrl?: string;
