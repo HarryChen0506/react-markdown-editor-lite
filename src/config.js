@@ -14,7 +14,7 @@ const config = {
   logger: {
     interval: 3000
   },
-  synchScroll: true,
+  syncScroll: true,
   imageUrl: '',
   imageAccept: '',
   linkUrl: '',

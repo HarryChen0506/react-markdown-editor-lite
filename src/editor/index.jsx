@@ -94,8 +94,8 @@ export class MdEditor extends Component {
     this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
     this.handleInputScroll = tool.throttle((e) => {
-      const { synchScroll } = this.config
-      if (!synchScroll) {
+      const { syncScroll } = this.config
+      if (!syncScroll) {
         return
       }
       e.persist()
@@ -107,8 +107,8 @@ export class MdEditor extends Component {
       }
     }, 1000 / 60)
     this.handlePreviewScroll = tool.throttle((e) => {
-      const { synchScroll } = this.config
-      if (!synchScroll) {
+      const { syncScroll } = this.config
+      if (!syncScroll) {
         return
       }
       e.persist()
