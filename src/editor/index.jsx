@@ -62,7 +62,19 @@ export class MdEditor extends Component {
   }
 
   selection = { ...this.initialSelection }
-
+  static defaultProps = {
+    onBeforeClear: function () {
+      return new Promise((resolve) => {
+        if (window.confirm && typeof window.confirm === 'function') {
+          const result = window.confirm(this.config.clearTip)
+          const toClear = result ? true : false
+          resolve(toClear)
+        } else {
+          resolve(true)
+        }
+      })
+    }
+  }
   constructor(props) {
     super(props)
     this.config = this.initConfig()
@@ -346,7 +358,7 @@ export class MdEditor extends Component {
       })
     }
     if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear()
+      const res = onBeforeClear.call(this)
       if (typeof res === 'object' && typeof res.then === 'function') {
         res.then((toClear) => {
           if (toClear) {
@@ -358,11 +370,6 @@ export class MdEditor extends Component {
           text: '',
           html: ''
         })
-      }
-    } else if (window.confirm) {
-      const result = window.confirm(this.config.clearTip)
-      if (result) {
-        clearText()
       }
     }
   }

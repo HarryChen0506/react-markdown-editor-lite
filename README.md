@@ -52,7 +52,17 @@ yarn add react-markdown-editor-lite
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
-| onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | none |  |
+| onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | ```function () {
+      return new Promise((resolve) => {
+        if (window.confirm && typeof window.confirm === 'function') {
+          const result = window.confirm(this.config.clearTip)
+          const toClear = result ? true : false
+          resolve(toClear)
+        } else {
+          resolve(true)
+        }
+      })
+    }``` |  |
 
 ## API
 
