@@ -39,7 +39,7 @@ yarn add react-markdown-editor-lite
 | name | the name prop of textarea | String | 'textarea' |  |
 | style | Inline styles for the component container | Object | `{height: '100%'}` |  |
 | config | Configuration object for the editor | Object | See config.js for defaults |  |
-| config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true}` |  |
+| config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true, fullScreen: true}` |  |
 | config.htmlClass | className of preview pane | String | `''` |  |
 | config.markdownClass | className of editorpane | String | `''` |  |
 | config.imageUrl | default image url | String | `''` | DEBUG USE ONLY |
@@ -52,17 +52,7 @@ yarn add react-markdown-editor-lite
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
-| onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | ```function () {
-      return new Promise((resolve) => {
-        if (window.confirm && typeof window.confirm === 'function') {
-          const result = window.confirm(this.config.clearTip)
-          const toClear = result ? true : false
-          resolve(toClear)
-        } else {
-          resolve(true)
-        }
-      })
-    }``` |  |
+| onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | See detail in src/editor/index.jsx |  |
 
 ## API
 
@@ -241,7 +231,8 @@ export default class Demo extends React.Component {
               view: {
                 menu: true,
                 md: true,
-                html: true
+                html: true,
+                fullScreen: true
               },
               imageUrl: 'https://octodex.github.com/images/minion.png'
             }}
