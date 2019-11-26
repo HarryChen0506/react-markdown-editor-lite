@@ -16,6 +16,5 @@ dist/*
 coverage/
 coverage/*
 
-
 # Xcode
 .DS_Store
