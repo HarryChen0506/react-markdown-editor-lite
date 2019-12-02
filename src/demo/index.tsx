@@ -50,6 +50,22 @@ class Demo extends React.Component {
     reader.readAsDataURL(file)
   }
 
+  onBeforeClear(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const result = window.confirm('Are you sure you want to clear your markdown :-)')
+      const toClear = result ? true : false
+      resolve(toClear)
+      // custom confirm message pseudo code
+      // YourCustomDialog.open(() => {
+      //   // confirm callback
+      //   resolve(true)
+      // }, () => {
+      //   // cancel callback
+      //   resolve(false)
+      // })
+    })
+  }
+
   handleGetMdValue = () => {
     if (this.mdEditor) {
       alert(this.mdEditor.getMdValue())
@@ -80,16 +96,20 @@ class Demo extends React.Component {
               view: {
                 menu: true,
                 md: true,
-                html: true
+                html: true,
+                fullScreen: true
               },
               table: {
                 maxRow: 5,
                 maxCol: 6
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
+              syncScrollMode: ['rightFollowLeft'],
+              clearTip: 'Are you sure you want to clear your markdown ???'
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
+            onBeforeClear={this.onBeforeClear}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>

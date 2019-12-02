@@ -24,6 +24,10 @@ lib/
 *.sql
 *.sqlite
 
+# karma
+coverage/
+coverage/*
+
 # OS generated files #
 ######################
 .DS_Store

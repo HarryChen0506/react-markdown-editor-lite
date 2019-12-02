@@ -6,11 +6,6 @@ interface IconProps {
   type: string;
 }
 
-class Icon extends React.Component<IconProps, any> {
-  render() {   
-    return ( 
-      <span className={`rmel-${this.props.type}`}></span>
-    )
-  }
+export default function Icon (props: IconProps) {
+  return (<span className={`rmel-${props.type}`}></span>);
 }
-export default Icon

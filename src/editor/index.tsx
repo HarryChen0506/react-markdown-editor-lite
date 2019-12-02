@@ -38,6 +38,8 @@ interface EditorConfig {
     maxRow: number;
     maxCol: number;
   }
+  syncScrollMode?: string[];
+  clearTip?: string;
 }
 
 interface EditorProps extends EditorConfig {
@@ -50,12 +52,24 @@ interface EditorProps extends EditorConfig {
     text: string;
     html: string;
   }, event?: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
   onImageUpload?: (file: File, callback: (url: string) => void) => void;
 }
 
 class Editor extends React.Component<EditorProps, any> {
   static defaultProps = {
-    value: ""
+    value: "",
+    onBeforeClear: function(this: Editor) {
+      return new Promise((resolve) => {
+        if (window.confirm && typeof window.confirm === 'function') {
+          const result = window.confirm(this.config.clearTip)
+          const toClear = result ? true : false
+          resolve(toClear)
+        } else {
+          resolve(true)
+        }
+      })
+    }
   };
 
   private config: EditorConfig;
@@ -82,8 +96,7 @@ class Editor extends React.Component<EditorProps, any> {
     text: ''
   }
 
-  private selection = { ...this.initialSelection }
-
+  private selection = { ...this.initialSelection };
 
   private handleInputScroll: () => void;
   private handlePreviewScroll: () => void;
@@ -124,8 +137,8 @@ class Editor extends React.Component<EditorProps, any> {
     this.handleonKeyDown = this.handleonKeyDown.bind(this)
 
     this.handleInputScroll = tool.throttle((e: any) => {
-      const { synchScroll } = this.config
-      if (!synchScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('rightFollowLeft')) {
         return
       }
       e.persist()
@@ -137,8 +150,8 @@ class Editor extends React.Component<EditorProps, any> {
       }
     }, 1000 / 60).bind(this);
     this.handlePreviewScroll = tool.throttle((e: any) => {
-      const { synchScroll } = this.config
-      if (!synchScroll) {
+      const { syncScrollMode = [] } = this.config
+      if (!syncScrollMode.includes('leftFollowRight')) {
         return
       }
       e.persist()
@@ -234,7 +247,7 @@ class Editor extends React.Component<EditorProps, any> {
       'italic',
       'underline',
       'strikethrough',
-      'unorder',
+      'unordered',
       'order',
       'quote',
       'hr',
@@ -262,18 +275,19 @@ class Editor extends React.Component<EditorProps, any> {
     const { selection } = this;
     const beforeContent = text.slice(0, selection.start);
     const afterContent = text.slice(selection.end, text.length);
-    let decoratedText = '';
+    const decorate = new Decorate(selection.text)
+    let decoratedText = ''
     if (type === 'image') {
-      decoratedText = Decorate(selection.text, type, {
+      decoratedText = decorate.getDecoratedText(type, {
         target: option.target || "",
         imageUrl: option.imageUrl || this.config.imageUrl
-      });
+      })
     } else if (type === 'link') {
-      decoratedText = Decorate(selection.text, type, {
+      decoratedText = decorate.getDecoratedText(type, {
         linkUrl: this.config.linkUrl
-      });
+      })
     } else {
-      decoratedText = Decorate(selection.text, type, option);
+      decoratedText = decorate.getDecoratedText(type, option)
     }
     const result = beforeContent + `${decoratedText}` + afterContent;
     return result;
@@ -353,14 +367,28 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private handleEmpty() {
-    if (window.confirm) {
-      const result = window.confirm('Are you sure to empty markdown ?');
-      if (result) {
-        this.setState({
-          text: '',
-          html: ''
-        });
+    const { onBeforeClear } = this.props
+    const clearText = () => {
+      this.setState({
+        text: '',
+        html: ''
+      })
+    }
+    if (onBeforeClear) {
+      if (typeof onBeforeClear === 'function') {
+        const res = onBeforeClear.call(this)
+        if (typeof res === 'object' && typeof res.then === 'function') {
+          res.then((toClear) => {
+            if (toClear) {
+              clearText()
+            }
+          })
+        } else if (res === true) {
+          clearText()
+        }
       }
+    } else {
+      clearText();
     }
   }
 
@@ -423,7 +451,7 @@ class Editor extends React.Component<EditorProps, any> {
     if (!this.nodeMdText.current || !this.nodeMdPreview || !this.nodeMdPreviewWraper.current) {
       return;
     }
-    this.scale = (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight) / (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight);
+    this.scale = (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight + 35) / (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight + 35);
     this.hasContentChanged = false;
   }
 
@@ -500,7 +528,7 @@ class Editor extends React.Component<EditorProps, any> {
         <NavigationBar
           left={
             <div className="button-wrap">
-              <span className="button" title="header"
+              <span className="button" title="Header"
                 onMouseEnter={() => this.showDropList('header', true)}
                 onMouseLeave={() => this.showDropList('header', false)}
               >
@@ -519,17 +547,17 @@ class Editor extends React.Component<EditorProps, any> {
                   }}
                 />
               </span>
-              <span className="button" title="bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
-              <span className="button" title="italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
-              <span className="button" title="italic" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
-              <span className="button" title="strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
-              <span className="button" title="unorder" onClick={() => this.handleDecorate('unorder')}><Icon type="icon-list-ul" /></span>
-              <span className="button" title="order" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
-              <span className="button" title="quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
-              <span className="button" title="hr" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
-              <span className="button" title="inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
-              <span className="button" title="code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
-              <span className="button" title="table"
+              <span className="button" title="Bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
+              <span className="button" title="Italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
+              <span className="button" title="Underline" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
+              <span className="button" title="Strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
+              <span className="button" title="Unordered list" onClick={() => this.handleDecorate('unordered')}><Icon type="icon-list-ul" /></span>
+              <span className="button" title="Ordered list" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
+              <span className="button" title="Quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
+              <span className="button" title="Line break" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
+              <span className="button" title="Inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
+              <span className="button" title="Block code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
+              <span className="button" title="Table"
                 onMouseEnter={() => this.showDropList('table', true)}
                 onMouseLeave={() => this.showDropList('table', false)}
               >
@@ -548,7 +576,7 @@ class Editor extends React.Component<EditorProps, any> {
                   }}
                 />
               </span>
-              <span className="button" title="image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
+              <span className="button" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                 <Icon type="icon-photo" />
                 <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   e.persist();
@@ -557,18 +585,20 @@ class Editor extends React.Component<EditorProps, any> {
                   }
                 }} />
               </span>
-              <span className="button" title="link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
+              <span className="button" title="Link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
 
-              <span className="button" title="empty" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
-              <span className="button" title="undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
-              <span className="button" title="redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
+              <span className="button" title="Clear" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
+              <span className="button" title="Undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
+              <span className="button" title="Redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
             </div>
           }
           right={
             <div className="button-wrap">
-              <span className="button" title="full screen" onClick={this.handleToggleFullScreen}>
-                {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
-              </span>
+              {view.fullScreen &&
+                <span className="button" title="Full screen" onClick={this.handleToggleFullScreen}>
+                  {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
+                </span>
+              }
             </div>
           }
         />
@@ -580,13 +610,13 @@ class Editor extends React.Component<EditorProps, any> {
         res.push(
           <section className={'sec-md'} key="md">
             <ToolBar>
-              <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+              <span className="button" title={view.menu ? 'Hide menu' : 'Show menu'} onClick={this.handleToggleMenu}>
                 {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
               </span>
-              <span className="button" title={view.html ? 'preview' : 'column'} onClick={this.handleMdPreview}>
+              <span className="button" title={view.html ? 'Hide preview' : 'Show preview'} onClick={this.handleMdPreview}>
                 {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
               </span>
-              <span className="button" title={'toggle'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
+              <span className="button" title={'Preview'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
             </ToolBar>
             <textarea
               id="textarea"
@@ -611,13 +641,13 @@ class Editor extends React.Component<EditorProps, any> {
                   : <Icon type="icon-chevron-down" />
                 }
               </span>
-              <span className="button" title={view.md ? 'preview' : 'column'} onClick={this.handleHtmlPreview}>
+              <span className="button" title={view.md ? 'Hide editor' : 'Show editor'} onClick={this.handleHtmlPreview}>
                 {view.md ? <Icon type="icon-desktop" />
                   : <Icon type="icon-columns" />
                 }
               </span>
-              <span className="button" title={'toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
-              <span className="button" title="HTML code" onClick={this.handleToggleHtmlType}>
+              <span className="button" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
+              <span className="button" title="Show HTML" onClick={this.handleToggleHtmlType}>
                 {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
                 }
@@ -642,7 +672,7 @@ class Editor extends React.Component<EditorProps, any> {
       return res
     }
     return (
-      <div 
+      <div
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
         style={this.props.style} onKeyDown={this.handleonKeyDown}
       >
@@ -655,4 +685,4 @@ class Editor extends React.Component<EditorProps, any> {
   }
 }
 
-export default Editor;
+export default Editor
