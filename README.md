@@ -81,6 +81,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
+// If you are using less/scss, you can aslo import css at your style file
 import 'react-markdown-editor-lite/index.css';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."

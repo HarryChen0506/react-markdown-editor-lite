@@ -2,6 +2,8 @@
  * logger: undo redo
  */
 
+const MAX_LOG_SIZE = 100;
+
 class Logger {  
 
   private record: string[] = []
@@ -9,7 +11,12 @@ class Logger {
   private recycle: string[] = []
 
   pushRecord(val: string) {
-    return this.record.push(val);
+    const result = this.record.push(val);
+    // 如果超过了最长限制，把之前的清理掉，避免造成内存浪费
+    while (this.record.length > MAX_LOG_SIZE) {
+      this.record.shift();
+    }
+    return result;
   }
 
   getRecord() {
@@ -32,7 +39,7 @@ class Logger {
   redo(cb?: (obj: string) => void) {
     const history = this.recycle.pop();
     if (history) {
-      this.record.push(history);
+      this.pushRecord(history);
       typeof cb === 'function' && cb(this.getLastRecord());
     }    
   }
