@@ -21,4 +21,4 @@ coverage/
 coverage/*
 
 # Xcode
-.DS_Store
+.DS_Store.DS_Store
