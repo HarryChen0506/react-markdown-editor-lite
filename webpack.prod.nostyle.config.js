@@ -1,7 +1,8 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const version = require("./package.json").version;
 const banner =
@@ -12,7 +13,7 @@ const banner =
   " */\n";
 const config = {
   entry: {
-    index: './src/index',
+    "index.nostyle": './src/index'
   },
   output: {
     filename: '[name].js',
@@ -45,6 +46,9 @@ const config = {
         use: [
           'style-loader',
           {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
             loader: 'css-loader',
             options: {
               importLoaders: 1
@@ -69,14 +73,13 @@ const config = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    new CleanWebpackPlugin(['lib']),
     new webpack.BannerPlugin({
       banner,
       raw: false
     }),
-    new CopyWebpackPlugin([{
-      from: 'src/index.d.ts'
-    }])
+    new MiniCssExtractPlugin({
+      filename: 'index.css',
+    })
   ],
 };
 
