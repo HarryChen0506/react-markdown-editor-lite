@@ -16,6 +16,8 @@
     "start": "webpack --config webpack.config.js",
     "dev": "webpack-dev-server  --host 0.0.0.0 --open http://localhost:8080",
     "prod": "webpack --config webpack.prod.config.js",
+    "nostyle": "webpack --config webpack.prod.nostyle.config.js",
+    "release": "npm run prod && npm run nostyle",
     "dev-build": "webpack --config webpack.dev-build.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -72,6 +74,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
+    "mini-css-extract-plugin": "^0.8.0",
     "mocha": "^5.2.0",
     "postcss-loader": "^2.1.6",
     "react": "^16.8.1",

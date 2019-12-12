@@ -61,7 +61,6 @@ const config = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    // new CleanWebpackPlugin(['dist']),    
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './public/index.html'),
       filename: 'index.html',
