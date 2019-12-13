@@ -8,7 +8,7 @@ node_modules/
 # Optional npm cache directory
 .npm
 
-# dist 
+# dist
 dist/
 dist/*
 
