@@ -17,7 +17,7 @@ import './index.less'
 export class HtmlRender extends Component {
   render() {
     return (
-      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
+      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ''}`} />
     )
   }
 }
@@ -25,7 +25,7 @@ export class HtmlRender extends Component {
 class HtmlCode extends Component {
   render() {
     return (
-      <textarea className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
+      <textarea className={`html-code ${this.props.className || ''}`} value={this.props.html} onChange={() => { }}></textarea>
     )
   }
 }
@@ -133,7 +133,7 @@ export class MdEditor extends Component {
   }
 
   componentDidMount() {
-    this.renderHTML(this.props.value || "")
+    this.renderHTML(this.props.value || '')
       .then(html => {
         this.setState({
           html: html
@@ -262,7 +262,7 @@ export class MdEditor extends Component {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
-        target: option.target || "",
+        target: option.target || '',
         imageUrl: option.imageUrl || this.config.imageUrl
       })
     } else if (type === 'link') {
@@ -282,9 +282,9 @@ export class MdEditor extends Component {
       return
     }
     const res = this.props.renderHTML(markdownText)
-    if (typeof res === "string") {
+    if (typeof res === 'string') {
       return Promise.resolve(res)
-    } else if (typeof res === "function") {
+    } else if (typeof res === 'function') {
       return Promise.resolve(res())
     } else if (typeof res === 'object' && typeof res.then === 'function') {
       return res
@@ -391,7 +391,7 @@ export class MdEditor extends Component {
   }
 
   _handleChange(e) {
-    e.persist();
+    e.persist()
     this.startLogger()
     const value = e.target.value
     if (!this.hasContentChanged) {
@@ -411,7 +411,10 @@ export class MdEditor extends Component {
 
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper = {} } = this
+    const { nodeMdText, nodeMdPreview, nodeMdPreviewWraper } = this
+    if (!nodeMdText || !nodeMdPreview || !nodeMdPreviewWraper) {
+      return
+    }
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight + 35) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight + 35)
     this.hasContentChanged = false
   }
@@ -469,7 +472,7 @@ export class MdEditor extends Component {
   }
 
   onEmit(output, event) {
-    const { onChange } = this.props;
+    const { onChange } = this.props
     typeof onChange === 'function' && onChange(output, event)
   }
 
@@ -545,7 +548,7 @@ export class MdEditor extends Component {
               </span>
               <span className="button button-type--image" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                 <Icon type="icon-photo" />
-                <InputFile accept={this.config.imageAccept || ""} ref={(input) => { this.inputFile = input }} onChange={(e) => {
+                <InputFile accept={this.config.imageAccept || ''} ref={(input) => { this.inputFile = input }} onChange={(e) => {
                   e.persist()
                   const file = e.target.files[0]
                   this.onImageChanged(file)
@@ -586,10 +589,10 @@ export class MdEditor extends Component {
             </ToolBar>
             <textarea
               id="textarea"
-              name={this.props.name || "textarea"}
+              name={this.props.name || 'textarea'}
               ref={node => this.nodeMdText = node}
               value={text}
-              className={`input ${this.config.markdownClass || ""}`}
+              className={`input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
               onSelect={this.handleInputSelect}

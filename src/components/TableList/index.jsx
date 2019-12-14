@@ -21,13 +21,13 @@ class TableList extends Component {
 
   formatTableModel(maxRow = 0, maxCol = 0) {
     const result = new Array(maxRow).fill()
-    return result.map(v => {
+    return result.map(() => {
       return new Array(maxCol).fill(0)
     })
   }
 
   calcWrapStyle() {
-    const { maxRow, maxCol } = this.state;
+    const { maxRow, maxCol } = this.state
     const { width, height, padding } = this.config
     const wrapWidth = (width + padding) * maxCol - padding
     const wrapHeight = (height + padding) * maxRow - padding

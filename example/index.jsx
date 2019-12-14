@@ -1,8 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import MdEditor from '../src/index.js';
+/* eslint-disable */
+import React from 'react'
+import ReactDOM from 'react-dom'
+import MdEditor from '../src/index.js'
 // import MdEditor from '../lib/index.js'
-import MarkdownIt from 'markdown-it';
+// import MdEditor from '../lib/index.nostyle.js'
+// import '../lib/index.css'
+import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import subscript from 'markdown-it-sub'
 import superscript from 'markdown-it-sup'
@@ -15,9 +18,10 @@ import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 // import 'highlight.js/styles/github.css'
-// import content from './content.js';
-import content from './content.1.js';
-import './index.less';
+// import content from './content.js'
+import content from './content.1.js'
+import './index.less'
+
 
 const MOCK_DATA = content
 
@@ -38,23 +42,25 @@ class Demo extends React.Component {
         if (lang && hljs.getLanguage(lang)) {
           try {
             return hljs.highlight(lang, str).value
-          } catch (__) {}
-        }    
+          } catch (err) {
+            console.log(err)
+          }
+        }
         return '' // use external default escaping
       }
     })
-    .use(emoji)
-    .use(subscript)
-    .use(superscript)
-    .use(footnote)
-    .use(deflist)
-    .use(abbreviation)
-    .use(insert)
-    .use(mark)
-    .use(tasklists, { enabled: this.taskLists })
+      .use(emoji)
+      .use(subscript)
+      .use(superscript)
+      .use(footnote)
+      .use(deflist)
+      .use(abbreviation)
+      .use(insert)
+      .use(mark)
+      .use(tasklists, { enabled: this.taskLists })
   }
 
-  handleEditorChange = ({ html, text}, event) => {
+  handleEditorChange = ({ html, text }, event) => {
     console.log('handleEditorChange', event)
   }
 
@@ -136,7 +142,7 @@ class Demo extends React.Component {
                 maxCol: 6
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
-              syncScrollMode: ['rightFollowLeft'],
+              syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
               clearTip: 'Are you sure you want to clear your markdown ???'
             }}
             onChange={this.handleEditorChange}

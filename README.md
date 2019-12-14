@@ -106,6 +106,12 @@ export default class Demo extends React.Component {
   }
 }
 ```
+or import style manually:
+
+```js
+import MdEditor from 'react-markdown-editor-lite/lib/index.nostyle.js'
+import 'react-markdown-editor-lite/lib/index.css'
+```
 
 ## More complicated example
 
