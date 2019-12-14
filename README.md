@@ -18,7 +18,8 @@
 ## Demo
 
 Online demo <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
-<!-- ![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-4-6.PNG?raw=true) -->
+
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-4-6.PNG?raw=true)
 
 ## Install
 

@@ -1,6 +1,6 @@
 {
   "name": "react-markdown-editor-lite",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "a light-weight Markdown editor based on React",
   "main": "./lib/index.js",
   "files": [
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "webpack --config webpack.config.js",
-    "dev": "webpack-dev-server  --host 0.0.0.0 --open http://localhost:8080",
+    "dev": "webpack-dev-server  --host 0.0.0.0 --open",
     "prod": "webpack --config webpack.prod.config.js",
     "nostyle": "webpack --config webpack.prod.nostyle.config.js",
     "release": "npm run prod && npm run nostyle",
