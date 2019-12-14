@@ -88,6 +88,22 @@ class Demo extends React.Component {
     reader.readAsDataURL(file)
   }
 
+  onCustomImageUpload = () => {
+    return new Promise((resolve, reject) => {
+      const result = window.prompt('Please enter image url here')
+      resolve({ url: result })
+      // custom confirm message pseudo code
+      // YourCustomDialog.open(() => {
+      //   setTimeout(() => {
+      //     // setTimeout 模拟oss异步上传图片
+      //     // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
+      //     const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
+      //     resolve({url: url, name: 'pic'})
+      //   }, 1000)
+      // })
+    })
+  }
+
   onBeforeClear = () => {
     return new Promise((resolve, reject) => {
       const result = window.confirm('Are you sure you want to clear your markdown :-)')
@@ -142,11 +158,12 @@ class Demo extends React.Component {
                 maxCol: 6
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
-              syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
+              syncScrollMode: ['rightFollowLeft'],
               clearTip: 'Are you sure you want to clear your markdown ???'
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
+            // onCustomImageUpload={this.onCustomImageUpload}
             onBeforeClear={this.onBeforeClear}
           />
         </div>

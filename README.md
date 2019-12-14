@@ -52,6 +52,7 @@ yarn add react-markdown-editor-lite
 | config.imageAccept | Accepted file extensions for images, list of comma seperated values i.e `.jpg,.png` | String | `''` | |
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
+| onCustomImageUpload | custom image upload here, needs return Promise | `() => Promise` | See detail in src/editor/index.jsx |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
 | onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | See detail in src/editor/index.jsx |  |
 
@@ -192,6 +193,20 @@ export default class Demo extends React.Component {
     }
     reader.readAsDataURL(file)
   }
+  onCustomImageUpload = () => {
+    return new Promise((resolve, reject) => {
+      const result = window.prompt('Please enter image url here')
+      resolve({ url: result })
+      // custom confirm message pseudo code
+      // YourCustomDialog.open(() => {
+      //   setTimeout(() => {
+      //     // setTimeout 模拟oss异步上传图片
+      //     const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
+      //     resolve({url: url, name: 'pic'})
+      //   }, 1000)
+      // })
+    })
+  }
   renderHTML(text) {
     // 模拟异步渲染Markdown
     return new Promise((resolve) => {
@@ -245,6 +260,7 @@ export default class Demo extends React.Component {
             }}
             onChange={this.handleEditorChange} 
             onImageUpload={this.handleImageUpload}
+            // onCustomImageUpload={this.onCustomImageUpload} // if using onCustomImageUpload, onImageUpload will be not working
             onBeforeClear={this.onBeforeClear}
           />
         </section>                        
