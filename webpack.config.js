@@ -20,9 +20,24 @@ const config = {
     hot: true
   },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.(js|jsx)$/,
-        loader: "babel-loader",
+        enforce: 'pre',
+        use: [
+          {
+            options: {
+              formatter: require.resolve('eslint-formatter-pretty'),
+              eslintPath: require.resolve('eslint'),
+              resolvePluginsRelativeTo: __dirname,
+            },
+            loader: require.resolve('eslint-loader'),
+          },
+        ],
+      },
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'babel-loader',
       },
       {
         test: /\.css$/,
@@ -68,6 +83,6 @@ const config = {
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
-};
+}
 
-module.exports = config;
+module.exports = config

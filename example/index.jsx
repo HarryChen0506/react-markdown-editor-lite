@@ -1,8 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import MdEditor from '../src/index.js';
+/* eslint-disable */
+import React from 'react'
+import ReactDOM from 'react-dom'
+import MdEditor from '../src/index.js'
 // import MdEditor from '../lib/index.js'
-import MarkdownIt from 'markdown-it';
+// import MdEditor from '../lib/index.nostyle.js'
+// import '../lib/index.css'
+import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
 import subscript from 'markdown-it-sub'
 import superscript from 'markdown-it-sup'
@@ -15,9 +18,10 @@ import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 // import 'highlight.js/styles/github.css'
-// import content from './content.js';
-import content from './content.1.js';
-import './index.less';
+// import content from './content.js'
+import content from './content.1.js'
+import './index.less'
+
 
 const MOCK_DATA = content
 
@@ -38,23 +42,25 @@ class Demo extends React.Component {
         if (lang && hljs.getLanguage(lang)) {
           try {
             return hljs.highlight(lang, str).value
-          } catch (__) {}
-        }    
+          } catch (err) {
+            console.log(err)
+          }
+        }
         return '' // use external default escaping
       }
     })
-    .use(emoji)
-    .use(subscript)
-    .use(superscript)
-    .use(footnote)
-    .use(deflist)
-    .use(abbreviation)
-    .use(insert)
-    .use(mark)
-    .use(tasklists, { enabled: this.taskLists })
+      .use(emoji)
+      .use(subscript)
+      .use(superscript)
+      .use(footnote)
+      .use(deflist)
+      .use(abbreviation)
+      .use(insert)
+      .use(mark)
+      .use(tasklists, { enabled: this.taskLists })
   }
 
-  handleEditorChange = ({ html, text}, event) => {
+  handleEditorChange = ({ html, text }, event) => {
     console.log('handleEditorChange', event)
   }
 
@@ -80,6 +86,22 @@ class Demo extends React.Component {
       }, 1000)
     }
     reader.readAsDataURL(file)
+  }
+
+  onCustomImageUpload = () => {
+    return new Promise((resolve, reject) => {
+      const result = window.prompt('Please enter image url here')
+      resolve({ url: result })
+      // custom confirm message pseudo code
+      // YourCustomDialog.open(() => {
+      //   setTimeout(() => {
+      //     // setTimeout 模拟oss异步上传图片
+      //     // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
+      //     const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
+      //     resolve({url: url, name: 'pic'})
+      //   }, 1000)
+      // })
+    })
   }
 
   onBeforeClear = () => {
@@ -141,6 +163,7 @@ class Demo extends React.Component {
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
+            // onCustomImageUpload={this.onCustomImageUpload}
             onBeforeClear={this.onBeforeClear}
           />
         </div>

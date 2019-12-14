@@ -4,8 +4,8 @@ import './index.less'
 
 class DropList extends Component {
   constructor(props) {
-    super(props);
-    this.handleClose = this._handleClose.bind(this);
+    super(props)
+    this.handleClose = this._handleClose.bind(this)
   }
   _handleClose(e) {
     e.stopPropagation()

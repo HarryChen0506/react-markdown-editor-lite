@@ -17,7 +17,7 @@ import './index.less'
 export class HtmlRender extends Component {
   render() {
     return (
-      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
+      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ''}`} />
     )
   }
 }
@@ -25,7 +25,7 @@ export class HtmlRender extends Component {
 class HtmlCode extends Component {
   render() {
     return (
-      <textarea className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
+      <textarea className={`html-code ${this.props.className || ''}`} value={this.props.html} onChange={() => { }}></textarea>
     )
   }
 }
@@ -94,6 +94,7 @@ export class MdEditor extends Component {
     this.handleChange = this._handleChange.bind(this)
     this.handleInputSelect = this._handleInputSelect.bind(this)
     this.handleImageUpload = this._handleImageUpload.bind(this)
+    this.handleCustomImageUpload = this._handleCustomImageUpload.bind(this)
     this.handleEmpty = this._handleEmpty.bind(this)
     this.handleUndo = this._handleUndo.bind(this)
     this.handleRedo = this._handleRedo.bind(this)
@@ -133,7 +134,7 @@ export class MdEditor extends Component {
   }
 
   componentDidMount() {
-    this.renderHTML(this.props.value || "")
+    this.renderHTML(this.props.value || '')
       .then(html => {
         this.setState({
           html: html
@@ -262,7 +263,7 @@ export class MdEditor extends Component {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
-        target: option.target || "",
+        target: option.target || '',
         imageUrl: option.imageUrl || this.config.imageUrl
       })
     } else if (type === 'link') {
@@ -282,9 +283,9 @@ export class MdEditor extends Component {
       return
     }
     const res = this.props.renderHTML(markdownText)
-    if (typeof res === "string") {
+    if (typeof res === 'string') {
       return Promise.resolve(res)
-    } else if (typeof res === "function") {
+    } else if (typeof res === 'function') {
       return Promise.resolve(res())
     } else if (typeof res === 'object' && typeof res.then === 'function') {
       return res
@@ -383,6 +384,20 @@ export class MdEditor extends Component {
     }
   }
 
+  _handleCustomImageUpload() {
+    const { onCustomImageUpload } = this.props
+    if (typeof onCustomImageUpload === 'function') {
+      const res = onCustomImageUpload.call(this)
+      if (typeof res === 'object' && typeof res.then === 'function') {
+        res.then(({ url }) => {
+          if (url) {
+            this.handleDecorate('image', { imageUrl: url })
+          }
+        })
+      }
+    }
+  }
+
   onImageChanged(file) {
     const { onImageUpload } = this.props
     onImageUpload(file, (imageUrl) => {
@@ -391,7 +406,7 @@ export class MdEditor extends Component {
   }
 
   _handleChange(e) {
-    e.persist();
+    e.persist()
     this.startLogger()
     const value = e.target.value
     if (!this.hasContentChanged) {
@@ -411,7 +426,10 @@ export class MdEditor extends Component {
 
   _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText = {}, nodeMdPreview = {}, nodeMdPreviewWraper = {} } = this
+    const { nodeMdText, nodeMdPreview, nodeMdPreviewWraper } = this
+    if (!nodeMdText || !nodeMdPreview || !nodeMdPreviewWraper) {
+      return
+    }
     this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight + 35) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight + 35)
     this.hasContentChanged = false
   }
@@ -469,7 +487,7 @@ export class MdEditor extends Component {
   }
 
   onEmit(output, event) {
-    const { onChange } = this.props;
+    const { onChange } = this.props
     typeof onChange === 'function' && onChange(output, event)
   }
 
@@ -495,7 +513,7 @@ export class MdEditor extends Component {
         <NavigationBar
           left={
             <div className="button-wrap">
-              <span className="button button-type--header" title="Header"
+              <span className="button button-type-header" title="Header"
                 onMouseEnter={() => this.showDropList('header', true)}
                 onMouseLeave={() => this.showDropList('header', false)}
               >
@@ -514,17 +532,17 @@ export class MdEditor extends Component {
                   }}
                 />
               </span>
-              <span className="button button-type--bold" title="Bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
-              <span className="button button-type--italic" title="Italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
-              <span className="button button-type--underline" title="Underline" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
-              <span className="button button-type--strikethrough" title="Strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
-              <span className="button button-type--unordered" title="Unordered list" onClick={() => this.handleDecorate('unordered')}><Icon type="icon-list-ul" /></span>
-              <span className="button button-type--ordered" title="Ordered list" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
-              <span className="button button-type--quote" title="Quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
-              <span className="button button-type--hr" title="Line break" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
-              <span className="button button-type--inlinecode" title="Inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
-              <span className="button button-type--code" title="Block code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
-              <span className="button button-type--table" title="Table"
+              <span className="button button-type-bold" title="Bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
+              <span className="button button-type-italic" title="Italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
+              <span className="button button-type-underline" title="Underline" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
+              <span className="button button-type-strikethrough" title="Strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
+              <span className="button button-type-unordered" title="Unordered list" onClick={() => this.handleDecorate('unordered')}><Icon type="icon-list-ul" /></span>
+              <span className="button button-type-ordered" title="Ordered list" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
+              <span className="button button-type-quote" title="Quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
+              <span className="button button-type-hr" title="Line break" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
+              <span className="button button-type-inlinecode" title="Inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
+              <span className="button button-type-code" title="Block code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
+              <span className="button button-type-table" title="Table"
                 onMouseEnter={() => this.showDropList('table', true)}
                 onMouseLeave={() => this.showDropList('table', false)}
               >
@@ -543,25 +561,28 @@ export class MdEditor extends Component {
                   }}
                 />
               </span>
-              <span className="button button-type--image" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
-                <Icon type="icon-photo" />
-                <InputFile accept={this.config.imageAccept || ""} ref={(input) => { this.inputFile = input }} onChange={(e) => {
-                  e.persist()
-                  const file = e.target.files[0]
-                  this.onImageChanged(file)
-                }} />
-              </span>
-              <span className="button button-type--link" title="Link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
-
-              <span className="button button-type--clear" title="Clear" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
-              <span className="button button-type--undo" title="Undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
-              <span className="button button-type--redo" title="Redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
+              {
+                this.props.onCustomImageUpload ?
+                  <span className="button button-type-image" title="Image" onClick={this.handleCustomImageUpload}><Icon type="icon-photo" /></span> :
+                  <span className="button button-type-image" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
+                    <Icon type="icon-photo" />
+                    <InputFile accept={this.config.imageAccept || ''} ref={(input) => { this.inputFile = input }} onChange={(e) => {
+                      e.persist()
+                      const file = e.target.files[0]
+                      this.onImageChanged(file)
+                    }} />
+                  </span>
+              }
+              <span className="button button-type-link" title="Link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
+              <span className="button button-type-clear" title="Clear" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
+              <span className="button button-type-undo" title="Undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
+              <span className="button button-type-redo" title="Redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
             </div>
           }
           right={
             <div className="button-wrap">
               {view.fullScreen &&
-                <span className="button button-type--fullscreen" title="Full screen" onClick={this.handleToggleFullScreen}>
+                <span className="button button-type-fullscreen" title="Full screen" onClick={this.handleToggleFullScreen}>
                   {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
                 </span>
               }
@@ -576,20 +597,20 @@ export class MdEditor extends Component {
         res.push(
           <section className={'sec-md'} key="md">
             <ToolBar>
-              <span className="button button-type--menu" title={view.menu ? 'Hide menu' : 'Show menu'} onClick={this.handleToggleMenu}>
+              <span className="button button-type-menu" title={view.menu ? 'Hide menu' : 'Show menu'} onClick={this.handleToggleMenu}>
                 {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
               </span>
-              <span className="button button-type--preview" title={view.html ? 'Hide preview' : 'Show preview'} onClick={this.handleMdPreview}>
+              <span className="button button-type-preview" title={view.html ? 'Hide preview' : 'Show preview'} onClick={this.handleMdPreview}>
                 {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
               </span>
-              <span className="button button-type--md" title={'Preview'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
+              <span className="button button-type-md" title={'Preview'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
             </ToolBar>
             <textarea
               id="textarea"
-              name={this.props.name || "textarea"}
+              name={this.props.name || 'textarea'}
               ref={node => this.nodeMdText = node}
               value={text}
-              className={`input ${this.config.markdownClass || ""}`}
+              className={`input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
               onSelect={this.handleInputSelect}
@@ -602,18 +623,18 @@ export class MdEditor extends Component {
         res.push(
           <section className={'sec-html'} key="html">
             <ToolBar style={{ right: '20px' }}>
-              <span className="button button-type--menu" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+              <span className="button button-type-menu" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
                 {view.menu ? <Icon type="icon-chevron-up" />
                   : <Icon type="icon-chevron-down" />
                 }
               </span>
-              <span className="button button-type--editor" title={view.md ? 'Hide editor' : 'Show editor'} onClick={this.handleHtmlPreview}>
+              <span className="button button-type-editor" title={view.md ? 'Hide editor' : 'Show editor'} onClick={this.handleHtmlPreview}>
                 {view.md ? <Icon type="icon-desktop" />
                   : <Icon type="icon-columns" />
                 }
               </span>
-              <span className="button button-type--toggle" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
-              <span className="button button-type--html" title="Show HTML" onClick={this.handleToggleHtmlType}>
+              <span className="button button-type-toggle" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
+              <span className="button button-type-html" title="Show HTML" onClick={this.handleToggleHtmlType}>
                 {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
                 }
