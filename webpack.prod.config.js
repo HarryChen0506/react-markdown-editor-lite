@@ -1,14 +1,13 @@
 const path = require('path')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpack = require('webpack');
-const version = require("./package.json").version
+const webpack = require('webpack')
+const version = require('./package.json').version
 const banner =
-  "/**\n" +
-  " * react-markdown-editor-lite v" + version + "\n" +
-  " * https://github.com/HarryChen0506/react-markdown-editor-lite\n" +
-  " * MIT License\n" +
-  " */\n";
+  ' react-markdown-editor-lite v' + version + '\n' +
+  ' https://github.com/HarryChen0506/react-markdown-editor-lite\n' +
+  ' MIT License\n'
 const config = {
   entry: {
     index: './src/index',
@@ -16,7 +15,7 @@ const config = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'lib'),
-    libraryTarget: "umd"
+    libraryTarget: 'umd'
   },
   externals: [{
     react: 'react',
@@ -29,7 +28,7 @@ const config = {
   module: {
     rules: [{
       test: /\.(js|jsx)$/,
-      loader: "babel-loader",
+      loader: 'babel-loader',
     },
     {
       test: /\.css$/,
@@ -68,7 +67,7 @@ const config = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    new CleanWebpackPlugin(['lib']),
+    new CleanWebpackPlugin(),
     new webpack.BannerPlugin({
       banner,
       raw: false
@@ -77,6 +76,6 @@ const config = {
       from: 'src/index.d.ts'
     }])
   ],
-};
+}
 
-module.exports = config;
+module.exports = config

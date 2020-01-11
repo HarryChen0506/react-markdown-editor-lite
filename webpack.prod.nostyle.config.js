@@ -1,21 +1,19 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const webpack = require('webpack')
-const version = require("./package.json").version
+const version = require('./package.json').version
 const banner =
-  "/**\n" +
-  " * react-markdown-editor-lite v" + version + "\n" +
-  " * https://github.com/HarryChen0506/react-markdown-editor-lite\n" +
-  " * MIT License\n" +
-  " */\n";
+' react-markdown-editor-lite v' + version + '\n' +
+' https://github.com/HarryChen0506/react-markdown-editor-lite\n' +
+' MIT License\n'
 const config = {
   entry: {
-    "index.nostyle": './src/index'
+    'index.nostyle': './src/index'
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'lib'),
-    libraryTarget: "umd"
+    libraryTarget: 'umd'
   },
   externals: [{
     react: 'react',
@@ -28,7 +26,7 @@ const config = {
   module: {
     rules: [{
       test: /\.(js|jsx)$/,
-      loader: "babel-loader",
+      loader: 'babel-loader',
     },
     {
       test: /\.css$/,
@@ -78,6 +76,6 @@ const config = {
       filename: 'index.css',
     })
   ],
-};
+}
 
-module.exports = config;
+module.exports = config

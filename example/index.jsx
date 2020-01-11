@@ -88,7 +88,8 @@ class Demo extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  onCustomImageUpload = () => {
+  onCustomImageUpload = (e) => {
+    // console.log('onCustomImageUpload', e)
     return new Promise((resolve, reject) => {
       const result = window.prompt('Please enter image url here')
       resolve({ url: result })
@@ -104,7 +105,8 @@ class Demo extends React.Component {
     })
   }
 
-  onBeforeClear = () => {
+  onBeforeClear = (e) => {
+    // console.log('onBeforeClear', e)
     return new Promise((resolve, reject) => {
       const result = window.confirm('Are you sure you want to clear your markdown :-)')
       const toClear = result ? true : false

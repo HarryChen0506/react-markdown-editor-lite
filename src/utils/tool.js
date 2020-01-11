@@ -24,7 +24,7 @@ export function isEmpty(obj) {
 }
 
 export function isRepeat(arr) {
-  const hash = {};
+  const hash = {}
   for (let i in arr) {
     if (hash[arr[i]]) {
       return true

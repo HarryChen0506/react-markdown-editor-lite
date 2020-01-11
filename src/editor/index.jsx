@@ -350,7 +350,7 @@ export class MdEditor extends Component {
     })
   }
 
-  _handleEmpty() {
+  _handleEmpty(e) {
     const { onBeforeClear } = this.props
     const clearText = () => {
       this.setState({
@@ -359,7 +359,7 @@ export class MdEditor extends Component {
       })
     }
     if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear.call(this)
+      const res = onBeforeClear.call(this, e)
       if (typeof res === 'object' && typeof res.then === 'function') {
         res.then((toClear) => {
           if (toClear) {
@@ -384,10 +384,10 @@ export class MdEditor extends Component {
     }
   }
 
-  _handleCustomImageUpload() {
+  _handleCustomImageUpload(e) {
     const { onCustomImageUpload } = this.props
     if (typeof onCustomImageUpload === 'function') {
-      const res = onCustomImageUpload.call(this)
+      const res = onCustomImageUpload.call(this, e)
       if (typeof res === 'object' && typeof res.then === 'function') {
         res.then(({ url }) => {
           if (url) {
