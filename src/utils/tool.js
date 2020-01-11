@@ -20,14 +20,12 @@ export function deepClone(obj) {
 
 export function isEmpty(obj) {
   // 判断字符是否为空的方法
-  if (typeof obj === 'undefined' || obj === null || obj === '') {
-    return true
-  }
-  return false
+  return typeof obj === 'undefined' || obj === null || obj === ''
 }
+
 export function isRepeat(arr) {
-  var hash = {}
-  for (var i in arr) {
+  const hash = {};
+  for (let i in arr) {
     if (hash[arr[i]]) {
       return true
     }

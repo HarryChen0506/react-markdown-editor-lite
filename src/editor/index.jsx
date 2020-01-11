@@ -25,7 +25,7 @@ export class HtmlRender extends Component {
 class HtmlCode extends Component {
   render() {
     return (
-      <textarea className={`html-code ${this.props.className || ''}`} value={this.props.html} onChange={() => { }}></textarea>
+      <textarea className={`html-code ${this.props.className || ''}`} value={this.props.html} onChange={() => { }} />
     )
   }
 }
@@ -167,7 +167,7 @@ export class MdEditor extends Component {
   formatString(value) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
-      return new String(value).toString()
+      return String(value).toString()
     }
     return value
   }
