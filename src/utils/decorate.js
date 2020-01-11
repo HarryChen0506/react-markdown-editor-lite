@@ -52,7 +52,7 @@ class Decorate {
         // return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
         return this.formatTableText(this.target, option)
       case 'image':
-        return `![${this.target}](${option.imageUrl || ''})`
+        return `![${option.target}](${option.imageUrl || ''})`
       case 'link':
         return `[${this.target}](${option.linkUrl || ''})`
       default:
