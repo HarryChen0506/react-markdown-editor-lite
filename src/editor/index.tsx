@@ -263,12 +263,18 @@ class Editor extends React.Component<EditorProps, any> {
       if (!this.selection.isSelected) {
         return;
       }
-      const content = this._getDecoratedText(type, option)
+      const content = this._getDecoratedText(type, option);
       this._setMdText(content);
+      if (this.logger.getLastRecord() !== content) {
+        this.logger.pushRecord(content);
+      }
       this._clearSelection();
     } else {
-      const content = this._getDecoratedText(type, option)
+      const content = this._getDecoratedText(type, option);
       this._setMdText(content);
+      if (this.logger.getLastRecord() !== content) {
+        this.logger.pushRecord(content);
+      }
     }
   }
 

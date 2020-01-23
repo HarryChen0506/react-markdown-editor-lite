@@ -9,7 +9,7 @@ export default {
   htmlClass: '',
   markdownClass: '',
   logger: {
-    interval: 1000
+    interval: 800
   },
   // syncScroll: true,
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
