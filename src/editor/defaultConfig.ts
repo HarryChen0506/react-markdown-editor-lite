@@ -1,15 +1,15 @@
 export default {
-  theme : 'default',
+  theme: 'default',
   view: {
     menu: true,
     md: true,
     html: true,
-    fullScreen: true
+    fullScreen: true,
   },
   htmlClass: '',
   markdownClass: '',
   logger: {
-    interval: 800
+    interval: 800,
   },
   // syncScroll: true,
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
@@ -18,7 +18,7 @@ export default {
   linkUrl: '',
   table: {
     maxRow: 4,
-    maxCol: 6
+    maxCol: 6,
   },
-  clearTip: 'Are you sure you want to clear your markdown ?'
-}
+  clearTip: 'Are you sure you want to clear your markdown ?',
+};

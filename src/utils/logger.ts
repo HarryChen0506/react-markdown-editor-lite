@@ -4,11 +4,10 @@
 
 const MAX_LOG_SIZE = 100;
 
-class Logger {  
+class Logger {
+  private record: string[] = [];
 
-  private record: string[] = []
-
-  private recycle: string[] = []
+  private recycle: string[] = [];
 
   pushRecord(val: string) {
     const result = this.record.push(val);
@@ -32,7 +31,9 @@ class Logger {
     const lastRecord = this.record.pop();
     if (lastRecord) {
       this.recycle.push(lastRecord);
-      typeof cb === 'function' && cb(this.getLastRecord());
+      if (typeof cb === 'function') {
+        cb(this.getLastRecord());
+      }
     }
   }
 
@@ -40,14 +41,18 @@ class Logger {
     const history = this.recycle.pop();
     if (history) {
       this.pushRecord(history);
-      typeof cb === 'function' && cb(this.getLastRecord());
-    }    
+      if (typeof cb === 'function') {
+        cb(this.getLastRecord());
+      }
+    }
   }
 
   cleanRedoList(cb?: () => void) {
     this.recycle = [];
-    typeof cb === 'function' && cb();
+    if (typeof cb === 'function') {
+      cb();
+    }
   }
 }
 
-export default Logger
+export default Logger;
