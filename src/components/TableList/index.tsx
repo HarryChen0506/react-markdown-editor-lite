@@ -39,7 +39,7 @@ class TableList extends React.Component<TableListProps, TableListState> {
   }
 
   calcWrapStyle() {
-    const { maxRow, maxCol } = this.state;
+    const { maxRow, maxCol } = this.state
     const { width, height, padding } = this.config
     const wrapWidth = (width + padding) * maxCol - padding
     const wrapHeight = (height + padding) * maxRow - padding

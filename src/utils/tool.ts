@@ -5,7 +5,7 @@ export function deepClone(obj: any) {
   let objArray: any = Array.isArray(obj) ? [] : {}
   if (obj && typeof obj === 'object') {
     for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         // 如果obj的属性是对象，递归操作
         if (obj[key] && typeof obj[key] === 'object') {
           objArray[key] = deepClone(obj[key])
@@ -20,10 +20,7 @@ export function deepClone(obj: any) {
 
 export function isEmpty(obj: any) {
   // 判断字符是否为空的方法
-  if (typeof obj === 'undefined' || obj === null || obj === '') {
-    return true
-  }
-  return false
+  return typeof obj === 'undefined' || obj === null || obj === ''
 }
 
 export function isRepeat(arr: any[]) {
@@ -45,4 +42,8 @@ export function throttle(func: any, deltaX: number) {
       lastCalledAt = new Date().getTime()
     }
   }
+}
+
+export function isPromise(obj: any): boolean {
+  return obj && (typeof (obj) === "object" || typeof (obj) === "function") && typeof(obj.then) === "function";
 }

@@ -54,6 +54,7 @@ interface EditorProps extends EditorConfig {
   }, event?: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
   onImageUpload?: (file: File, callback: (url: string) => void) => void;
+  onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
 }
 
 class Editor extends React.Component<EditorProps, any> {
@@ -125,6 +126,7 @@ class Editor extends React.Component<EditorProps, any> {
     this.handleChange = this.handleChange.bind(this)
     this.handleInputSelect = this.handleInputSelect.bind(this)
     this.handleImageUpload = this.handleImageUpload.bind(this)
+    this.handleCustomImageUpload = this.handleCustomImageUpload.bind(this)
     this.handleEmpty = this.handleEmpty.bind(this)
     this.handleUndo = this.handleUndo.bind(this)
     this.handleRedo = this.handleRedo.bind(this)
@@ -200,7 +202,7 @@ class Editor extends React.Component<EditorProps, any> {
   private formatString(value: string) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
-      return new String(value).toString()
+      return String(value).toString()
     }
     return value
   }
@@ -279,7 +281,7 @@ class Editor extends React.Component<EditorProps, any> {
     let decoratedText = ''
     if (type === 'image') {
       decoratedText = decorate.getDecoratedText(type, {
-        target: option.target || "",
+        target: option.target || '',
         imageUrl: option.imageUrl || this.config.imageUrl
       })
     } else if (type === 'link') {
@@ -299,7 +301,7 @@ class Editor extends React.Component<EditorProps, any> {
       return Promise.resolve("");
     }
     const res = this.props.renderHTML(markdownText)
-    if (typeof res === "string") {
+    if (typeof res === 'string') {
       return Promise.resolve(res)
     } else if (typeof res === "function") {
       return Promise.resolve(res() as string)
@@ -398,6 +400,19 @@ class Editor extends React.Component<EditorProps, any> {
       this.inputFile.current && this.inputFile.current.click();
     } else {
       this.handleDecorate('image');
+    }
+  }
+
+  private handleCustomImageUpload(e: any) {
+    if (this.props.onCustomImageUpload) {
+      const res = this.props.onCustomImageUpload.call(this, e);
+      if (tool.isPromise(res)) {
+        res.then(({ url }) => {
+          if (url) {
+            this.handleDecorate('image', { imageUrl: url })
+          }
+        })
+      }
     }
   }
 
@@ -528,7 +543,7 @@ class Editor extends React.Component<EditorProps, any> {
         <NavigationBar
           left={
             <div className="button-wrap">
-              <span className="button" title="Header"
+              <span className="button button-type-header" title="Header"
                 onMouseEnter={() => this.showDropList('header', true)}
                 onMouseLeave={() => this.showDropList('header', false)}
               >
@@ -547,17 +562,17 @@ class Editor extends React.Component<EditorProps, any> {
                   }}
                 />
               </span>
-              <span className="button" title="Bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
-              <span className="button" title="Italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
-              <span className="button" title="Underline" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
-              <span className="button" title="Strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
-              <span className="button" title="Unordered list" onClick={() => this.handleDecorate('unordered')}><Icon type="icon-list-ul" /></span>
-              <span className="button" title="Ordered list" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
-              <span className="button" title="Quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
-              <span className="button" title="Line break" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
-              <span className="button" title="Inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
-              <span className="button" title="Block code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
-              <span className="button" title="Table"
+              <span className="button button-type-bold" title="Bold" onClick={() => this.handleDecorate('bold')}><Icon type="icon-bold" /></span>
+              <span className="button button-type-italic" title="Italic" onClick={() => this.handleDecorate('italic')}><Icon type="icon-italic" /></span>
+              <span className="button button-type-underline" title="Underline" onClick={() => this.handleDecorate('underline')}><Icon type="icon-underline" /></span>
+              <span className="button button-type-strikethrough" title="Strikethrough" onClick={() => this.handleDecorate('strikethrough')}><Icon type="icon-strikethrough" /></span>
+              <span className="button button-type-unordered" title="Unordered list" onClick={() => this.handleDecorate('unordered')}><Icon type="icon-list-ul" /></span>
+              <span className="button button-type-ordered" title="Ordered list" onClick={() => this.handleDecorate('order')}><Icon type="icon-list-ol" /></span>
+              <span className="button button-type-quote" title="Quote" onClick={() => this.handleDecorate('quote')}><Icon type="icon-quote-left" /></span>
+              <span className="button button-type-hr" title="Line break" onClick={() => this.handleDecorate('hr')}><Icon type="icon-window-minimize" /></span>
+              <span className="button button-type-inlinecode" title="Inline code" onClick={() => this.handleDecorate('inlinecode')}><Icon type="icon-embed" /></span>
+              <span className="button button-type-code" title="Block code" onClick={() => this.handleDecorate('code')}><Icon type="icon-embed2" /></span>
+              <span className="button button-type-table" title="Table"
                 onMouseEnter={() => this.showDropList('table', true)}
                 onMouseLeave={() => this.showDropList('table', false)}
               >
@@ -576,26 +591,29 @@ class Editor extends React.Component<EditorProps, any> {
                   }}
                 />
               </span>
-              <span className="button" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
-                <Icon type="icon-photo" />
-                <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  e.persist();
-                  if (e.target.files && e.target.files.length > 0) {
-                    this.onImageChanged(e.target.files[0]);
-                  }
-                }} />
-              </span>
-              <span className="button" title="Link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
-
-              <span className="button" title="Clear" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
-              <span className="button" title="Undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
-              <span className="button" title="Redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
+              {
+                this.props.onCustomImageUpload ?
+                  <span className="button button-type-image" title="Image" onClick={this.handleCustomImageUpload}><Icon type="icon-photo" /></span> :
+                  <span className="button button-type-image" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
+                    <Icon type="icon-photo" />
+                    <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      e.persist();
+                      if (e.target.files && e.target.files.length > 0) {
+                        this.onImageChanged(e.target.files[0]);
+                      }
+                    }} />
+                  </span>
+              }
+              <span className="button button-type-link" title="Link" onClick={() => this.handleDecorate('link')}><Icon type="icon-link" /></span>
+              <span className="button button-type-clear" title="Clear" onClick={this.handleEmpty}><Icon type="icon-trash" /></span>
+              <span className="button button-type-undo" title="Undo" onClick={this.handleUndo}><Icon type="icon-reply" /></span>
+              <span className="button button-type-redo" title="Redo" onClick={this.handleRedo}><Icon type="icon-share" /></span>
             </div>
           }
           right={
             <div className="button-wrap">
               {view.fullScreen &&
-                <span className="button" title="Full screen" onClick={this.handleToggleFullScreen}>
+                <span className="button button-type-fullscreen" title="Full screen" onClick={this.handleToggleFullScreen}>
                   {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
                 </span>
               }
@@ -610,20 +628,20 @@ class Editor extends React.Component<EditorProps, any> {
         res.push(
           <section className={'sec-md'} key="md">
             <ToolBar>
-              <span className="button" title={view.menu ? 'Hide menu' : 'Show menu'} onClick={this.handleToggleMenu}>
+              <span className="button button-type-menu" title={view.menu ? 'Hide menu' : 'Show menu'} onClick={this.handleToggleMenu}>
                 {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
               </span>
-              <span className="button" title={view.html ? 'Hide preview' : 'Show preview'} onClick={this.handleMdPreview}>
+              <span className="button button-type-preview" title={view.html ? 'Hide preview' : 'Show preview'} onClick={this.handleMdPreview}>
                 {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
               </span>
-              <span className="button" title={'Preview'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
+              <span className="button button-type-md" title={'Preview'} onClick={() => this.handleToggleView('md')}><Icon type="icon-refresh" /></span>
             </ToolBar>
             <textarea
               id="textarea"
               ref={this.nodeMdText}
               name={this.props.name || "textarea"}
               value={text}
-              className={`input ${this.config.markdownClass || ""}`}
+              className={`input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
               onSelect={this.handleInputSelect}
@@ -636,18 +654,18 @@ class Editor extends React.Component<EditorProps, any> {
         res.push(
           <section className={'sec-html'} key="html">
             <ToolBar style={{ right: '20px' }}>
-              <span className="button" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+              <span className="button button-type-menu" title={view.menu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
                 {view.menu ? <Icon type="icon-chevron-up" />
                   : <Icon type="icon-chevron-down" />
                 }
               </span>
-              <span className="button" title={view.md ? 'Hide editor' : 'Show editor'} onClick={this.handleHtmlPreview}>
+              <span className="button button-type-editor" title={view.md ? 'Hide editor' : 'Show editor'} onClick={this.handleHtmlPreview}>
                 {view.md ? <Icon type="icon-desktop" />
                   : <Icon type="icon-columns" />
                 }
               </span>
-              <span className="button" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
-              <span className="button" title="Show HTML" onClick={this.handleToggleHtmlType}>
+              <span className="button button-type-toggle" title={'Toggle'} onClick={() => this.handleToggleView('html')}><Icon type="icon-refresh" /></span>
+              <span className="button button-type-html" title="Show HTML" onClick={this.handleToggleHtmlType}>
                 {htmlType === 'render' ? <Icon type="icon-embed" />
                   : <Icon type="icon-eye" />
                 }

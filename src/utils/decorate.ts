@@ -41,7 +41,7 @@ class Decorate {
       case 'quote':
         return `\n> ${this.target}\n`
       case 'hr':
-        return `\n---\n`
+        return '\n---\n'
       case 'inlinecode':
         return `\`${this.target}\``
       case 'code':
@@ -49,9 +49,9 @@ class Decorate {
       case 'table':
         // return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
         return this.formatTableText(this.target, option)
-      case 'image': 
-        return `![${this.target}](${option.imageUrl || ''})`
-      case 'link': 
+      case 'image':
+        return `![${option.target}](${option.imageUrl || ''})`
+      case 'link':
         return `[${this.target}](${option.linkUrl || ''})`
       default:
         return `${this.target}`
@@ -65,7 +65,7 @@ class Decorate {
     let colStr = ''
     let result = ''
     for (let i = 0; i <= col; i++) {
-      rowHeader.push(' Head |')      
+      rowHeader.push(' Head |')
       rowDivision.push(' --- |')
       rowData.push(' Data |')
     }

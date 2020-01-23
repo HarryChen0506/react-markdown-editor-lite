@@ -17,6 +17,13 @@ lib/
 *.rar
 *.tar
 *.zip
+=======
+# Optional npm cache directory
+.npm
+
+# dist
+dist/
+dist/*
 
 # Logs and databases #
 ######################
