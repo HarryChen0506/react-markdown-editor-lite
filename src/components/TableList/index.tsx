@@ -1,15 +1,27 @@
 // TableList
-import React, { Component } from 'react'
+import * as React from 'react'
 import './index.less'
 
-class TableList extends Component {
+interface TableListProps {
+  maxRow?: number;
+  maxCol?: number;
+  onSetTable?: (table: { row: number, col: number }) => void;
+}
+
+interface TableListState {
+  maxRow: number,
+  maxCol: number,
+  list: number[][];
+}
+
+class TableList extends React.Component<TableListProps, TableListState> {
   config = {
     padding: 3,
     width: 20,
     height: 20
   }
 
-  constructor(props) {
+  constructor(props: any) {
     super(props)
     const { maxRow = 5, maxCol = 6 } = props
     this.state = {
@@ -20,10 +32,10 @@ class TableList extends Component {
   }
 
   formatTableModel(maxRow = 0, maxCol = 0) {
-    const result = new Array(maxRow).fill()
-    return result.map(() => {
+    const result = new Array(maxRow).fill(undefined);
+    return result.map(_ => {
       return new Array(maxCol).fill(0)
-    })
+    });
   }
 
   calcWrapStyle() {
@@ -47,41 +59,37 @@ class TableList extends Component {
     }
   }
 
-  handleHover(i, j) {
+  handleHover(i: number, j: number) {
     const { list } = this.state
     const newList = list.map((v, row) => {
-      return v.map((item, col) => {
-        if (row <= i && col <= j) {
-          item = 1
-        } else {
-          item = 0
-        }
-        return item
-      })
-    })
+      return v.map((_, col) => {
+        return (row <= i && col <= j) ? 1 : 0;
+      });
+    });
     this.setState({
       list: newList
-    })
+    });
   }
 
-  handleSetTable(i, j) {
+  handleSetTable(i: number, j: number) {
     const { onSetTable } = this.props
     typeof onSetTable === 'function' && onSetTable({ row: i, col: j })
   }
 
   render() {
-    const { list } = this.state
     return (
       <ul className="table-list wrap" style={this.calcWrapStyle()}>
-        {list.map((row, i) => {
+        {this.state.list.map((row, i) => {
           return row.map((col, j) => {
-            return <li
-              className={`list-item ${col === 1 ? 'active' : ''}`}
-              key={`${i}-${j}`}
-              style={this.calcItemStyle(i, j)}
-              onMouseOver={this.handleHover.bind(this, i, j)}
-              onClick={this.handleSetTable.bind(this, i, j)}
-            ></li>
+            return (
+              <li
+                className={`list-item ${col === 1 ? 'active' : ''}`}
+                key={`${i}-${j}`}
+                style={this.calcItemStyle(i, j)}
+                onMouseOver={this.handleHover.bind(this, i, j)}
+                onClick={this.handleSetTable.bind(this, i, j)}
+              ></li>
+            );
           })
         })}
       </ul>

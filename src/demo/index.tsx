@@ -1,37 +1,19 @@
-/* eslint-disable */
-import React from 'react'
-import ReactDOM from 'react-dom'
-import MdEditor from '../src/index.js'
-// import MdEditor from '../lib/index.js'
-// import MdEditor from '../lib/index.nostyle.js'
-// import '../lib/index.css'
-import MarkdownIt from 'markdown-it'
-import emoji from 'markdown-it-emoji'
-import subscript from 'markdown-it-sub'
-import superscript from 'markdown-it-sup'
-import footnote from 'markdown-it-footnote'
-import deflist from 'markdown-it-deflist'
-import abbreviation from 'markdown-it-abbr'
-import insert from 'markdown-it-ins'
-import mark from 'markdown-it-mark'
-import tasklists from 'markdown-it-task-lists'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/atom-one-light.css'
-// import 'highlight.js/styles/github.css'
-// import content from './content.js'
-import content from './content.1.js'
-import './index.less'
-
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import MdEditor from '../editor';
+import * as MarkdownIt from 'markdown-it';
+import content from './content';
+import './index.less';
 
 const MOCK_DATA = content
 
 class Demo extends React.Component {
 
-  mdEditor = null
+  mdEditor?: MdEditor = undefined
 
-  mdParser = null
+  mdParser?: MarkdownIt = undefined
 
-  constructor(props) {
+  constructor(props: any) {
     super(props)
     // initial a parser
     this.mdParser = new MarkdownIt({
@@ -39,45 +21,25 @@ class Demo extends React.Component {
       linkify: true,
       typographer: true,
       highlight: function (str, lang) {
+        /*
         if (lang && hljs.getLanguage(lang)) {
           try {
             return hljs.highlight(lang, str).value
-          } catch (err) {
-            console.log(err)
-          }
+          } catch (__) {}
         }
         return '' // use external default escaping
+        */
       }
     })
-      .use(emoji)
-      .use(subscript)
-      .use(superscript)
-      .use(footnote)
-      .use(deflist)
-      .use(abbreviation)
-      .use(insert)
-      .use(mark)
-      .use(tasklists, { enabled: this.taskLists })
   }
 
-  handleEditorChange = ({ html, text }, event) => {
-    console.log('handleEditorChange', event)
+  handleEditorChange = (it: { text: string, html: string }, event: any) => {
+    console.log('handleEditorChange', it.text, it.html, event);
   }
 
-  handleImageUpload = (file, callback) => {
+  handleImageUpload = (file: File, callback: (url: string) => void) => {
     const reader = new FileReader()
-    reader.onload = () => {
-      const convertBase64UrlToBlob = (urlData) => {
-        let arr = urlData.split(','), mime = arr[0].match(/:(.*?);/)[1]
-        let bstr = atob(arr[1])
-        let n = bstr.length
-        let u8arr = new Uint8Array(n)
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n)
-        }
-        return new Blob([u8arr], { type: mime })
-      }
-      const blob = convertBase64UrlToBlob(reader.result)
+    reader.onload = (_: ProgressEvent) => {
       setTimeout(() => {
         // setTimeout 模拟oss异步上传图片
         // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
@@ -88,25 +50,7 @@ class Demo extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  onCustomImageUpload = (e) => {
-    // console.log('onCustomImageUpload', e)
-    return new Promise((resolve, reject) => {
-      const result = window.prompt('Please enter image url here')
-      resolve({ url: result })
-      // custom confirm message pseudo code
-      // YourCustomDialog.open(() => {
-      //   setTimeout(() => {
-      //     // setTimeout 模拟oss异步上传图片
-      //     // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-      //     const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
-      //     resolve({url: url, name: 'pic'})
-      //   }, 1000)
-      // })
-    })
-  }
-
-  onBeforeClear = (e) => {
-    // console.log('onBeforeClear', e)
+  onBeforeClear(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const result = window.confirm('Are you sure you want to clear your markdown :-)')
       const toClear = result ? true : false
@@ -118,6 +62,24 @@ class Demo extends React.Component {
       // }, () => {
       //   // cancel callback
       //   resolve(false)
+      // })
+    })
+  }
+
+
+  onCustomImageUpload = (e: any) => {
+    console.log('onCustomImageUpload', e)
+    return new Promise((resolve, reject) => {
+      const result = window.prompt('Please enter image url here')
+      resolve({ url: result })
+      // custom confirm message pseudo code
+      // YourCustomDialog.open(() => {
+      //   setTimeout(() => {
+      //     // setTimeout 模拟oss异步上传图片
+      //     // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
+      //     const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
+      //     resolve({url: url, name: 'pic'})
+      //   }, 1000)
       // })
     })
   }
@@ -144,10 +106,10 @@ class Demo extends React.Component {
         </nav>
         <div className="editor-wrap" style={{ marginTop: '30px' }}>
           <MdEditor
-            ref={node => this.mdEditor = node}
+            ref={node => this.mdEditor = node || undefined}
             value={MOCK_DATA}
             style={{ height: '500px', width: '100%' }}
-            renderHTML={(text) => this.mdParser.render(text)}
+            renderHTML={(text) => this.mdParser ? this.mdParser.render(text) : ""}
             config={{
               view: {
                 menu: true,
@@ -191,5 +153,5 @@ class Demo extends React.Component {
 
 ReactDOM.render(
   <Demo />,
-  document.getElementById('root')
+  document.getElementById('app')
 )

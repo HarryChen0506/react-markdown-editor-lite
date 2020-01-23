@@ -19,8 +19,6 @@
 
 Online demo <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-4-6.PNG?raw=true)
-
 ## Install
 
 ### Npm
@@ -78,11 +76,14 @@ npm install markdown-it --save
 Using markdown-it as the markdown parser
 
 ```js
+// Fist: import react, react-markdown-editor-lite, and a markdown parser you like
 'use strict';
-import React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
+// If you are using less/scss, you can aslo import css at your style file
+import 'react-markdown-editor-lite/index.css';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
@@ -118,8 +119,8 @@ import 'react-markdown-editor-lite/lib/index.css'
 
 ```js
 'use strict';
-import React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
 import emoji from 'markdown-it-emoji'
@@ -152,7 +153,7 @@ export default class Demo extends React.Component {
           try {
             return hljs.highlight(lang, str).value
           } catch (__) {}
-        }    
+        }
         return '' // use external default escaping
       }
     })

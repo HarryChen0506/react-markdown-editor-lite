@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "outDir": "./lib/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "declaration": true
+  },
+  "exclude": ["./lib", "./image"],
+  "include": ["./src"]
+}

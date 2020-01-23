@@ -1,7 +1,5 @@
-// deal with selection text
-
 class Decorate {
-  constructor(target) {
+  constructor(target: string) {
     this.target = target
   }
   name = 'selection decoration'
@@ -9,12 +7,12 @@ class Decorate {
   type = ''
   option = {}
   result = ''
-  getDecoratedText(type, option = {}) {
+  getDecoratedText(type: string, option = {}) {
     this.type = type
     this.option = option
     return this.result = this.calcDecorateText(this.type, option)
   }
-  calcDecorateText(type, option = {}) {
+  calcDecorateText(type: string, option: any = {}) {
     switch (type) {
       case 'h1':
         return `\n# ${this.target} \n`
@@ -59,8 +57,8 @@ class Decorate {
         return `${this.target}`
     }
   }
-  formatTableText(target, option) {
-    const { row = 2, col = 2 } = option
+  formatTableText(target: string, option: any) {
+    const {row = 2, col = 2} = option
     let rowHeader = ['|']
     let rowData = ['|']
     let rowDivision = ['|']

@@ -1,8 +1,8 @@
-export function deepClone(obj) {
+export function deepClone(obj: any) {
   if (!obj || typeof obj !== 'object') {
     return obj
   }
-  let objArray = Array.isArray(obj) ? [] : {}
+  let objArray: any = Array.isArray(obj) ? [] : {}
   if (obj && typeof obj === 'object') {
     for (let key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -18,14 +18,14 @@ export function deepClone(obj) {
   return objArray
 }
 
-export function isEmpty(obj) {
+export function isEmpty(obj: any) {
   // 判断字符是否为空的方法
   return typeof obj === 'undefined' || obj === null || obj === ''
 }
 
-export function isRepeat(arr) {
-  const hash = {}
-  for (let i in arr) {
+export function isRepeat(arr: any[]) {
+  const hash: any = {};
+  for (const i in arr) {
     if (hash[arr[i]]) {
       return true
     }
@@ -33,12 +33,17 @@ export function isRepeat(arr) {
   }
   return false
 }
-export function throttle(func, deltaX) {
+
+export function throttle(func: any, deltaX: number) {
   let lastCalledAt = new Date().getTime()
-  return function () {
+  return function(this: any) {
     if (new Date().getTime() - lastCalledAt >= deltaX) {
       func.apply(this, arguments)
       lastCalledAt = new Date().getTime()
     }
   }
+}
+
+export function isPromise(obj: any): boolean {
+  return obj && (typeof (obj) === "object" || typeof (obj) === "function") && typeof(obj.then) === "function";
 }

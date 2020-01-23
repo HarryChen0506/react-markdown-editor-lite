@@ -1,6 +1,13 @@
-node_modules/
+# Configures
+.editorconfig
+.browserslistrc
+.gitignore
+.npmignore
+
+# Code and libs
+src/
+image/
 coverage/
-lib/
 .idea/
 .vscode/
 ~*
@@ -17,13 +24,6 @@ lib/
 *.rar
 *.tar
 *.zip
-=======
-# Optional npm cache directory
-.npm
-
-# dist
-dist/
-dist/*
 
 # Logs and databases #
 ######################
@@ -31,13 +31,8 @@ dist/*
 *.sql
 *.sqlite
 
-# karma
-coverage/
-coverage/*
-
 # OS generated files #
 ######################
-.DS_Store
  *.swp
 .DS_Store?
 ._*

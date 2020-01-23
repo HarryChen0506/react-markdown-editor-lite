@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+// markdown editor 
+import * as React from 'react'
 import * as tool from '../utils/tool'
 import Logger from '../utils/logger'
 import Decorate from '../utils/decorate'
@@ -10,60 +10,57 @@ import TableList from '../components/TableList'
 import InputFile from '../components/InputFile'
 import Icon from '../components/Icon'
 import ToolBar from '../components/ToolBar'
-import _config from '../config.js'
+
+import { HtmlRender, HtmlCode } from './preview';
 
 import './index.less'
+import defaultConfig from './defaultConfig';
+import mergeConfig from '../utils/mergeConfig';
 
-export class HtmlRender extends Component {
-  render() {
-    return (
-      <div dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ''}`} />
-    )
+interface EditorConfig {
+  theme?: string;
+  name?: string;
+  view?: {
+    menu: boolean;
+    md: boolean;
+    html: boolean;
+  };
+  htmlClass?: string;
+  markdownClass?: string;
+  logger?: {
+    interval: number;
+  };
+  synchScroll?: boolean;
+  imageUrl?: string;
+  imageAccept?: string;
+  linkUrl?: string;
+  table?: {
+    maxRow: number;
+    maxCol: number;
   }
+  syncScrollMode?: string[];
+  clearTip?: string;
 }
 
-class HtmlCode extends Component {
-  render() {
-    return (
-      <textarea className={`html-code ${this.props.className || ''}`} value={this.props.html} onChange={() => { }} />
-    )
-  }
+interface EditorProps extends EditorConfig {
+  value: string;
+  renderHTML: (text: string) => string | Promise<string> | (() => string);
+  style?: React.CSSProperties;
+  config?: any;
+  // Configs
+  onChange?: (data: {
+    text: string;
+    html: string;
+  }, event?: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
+  onImageUpload?: (file: File, callback: (url: string) => void) => void;
+  onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
 }
 
-export class MdEditor extends Component {
-
-  config = {}
-
-  logger = {}
-
-  loggerTimerId = null
-
-  mdjs = null
-
-  nodeMdText = null
-
-  nodeMdPreview = null
-
-  nodeMdPreviewWraper = null
-
-  inputFile = null
-
-  scale = 0
-
-  willScrollEle = '' // 即将滚动的元素 md html
-
-  hasContentChanged = true
-
-  initialSelection = {
-    isSelected: false,
-    start: 0,
-    end: 0,
-    text: ''
-  }
-
-  selection = { ...this.initialSelection }
+class Editor extends React.Component<EditorProps, any> {
   static defaultProps = {
-    onBeforeClear: function () {
+    value: "",
+    onBeforeClear: function(this: Editor): Promise<boolean> {
       return new Promise((resolve) => {
         if (window.confirm && typeof window.confirm === 'function') {
           const result = window.confirm(this.config.clearTip)
@@ -74,10 +71,40 @@ export class MdEditor extends Component {
         }
       })
     }
+  };
+
+  private config: EditorConfig;
+
+  private logger: Logger;
+
+  private loggerTimerId?: number;
+
+  private nodeMdText: React.RefObject<HTMLTextAreaElement>;
+  private nodeMdPreview?: HtmlCode | HtmlRender;
+  private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
+  private inputFile: React.RefObject<InputFile>;
+
+  private scale = 0
+
+  private willScrollEle: "md" | "html" | "" = '' // 即将滚动的元素 md html
+
+  private hasContentChanged = true
+
+  private initialSelection = {
+    isSelected: false,
+    start: 0,
+    end: 0,
+    text: ''
   }
-  constructor(props) {
-    super(props)
-    this.config = this.initConfig()
+
+  private selection = { ...this.initialSelection };
+
+  private handleInputScroll: () => void;
+  private handlePreviewScroll: () => void;
+  constructor(props: any) {
+    super(props);
+
+    this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
       text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
@@ -91,22 +118,27 @@ export class MdEditor extends Component {
       fullScreen: false,
       table: this.config.table
     }
-    this.handleChange = this._handleChange.bind(this)
-    this.handleInputSelect = this._handleInputSelect.bind(this)
-    this.handleImageUpload = this._handleImageUpload.bind(this)
-    this.handleCustomImageUpload = this._handleCustomImageUpload.bind(this)
-    this.handleEmpty = this._handleEmpty.bind(this)
-    this.handleUndo = this._handleUndo.bind(this)
-    this.handleRedo = this._handleRedo.bind(this)
-    this.handleToggleFullScreen = this._handleToggleFullScreen.bind(this)
-    this.handleToggleMenu = this._handleToggleMenu.bind(this)
-    this.handleToggleView = this._handleToggleView.bind(this)
-    this.handleMdPreview = this._handleMdPreview.bind(this)
-    this.handleHtmlPreview = this._handleHtmlPreview.bind(this)
-    this.handleToggleHtmlType = this._handleToggleHtmlType.bind(this)
-    this.handleonKeyDown = this._handleonKeyDown.bind(this)
 
-    this.handleInputScroll = tool.throttle((e) => {
+    this.nodeMdText = React.createRef();
+    this.nodeMdPreviewWraper = React.createRef();
+    this.inputFile = React.createRef();
+
+    this.handleChange = this.handleChange.bind(this)
+    this.handleInputSelect = this.handleInputSelect.bind(this)
+    this.handleImageUpload = this.handleImageUpload.bind(this)
+    this.handleCustomImageUpload = this.handleCustomImageUpload.bind(this)
+    this.handleEmpty = this.handleEmpty.bind(this)
+    this.handleUndo = this.handleUndo.bind(this)
+    this.handleRedo = this.handleRedo.bind(this)
+    this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this)
+    this.handleToggleMenu = this.handleToggleMenu.bind(this)
+    this.handleToggleView = this.handleToggleView.bind(this)
+    this.handleMdPreview = this.handleMdPreview.bind(this)
+    this.handleHtmlPreview = this.handleHtmlPreview.bind(this)
+    this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this)
+    this.handleonKeyDown = this.handleonKeyDown.bind(this)
+
+    this.handleInputScroll = tool.throttle((e: any) => {
       const { syncScrollMode = [] } = this.config
       if (!syncScrollMode.includes('rightFollowLeft')) {
         return
@@ -114,12 +146,12 @@ export class MdEditor extends Component {
       e.persist()
       if (this.willScrollEle === 'md') {
         this.hasContentChanged && this._setScrollValue()
-        if (this.nodeMdPreviewWraper && this.nodeMdText) {
-          this.nodeMdPreviewWraper.scrollTop = this.nodeMdText.scrollTop / this.scale
+        if (this.nodeMdPreviewWraper.current && this.nodeMdText.current) {
+          this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scale
         }
       }
-    }, 1000 / 60)
-    this.handlePreviewScroll = tool.throttle((e) => {
+    }, 1000 / 60).bind(this);
+    this.handlePreviewScroll = tool.throttle((e: any) => {
       const { syncScrollMode = [] } = this.config
       if (!syncScrollMode.includes('leftFollowRight')) {
         return
@@ -127,14 +159,17 @@ export class MdEditor extends Component {
       e.persist()
       if (this.willScrollEle === 'html') {
         this.hasContentChanged && this._setScrollValue()
-        if (this.nodeMdText && this.nodeMdPreviewWraper)
-          this.nodeMdText.scrollTop = this.nodeMdPreviewWraper.scrollTop * this.scale
+        if (this.nodeMdText.current && this.nodeMdPreviewWraper.current)
+          this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scale
       }
-    }, 1000 / 60)
+    }, 1000 / 60).bind(this);
+
+    // init Logger
+    this.logger = new Logger();
   }
 
-  componentDidMount() {
-    this.renderHTML(this.props.value || '')
+  public componentDidMount() {
+    this.renderHTML(this.props.value || "")
       .then(html => {
         this.setState({
           html: html
@@ -143,7 +178,7 @@ export class MdEditor extends Component {
     this.initLogger()
   }
 
-  componentWillReceiveProps(nextProps) {
+  public componentWillReceiveProps(nextProps: EditorProps) {
     if (nextProps.value === this.props.value) {
       // console.log('value not change')
       return
@@ -160,11 +195,11 @@ export class MdEditor extends Component {
       })
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.endLogger()
   }
 
-  formatString(value) {
+  private formatString(value: string) {
     if (typeof this.props.value !== 'string') {
       console && console.error && console.error('The type of "value" must be String!')
       return String(value).toString()
@@ -172,54 +207,37 @@ export class MdEditor extends Component {
     return value
   }
 
-  initConfig() {
-    return { ..._config, ...this.props.config }
-  }
-
-  initLogger() {
-    this.logger = new Logger()
+  private initLogger() {
     this.startLogger()
     this.logger.pushRecord(this.state.text)
   }
 
-  startLogger() {
-    if (!this.loggerTimerId) {
-      this.loggerTimerId = setInterval(() => {
-        const { text } = this.state
-        if (this.logger.getLastRecord() !== text) {
-          this.logger.pushRecord(text)
-        }
-      }, this.config.logger.interval)
-    }
+  private startLogger() {
     // 清空redo历史
     this.logger.cleanRedoList()
   }
 
-  endLogger() {
+  private endLogger() {
     if (this.loggerTimerId) {
       clearInterval(this.loggerTimerId)
-      this.loggerTimerId = null
+      this.loggerTimerId = undefined
     }
   }
 
-  handleGetLogger() {
-    console.log('handleGetLogger', this.logger)
-  }
-
-  _handleUndo() {
+  private handleUndo() {
     this.logger.undo((last) => {
       this.endLogger()
       this._setMdText(last)
-    })
+    });
   }
 
-  _handleRedo() {
-    this.logger.redo((last) => {
+  private handleRedo() {
+    this.logger.redo(last => {
       this._setMdText(last)
-    })
+    });
   }
 
-  handleDecorate(type, option = {}) {
+  private handleDecorate(type: string, option: any = {}) {
     const clearList = [
       'h1',
       'h2',
@@ -240,25 +258,31 @@ export class MdEditor extends Component {
       'table',
       'image',
       'link'
-    ]
+    ];
     if (clearList.indexOf(type) > -1) {
       if (!this.selection.isSelected) {
-        return
+        return;
       }
-      const content = this._getDecoratedText(type, option)
-      this._setMdText(content)
-      this._clearSelection()
+      const content = this._getDecoratedText(type, option);
+      this._setMdText(content);
+      if (this.logger.getLastRecord() !== content) {
+        this.logger.pushRecord(content);
+      }
+      this._clearSelection();
     } else {
-      const content = this._getDecoratedText(type, option)
-      this._setMdText(content)
+      const content = this._getDecoratedText(type, option);
+      this._setMdText(content);
+      if (this.logger.getLastRecord() !== content) {
+        this.logger.pushRecord(content);
+      }
     }
   }
 
-  _getDecoratedText(type, option) {
-    const { text = '' } = this.state
-    const { selection } = this
-    const beforeContent = text.slice(0, selection.start)
-    const afterContent = text.slice(selection.end, text.length)
+  private _getDecoratedText(type: string, option: any) {
+    const { text = '' } = this.state;
+    const { selection } = this;
+    const beforeContent = text.slice(0, selection.start);
+    const afterContent = text.slice(selection.end, text.length);
     const decorate = new Decorate(selection.text)
     let decoratedText = ''
     if (type === 'image') {
@@ -273,84 +297,84 @@ export class MdEditor extends Component {
     } else {
       decoratedText = decorate.getDecoratedText(type, option)
     }
-    const result = beforeContent + `${decoratedText}` + afterContent
-    return result
+    const result = beforeContent + `${decoratedText}` + afterContent;
+    return result;
   }
 
-  renderHTML(markdownText) {
+  private renderHTML(markdownText: string): Promise<string> {
     if (!this.props.renderHTML) {
-      console.error('renderHTML props must be required!')
-      return
+      console.error('renderHTML props is required!')
+      return Promise.resolve("");
     }
     const res = this.props.renderHTML(markdownText)
     if (typeof res === 'string') {
       return Promise.resolve(res)
-    } else if (typeof res === 'function') {
-      return Promise.resolve(res())
+    } else if (typeof res === "function") {
+      return Promise.resolve(res() as string)
     } else if (typeof res === 'object' && typeof res.then === 'function') {
-      return res
+      return res;
     }
-    return res
+    return Promise.resolve("");
   }
 
-  _handleToggleFullScreen() {
+  private handleToggleFullScreen() {
     this.setState({
       fullScreen: !this.state.fullScreen
-    })
+    });
   }
 
-  changeView(to) {
+  private changeView(to: any) {
     const view = Object.assign({}, this.state.view, to)
     this.setState({
       view: view
-    })
+    });
   }
 
-  _handleToggleMenu() {
+  private handleToggleMenu() {
     this.changeView({
       'menu': !this.state.view.menu
-    })
+    });
   }
 
-  _handleToggleView(type) {
+  private handleToggleView(type: "md" | "html") {
     if (type === 'md') {
       this.changeView({
         'md': false,
         'html': true
-      })
+      });
     } else {
       this.changeView({
         'md': true,
         'html': false
-      })
+      });
     }
   }
 
-  _handleMdPreview() {
+  private handleMdPreview() {
     this.changeView({
       'html': !this.state.view.html
-    })
+    });
   }
 
-  _handleHtmlPreview() {
+  private handleHtmlPreview() {
     this.changeView({
       'md': !this.state.view.md
-    })
+    });
   }
 
-  _handleToggleHtmlType() {
+  private handleToggleHtmlType() {
     let { htmlType } = this.state
     if (htmlType === 'render') {
-      htmlType = 'source'
+      htmlType = 'source';
     } else if (htmlType === 'source') {
-      htmlType = 'render'
+      htmlType = 'render';
     }
     this.setState({
       htmlType: htmlType
-    })
+    });
   }
 
-  _handleEmpty(e) {
+  private handleEmpty() {
     const { onBeforeClear } = this.props
     const clearText = () => {
       this.setState({
@@ -358,37 +382,37 @@ export class MdEditor extends Component {
         html: ''
       })
     }
-    if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear.call(this, e)
-      if (typeof res === 'object' && typeof res.then === 'function') {
-        res.then((toClear) => {
-          if (toClear) {
-            clearText()
-          }
-        })
-      } else if (res === true) {
-        this.setState({
-          text: '',
-          html: ''
-        })
+    if (onBeforeClear) {
+      if (typeof onBeforeClear === 'function') {
+        const res = onBeforeClear.call(this)
+        if (typeof res === 'object' && typeof res.then === 'function') {
+          res.then((toClear) => {
+            if (toClear) {
+              clearText()
+            }
+          })
+        } else if (res === true) {
+          clearText()
+        }
       }
+    } else {
+      clearText();
     }
   }
 
-  _handleImageUpload() {
+  private handleImageUpload() {
     const { onImageUpload } = this.props
     if (typeof onImageUpload === 'function') {
-      this.inputFile && this.inputFile.click()
+      this.inputFile.current && this.inputFile.current.click();
     } else {
-      this.handleDecorate('image')
+      this.handleDecorate('image');
     }
   }
 
-  _handleCustomImageUpload(e) {
-    const { onCustomImageUpload } = this.props
-    if (typeof onCustomImageUpload === 'function') {
-      const res = onCustomImageUpload.call(this, e)
-      if (typeof res === 'object' && typeof res.then === 'function') {
+  private handleCustomImageUpload(e: any) {
+    if (this.props.onCustomImageUpload) {
+      const res = this.props.onCustomImageUpload.call(this, e);
+      if (tool.isPromise(res)) {
         res.then(({ url }) => {
           if (url) {
             this.handleDecorate('image', { imageUrl: url })
@@ -398,115 +422,136 @@ export class MdEditor extends Component {
     }
   }
 
-  onImageChanged(file) {
-    const { onImageUpload } = this.props
-    onImageUpload(file, (imageUrl) => {
-      this.handleDecorate('image', { target: file.name, imageUrl })
-    })
-  }
-
-  _handleChange(e) {
-    e.persist()
-    this.startLogger()
-    const value = e.target.value
-    if (!this.hasContentChanged) {
-      this.hasContentChanged = true
+  private onImageChanged(file: File) {
+    if (this.props.onImageUpload) {
+      this.props.onImageUpload(file, imageUrl => {
+        this.handleDecorate('image', {
+          target: file.name,
+          imageUrl
+        });
+      })
     }
-    this._setMdText(value, e)
   }
 
-  _handleInputSelect(e) {
-    e.persist()
-    this.selection = Object.assign({}, this.selection, { isSelected: true }, this._getSelectionInfo(e))
+  private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    e.persist();
+    this.startLogger();
+    const value = e.target.value;
+    if (!this.hasContentChanged) {
+      this.hasContentChanged = true;
+    }
+    // 历史记录
+    this.startLogger();
+    if (this.loggerTimerId) {
+      window.clearTimeout(this.loggerTimerId);
+      this.loggerTimerId = 0;
+    }
+    this.loggerTimerId = window.setTimeout(() => {
+      if (this.logger.getLastRecord() !== value) {
+        this.logger.pushRecord(value);
+      }
+      window.clearTimeout(this.loggerTimerId);
+      this.loggerTimerId = 0;
+    }, this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval);
+    this._setMdText(value, e);
   }
 
-  handleScrollEle(node) {
+  private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+    e.persist();
+    this.selection = Object.assign({}, this.selection, {
+      isSelected: true
+    }, this._getSelectionInfo(e));
+  }
+
+  private handleScrollEle(node: "md" | "html") {
     this.willScrollEle = node
   }
 
-  _setScrollValue() {
+  private _setScrollValue() {
     // 设置值，方便 scrollBy 操作
-    const { nodeMdText, nodeMdPreview, nodeMdPreviewWraper } = this
-    if (!nodeMdText || !nodeMdPreview || !nodeMdPreviewWraper) {
-      return
+    if (!this.nodeMdText.current || !this.nodeMdPreview || !this.nodeMdPreviewWraper.current) {
+      return;
     }
-    this.scale = (nodeMdText.scrollHeight - nodeMdText.offsetHeight + 35) / (nodeMdPreview.offsetHeight - nodeMdPreviewWraper.offsetHeight + 35)
-    this.hasContentChanged = false
+    this.scale = (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight + 35) / (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight + 35);
+    this.hasContentChanged = false;
   }
 
-  _clearSelection() {
+  private _clearSelection() {
     this.selection = Object.assign({}, this.initialSelection)
   }
 
-  _getSelectionInfo(e) {
-    const source = e.srcElement || e.target
-    const start = source.selectionStart
-    const end = source.selectionEnd
-    const text = (source.value || '').slice(start, end)
-    const selection = { start, end, text }
-    return selection
+  private _getSelectionInfo(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
+    const event = e.nativeEvent;
+    const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
+    const start = source.selectionStart;
+    const end = source.selectionEnd;
+    const text = (source.value || '').slice(start, end);
+    return { start, end, text };
   }
 
-  _setMdText(value = '', e) {
-    const text = value.replace(/↵/g, '\n')
+  private _setMdText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>) {
+    const text = value.replace(/↵/g, '\n');
     this.setState({
       text: value
-    })
+    });
     this.renderHTML(text)
       .then(html => {
         this.setState({
           html
-        })
-        this.onEmit({
-          text,
-          html,
-        }, e)
+        });
+        if (this.props.onChange) {
+          this.props.onChange({ text, html }, event);
+        }
       })
   }
 
-  _isKeyMatch(event, key, keyCode, withCtrl = false) {
-    if (event.ctrlKey !== withCtrl) {
-      return false
+  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withKey?: ("ctrlKey" | "shiftKey" | "altKey" | "metaKey")[]) {
+    if (withKey && withKey.length > 0) {
+      for (const it in withKey) {
+        // @ts-ignore
+        if (typeof (event[it]) !== "undefined" && !event[it]) {
+          return false;
+        }
+      }
     }
     if (event.key) {
-      return event.key === key
+      return event.key === key;
     } else {
-      return event.keyCode === keyCode
+      return event.keyCode === keyCode;
     }
   }
 
-  _handleonKeyDown(e) {
-    if (this._isKeyMatch(e, 'z', 90, true)) {
-      this._handleUndo()
-      e.preventDefault()
+  private handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    // Mac的Redo比较特殊，是Command+Shift+Z，优先处理
+    // metaKey = command
+    if (this._isKeyMatch(e, 'y', 89, ["ctrlKey"]) || this._isKeyMatch(e, 'z', 90, ["metaKey", "shiftKey"])) {
+      this.handleRedo();
+      e.preventDefault();
+      return;
     }
-    if (this._isKeyMatch(e, 'y', 89, true)) {
-      this._handleRedo()
-      e.preventDefault()
+    if (this._isKeyMatch(e, 'z', 90, ["ctrlKey"]) || this._isKeyMatch(e, 'z', 90, ["metaKey"])) {
+      this.handleUndo();
+      e.preventDefault();
+      return;
     }
   }
 
-  onEmit(output, event) {
-    const { onChange } = this.props
-    typeof onChange === 'function' && onChange(output, event)
-  }
-
-  getMdValue() {
+  public getMdValue(): string {
     return this.state.text
   }
 
-  getHtmlValue() {
+  public getHtmlValue(): string {
     return this.state.html
   }
 
-  showDropList(type = 'header', flag) {
-    const { dropButton } = this.state
+  private showDropList(type: "header" | "table", flag: boolean) {
+    const { dropButton } = this.state;
     this.setState({
       dropButton: { ...dropButton, [type]: flag }
-    })
+    });
   }
 
-  render() {
+  public render() {
     const { view, dropButton, fullScreen, table } = this.state
     const renderNavigation = () => {
       return view.menu &&
@@ -525,7 +570,7 @@ export class MdEditor extends Component {
                   }}
                   render={() => {
                     return (
-                      <HeaderList onSelectHeader={(header) => {
+                      <HeaderList onSelectHeader={(header: string) => {
                         this.handleDecorate(header)
                       }} />
                     )
@@ -554,7 +599,7 @@ export class MdEditor extends Component {
                   }}
                   render={() => {
                     return (
-                      <TableList maxRow={table.maxRow} maxCol={table.maxCol} onSetTable={(option) => {
+                      <TableList maxRow={table.maxRow} maxCol={table.maxCol} onSetTable={(option: any) => {
                         this.handleDecorate('table', option)
                       }} />
                     )
@@ -566,10 +611,11 @@ export class MdEditor extends Component {
                   <span className="button button-type-image" title="Image" onClick={this.handleCustomImageUpload}><Icon type="icon-photo" /></span> :
                   <span className="button button-type-image" title="Image" onClick={this.handleImageUpload} style={{ position: 'relative' }}>
                     <Icon type="icon-photo" />
-                    <InputFile accept={this.config.imageAccept || ''} ref={(input) => { this.inputFile = input }} onChange={(e) => {
-                      e.persist()
-                      const file = e.target.files[0]
-                      this.onImageChanged(file)
+                    <InputFile accept={this.config.imageAccept || ""} ref={this.inputFile} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      e.persist();
+                      if (e.target.files && e.target.files.length > 0) {
+                        this.onImageChanged(e.target.files[0]);
+                      }
                     }} />
                   </span>
               }
@@ -607,8 +653,8 @@ export class MdEditor extends Component {
             </ToolBar>
             <textarea
               id="textarea"
-              name={this.props.name || 'textarea'}
-              ref={node => this.nodeMdText = node}
+              ref={this.nodeMdText}
+              name={this.props.name || "textarea"}
               value={text}
               className={`input ${this.config.markdownClass || ''}`}
               wrap="hard"
@@ -642,15 +688,15 @@ export class MdEditor extends Component {
             </ToolBar>
             {htmlType === 'render' ?
               (<div className="html-wrap"
-                ref={node => this.nodeMdPreviewWraper = node}
+                ref={this.nodeMdPreviewWraper}
                 onMouseOver={() => this.handleScrollEle('html')}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlRender html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlRender html={html} className={this.config.htmlClass} ref={(instance: HtmlRender) => this.nodeMdPreview = instance} />
               </div>)
               : (<div className={'html-code-wrap'}
-                ref={node => this.nodeMdPreviewWraper = ReactDOM.findDOMNode(node)}
+                ref={this.nodeMdPreviewWraper}
                 onScroll={this.handlePreviewScroll}>
-                <HtmlCode html={html} className={this.config.htmlClass} ref={node => this.nodeMdPreview = ReactDOM.findDOMNode(node)} />
+                <HtmlCode html={html} className={this.config.htmlClass} ref={(instance: HtmlCode) => this.nodeMdPreview = instance} />
               </div>)
             }
           </section>
@@ -671,6 +717,5 @@ export class MdEditor extends Component {
     )
   }
 }
-MdEditor.HtmlRender = HtmlRender
 
-export default MdEditor
+export default Editor

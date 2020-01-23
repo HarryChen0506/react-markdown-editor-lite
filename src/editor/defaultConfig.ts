@@ -1,8 +1,4 @@
-/**
- * config
- */
-
-const config = {
+export default {
   theme : 'default',
   view: {
     menu: true,
@@ -13,7 +9,7 @@ const config = {
   htmlClass: '',
   markdownClass: '',
   logger: {
-    interval: 3000
+    interval: 800
   },
   // syncScroll: true,
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
@@ -26,5 +22,3 @@ const config = {
   },
   clearTip: 'Are you sure you want to clear your markdown ?'
 }
-
-export default config
