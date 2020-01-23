@@ -505,9 +505,15 @@ class Editor extends React.Component<EditorProps, any> {
       })
   }
 
-  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withCtrl: boolean = false) {
-    if (event.ctrlKey !== withCtrl && event.metaKey !== withCtrl) {
-      return false;
+  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, key: string, keyCode: number, withKey?: ("ctrlKey" | "shiftKey" | "altKey" | "metaKey")[]) {
+    console.log(event.ctrlKey, event.shiftKey, event.altKey, event.metaKey);
+    if (withKey && withKey.length > 0) {
+      for (const it in withKey) {
+        // @ts-ignore
+        if (typeof (event[it]) !== "undefined" && !event[it]) {
+          return false;
+        }
+      }
     }
     if (event.key) {
       return event.key === key;
@@ -517,13 +523,17 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   private handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (this._isKeyMatch(e, 'z', 90, true)) {
-      this.handleUndo()
-      e.preventDefault()
+    // Mac的Redo比较特殊，是Command+Shift+Z，优先处理
+    // metaKey = command
+    if (this._isKeyMatch(e, 'y', 89, ["ctrlKey"]) || this._isKeyMatch(e, 'y', 89, ["metaKey", "shiftKey"])) {
+      this.handleRedo();
+      e.preventDefault();
+      return;
     }
-    if (this._isKeyMatch(e, 'y', 89, true)) {
-      this.handleRedo()
-      e.preventDefault()
+    if (this._isKeyMatch(e, 'z', 90, ["ctrlKey"]) || this._isKeyMatch(e, 'z', 90, ["metaKey"])) {
+      this.handleUndo();
+      e.preventDefault();
+      return;
     }
   }
 
