@@ -1,5 +1,5 @@
-import * as React from 'react'
-import './index.less'
+import * as React from 'react';
+import './index.less';
 
 interface ToolBarProps {
   style?: React.CSSProperties;
@@ -11,5 +11,5 @@ export default function ToolBar(props: ToolBarProps) {
     <div className="tool-bar" style={props.style}>
       {props.children}
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 // TableList
-import * as React from 'react'
-import './index.less'
+import * as React from 'react';
+import './index.less';
 
 interface InputFileProps {
   accept: string;
@@ -23,18 +23,22 @@ class InputFile extends React.Component<InputFileProps, any> {
       return;
     }
     this.locked = true;
-    this.input.current.value = ''
-    this.input.current.click()
-    this.timerId && window.clearTimeout(this.timerId);
+    this.input.current.value = '';
+    this.input.current.click();
+    if (this.timerId) {
+      window.clearTimeout(this.timerId);
+    }
     this.timerId = window.setTimeout(() => {
       this.locked = false;
       window.clearTimeout(this.timerId);
       this.timerId = undefined;
-    }, 200)
+    }, 200);
   }
 
   componentWillUnmount() {
-    this.timerId && window.clearTimeout(this.timerId);
+    if (this.timerId) {
+      window.clearTimeout(this.timerId);
+    }
   }
 
   render() {
@@ -52,8 +56,9 @@ class InputFile extends React.Component<InputFileProps, any> {
           height: 0,
           opacity: 0,
         }}
-        onChange={this.props.onChange} />
-    )
+        onChange={this.props.onChange}
+      />
+    );
   }
 }
-export default InputFile
+export default InputFile;

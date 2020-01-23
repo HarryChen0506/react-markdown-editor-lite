@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 
 export interface PreviewProps {
   html: string;
@@ -19,16 +19,25 @@ export abstract class Preview<T extends HTMLElement> extends React.Component<Pre
 export class HtmlCode extends Preview<HTMLTextAreaElement> {
   render() {
     return (
-      <textarea ref={this.el} className={`html-code ${this.props.className || ""}`} value={this.props.html} onChange={() => { }}></textarea>
-    )
+      <textarea
+        ref={this.el}
+        className={`html-code ${this.props.className || ''}`}
+        value={this.props.html}
+        onChange={() => {}}
+      />
+    );
   }
 }
 
 export class HtmlRender extends Preview<HTMLDivElement> {
   render() {
     return (
-      <div ref={this.el} dangerouslySetInnerHTML={{ __html: this.props.html }} className={`custom-html-style ${this.props.className || ""}`} />
-    )
+      <div
+        ref={this.el}
+        dangerouslySetInnerHTML={{ __html: this.props.html }}
+        className={`custom-html-style ${this.props.className || ''}`}
+      />
+    );
   }
 }
 
