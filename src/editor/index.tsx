@@ -60,7 +60,7 @@ interface EditorProps extends EditorConfig {
 class Editor extends React.Component<EditorProps, any> {
   static defaultProps = {
     value: "",
-    onBeforeClear: function(this: Editor) {
+    onBeforeClear: function(this: Editor): Promise<boolean> {
       return new Promise((resolve) => {
         if (window.confirm && typeof window.confirm === 'function') {
           const result = window.confirm(this.config.clearTip)
