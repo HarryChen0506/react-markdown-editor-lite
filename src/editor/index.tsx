@@ -13,9 +13,9 @@ import ToolBar from '../components/ToolBar';
 
 import { HtmlRender, HtmlCode } from './preview';
 
-import './index.less';
 import defaultConfig from './defaultConfig';
 import mergeConfig from '../utils/mergeConfig';
+import './index.less';
 
 interface EditorConfig {
   theme?: string;
@@ -30,7 +30,6 @@ interface EditorConfig {
   logger?: {
     interval: number;
   };
-  synchScroll?: boolean;
   imageUrl?: string;
   imageAccept?: string;
   linkUrl?: string;
@@ -390,18 +389,16 @@ class Editor extends React.Component<EditorProps, any> {
         html: '',
       });
     };
-    if (onBeforeClear) {
-      if (typeof onBeforeClear === 'function') {
-        const res = onBeforeClear.call(this);
-        if (typeof res === 'object' && typeof res.then === 'function') {
-          res.then(toClear => {
-            if (toClear) {
-              clearText();
-            }
-          });
-        } else if (res === true) {
-          clearText();
-        }
+    if (typeof onBeforeClear === 'function') {
+      const res = onBeforeClear.call(this);
+      if (typeof res === 'object' && typeof res.then === 'function') {
+        res.then(toClear => {
+          if (toClear) {
+            clearText();
+          }
+        });
+      } else if (res === true) {
+        clearText();
       }
     } else {
       clearText();

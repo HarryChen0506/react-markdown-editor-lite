@@ -1,13 +1,13 @@
 # react-markdown-editor-lite
 
-* A light-weight(69KB) Markdown editor of React component
+* A light-weight(27KB) Markdown editor of React component
 * Supports TypeScript
 * Supports custom markdown parser
 * Full markdown support
 * Full control over UI
 * Supports image upload
 * Supports synced scrolling between editor and preview
-* 一款轻量的基于React的Markdown编辑器, 压缩后代码只有69KB
+* 一款轻量的基于React的Markdown编辑器, 压缩后代码只有27KB
 * 支持TypeScript
 * 支持自定义Markdown解析器
 * 界面可配置, 如只显示编辑区或预览区
@@ -37,6 +37,7 @@ yarn add react-markdown-editor-lite
 | value | Markdown content | String | `''` | **required** |
 | name | the name prop of textarea | String | 'textarea' |  |
 | style | Inline styles for the component container | Object | `{height: '100%'}` |  |
+| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
 | config | Configuration object for the editor | Object | See config.js for defaults |  |
 | config.view | Controls the editor panes open by default. menu: Menu bar, md: Markdown editor, html: rendered preview | Object | `{menu: true, md: true, html: true, fullScreen: true}` |  |
 | config.htmlClass | className of preview pane | String | `''` |  |
@@ -51,7 +52,6 @@ yarn add react-markdown-editor-lite
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Callback called on image upload | `(file: File, callback: (url: string) => void) => void;` | `({file, callback}) => {}` |  |
 | onCustomImageUpload | custom image upload here, needs return Promise | `() => Promise` | See detail in src/editor/index.jsx |  |
-| renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string\|function\|Promise` | none | **required** |
 | onBeforeClear | custom clear confirm dialog here, You can return either function or Promise | `() => function\|Promise` | See detail in src/editor/index.jsx |  |
 
 ## API
@@ -76,14 +76,14 @@ npm install markdown-it --save
 Using markdown-it as the markdown parser
 
 ```js
-// Fist: import react, react-markdown-editor-lite, and a markdown parser you like
 'use strict';
+// import react, react-markdown-editor-lite, and a markdown parser you like
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import MdEditor from 'react-markdown-editor-lite'
 import MarkdownIt from 'markdown-it'
-// If you are using less/scss, you can aslo import css at your style file
-import 'react-markdown-editor-lite/index.css';
+import MdEditor from 'react-markdown-editor-lite'
+// import style manually
+import 'react-markdown-editor-lite/lib/index.css';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
 export default class Demo extends React.Component {
@@ -108,12 +108,6 @@ export default class Demo extends React.Component {
   }
 }
 ```
-or import style manually:
-
-```js
-import MdEditor from 'react-markdown-editor-lite/lib/index.nostyle.js'
-import 'react-markdown-editor-lite/lib/index.css'
-```
 
 ## More complicated example
 
@@ -135,6 +129,7 @@ import tasklists from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 // import 'highlight.js/styles/github.css'
+import 'react-markdown-editor-lite/lib/index.css';
 import './index.less';
 
 const MOCK_DATA = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
@@ -275,6 +270,7 @@ export default class Demo extends React.Component {
 
 ```js
 import dynamic from 'next/dynamic'
+import 'react-markdown-editor-lite/lib/index.css';
 
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
   ssr: false

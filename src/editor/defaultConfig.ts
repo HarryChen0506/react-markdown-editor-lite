@@ -11,7 +11,6 @@ export default {
   logger: {
     interval: 800,
   },
-  // syncScroll: true,
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
   imageUrl: '',
   imageAccept: '',

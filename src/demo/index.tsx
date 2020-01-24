@@ -1,26 +1,25 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import MdEditor from '../editor';
 import * as MarkdownIt from 'markdown-it';
+import MdEditor from '../editor';
 import content from './content';
 import './index.less';
 
-const MOCK_DATA = content
+const MOCK_DATA = content;
 
 class Demo extends React.Component {
+  mdEditor?: MdEditor = undefined;
 
-  mdEditor?: MdEditor = undefined
-
-  mdParser?: MarkdownIt = undefined
+  mdParser?: MarkdownIt = undefined;
 
   constructor(props: any) {
-    super(props)
+    super(props);
     // initial a parser
     this.mdParser = new MarkdownIt({
       html: true,
       linkify: true,
       typographer: true,
-      highlight: function (str, lang) {
+      highlight(str, lang) {
         /*
         if (lang && hljs.getLanguage(lang)) {
           try {
@@ -29,32 +28,32 @@ class Demo extends React.Component {
         }
         return '' // use external default escaping
         */
-      }
-    })
+      },
+    });
   }
 
-  handleEditorChange = (it: { text: string, html: string }, event: any) => {
+  handleEditorChange = (it: { text: string; html: string }, event: any) => {
     console.log('handleEditorChange', it.text, it.html, event);
-  }
+  };
 
   handleImageUpload = (file: File, callback: (url: string) => void) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = (_: ProgressEvent) => {
       setTimeout(() => {
         // setTimeout 模拟oss异步上传图片
         // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4'
-        callback(url)
-      }, 1000)
-    }
-    reader.readAsDataURL(file)
-  }
+        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4';
+        callback(url);
+      }, 1000);
+    };
+    reader.readAsDataURL(file);
+  };
 
   onBeforeClear(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const result = window.confirm('Are you sure you want to clear your markdown :-)')
-      const toClear = result ? true : false
-      resolve(toClear)
+      const result = window.confirm('Are you sure you want to clear your markdown :-)');
+      const toClear = result ? true : false;
+      resolve(toClear);
       // custom confirm message pseudo code
       // YourCustomDialog.open(() => {
       //   // confirm callback
@@ -63,15 +62,14 @@ class Demo extends React.Component {
       //   // cancel callback
       //   resolve(false)
       // })
-    })
+    });
   }
 
-
   onCustomImageUpload = (e: any) => {
-    console.log('onCustomImageUpload', e)
+    console.log('onCustomImageUpload', e);
     return new Promise((resolve, reject) => {
-      const result = window.prompt('Please enter image url here')
-      resolve({ url: result })
+      const result = window.prompt('Please enter image url here');
+      resolve({ url: result });
       // custom confirm message pseudo code
       // YourCustomDialog.open(() => {
       //   setTimeout(() => {
@@ -81,49 +79,49 @@ class Demo extends React.Component {
       //     resolve({url: url, name: 'pic'})
       //   }, 1000)
       // })
-    })
-  }
+    });
+  };
 
   handleGetMdValue = () => {
     if (this.mdEditor) {
-      alert(this.mdEditor.getMdValue())
+      alert(this.mdEditor.getMdValue());
     }
-  }
+  };
 
   handleGetHtmlValue = () => {
     if (this.mdEditor) {
-      alert(this.mdEditor.getHtmlValue())
+      alert(this.mdEditor.getHtmlValue());
     }
-  }
+  };
 
   render() {
     return (
       <div className="demo-wrap">
         <h3>react-markdown-editor-lite demo</h3>
         <nav className="nav">
-          <button onClick={this.handleGetMdValue} >getMdValue</button>
-          <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>
+          <button onClick={this.handleGetMdValue}>getMdValue</button>
+          <button onClick={this.handleGetHtmlValue}>getHtmlValue</button>
         </nav>
         <div className="editor-wrap" style={{ marginTop: '30px' }}>
           <MdEditor
-            ref={node => this.mdEditor = node || undefined}
+            ref={node => (this.mdEditor = node || undefined)}
             value={MOCK_DATA}
             style={{ height: '500px', width: '100%' }}
-            renderHTML={(text) => this.mdParser ? this.mdParser.render(text) : ""}
+            renderHTML={text => (this.mdParser ? this.mdParser.render(text) : '')}
             config={{
               view: {
                 menu: true,
                 md: true,
                 html: true,
-                fullScreen: true
+                fullScreen: true,
               },
               table: {
                 maxRow: 5,
-                maxCol: 6
+                maxCol: 6,
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
               syncScrollMode: ['rightFollowLeft'],
-              clearTip: 'Are you sure you want to clear your markdown ???'
+              clearTip: 'Are you sure you want to clear your markdown ???',
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
@@ -147,11 +145,8 @@ class Demo extends React.Component {
           />  
         </div> */}
       </div>
-    )
+    );
   }
 }
 
-ReactDOM.render(
-  <Demo />,
-  document.getElementById('app')
-)
+ReactDOM.render(<Demo />, document.getElementById('app'));
