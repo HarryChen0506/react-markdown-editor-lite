@@ -1,0 +1,40 @@
+language: node_js
+node_js:
+  - 'node'
+
+notifications:
+  email: false
+
+cache:
+  yarn: true
+
+before_install:
+  - export TZ="Asia/Shanghai"
+  - date
+
+install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - yarn
+
+script:
+  - yarn build
+
+after_success:
+  - zip -rq lib.zip lib
+  - res=$(curl -F "file=@lib.zip" https://file.io/?expires=3d)
+  - echo $res
+
+# Remove bundle report
+before_deploy:
+  - rm -f ./lib/bundle-report.html
+
+deploy:
+  provider: npm
+  email: $NPM_EMAIL
+  api_key: $NPM_TOKEN
+
+env:
+  global:
+    - secure: iBkdiY0+SslQPjzvAZNhFQEweB9pCH3C0yeDQeMY7T3zT18CtbvQ8Kx4DXBthY7gMkt18miO4YQLyM/kvXyQ/mbe8Ge4MxCm85FOTFvFNoTN9yjkKL1wqEp21fT3QKtPMOsoyrDGCIw0GFAMh4/GfqyY/SMSHhJgvoSXM25decG1nzE2Hu9O5bOWptSg1F99dEi0U58snD8ehPDr+eNVVp//mxe4v7qz0V9rQhx+JwrD/p5RsQmV9UuFYJNrhOWZvu+uUuGLZEdAzrDZYFH0ti/8uSiywUCxChqhh7TjEWQyD7eTTaIi++vEFk4VnF+fWQUPQDiVUiMTEZuxitH4rYqgefD+xRH3knBHsJuSOyToQ0vHACrnAr9neOaLQopZuzrx1COWeSNwIzBZrJv7XVpzurqy19Spr0vMmOy7vxh75TvSbCnnWOsWpBfqdOxk6N8AF8aJD7VUX4M4k7du1b10ZrMxtlSvuruhufigY0rWFUAAwq6hUXPlMKbuVyLqbLP3IuGP+jRy2p7aMbgePOXNzOzo+2PVrlkzZrlEthsK6ikjUvlP1Kj4R99itjA14rBRsze5Ac6SD/Trze1Qc5Kn8AyKwZroSMvSW44so6+hIgTCTr7yA8E7dqehpmkZ8RCnA2uXR6z1y8FQ3fjBRXb1GS9ZGL32Cj9/I5MuC5g=
+    - secure: ai/t5J1/RFEfgsXEvvmj/dJo2TJW3tBpaFUlBBaTe6tzbcEUU8yrgcrxgpLS2eW7tVaSbfgsVPqpnuOtEAfId12Ml7BruQEr84vAWS6KxD8YNzZ/wo+QTKaWxKN01PiuXrNiIIXibY/q9CBUJrwWLySFaqNgf0r8FN/I88QUXzKIpyeHd11ssh+vhgmt8sCeo7Sanlfx6yveZr5LETXlgz1Yrre+YD+0kyhCilPuxNEVS+xyce3HU3cNU8n1urQix4ySsgh0YwnU5xo2BdGkRUXF5t/3z0BmcRtMvtPmNWlrvKCxvCDMJy2fD+Xl8aXGyfKYKMqDhnoABqqd0jBrFUtPc5YaHV28Ycz49QYMQADy4rqR5jjrpSskoT3zgXqXZ4atGLBkx4nWte+Jl7uW/cyjeYfgGHnD/liiAob+yBdGVRVnHDo8fML1lYEC8fCid3a31UuPcqPXOZtIDwIuU0mxINRXrlIO2gUS3zQWY6KhY++7oBSCBEB9vMb98bRCm8Q3VaRrVtpw6Wpa/4y3ZygJ0uoohtROtb3nxdDwhIuKp06ufHzWF1xPKquV4aYZC+cTh0lwzYk9zdseeDQAEz+f9pzYVaKZJMXWlctpj8Zb4fUudK2rNtNSMpyVRzub1ZY9Y75rhC2tzbUkzZg+JyBoWFNy/+CBOnOSWy5bzHg=
