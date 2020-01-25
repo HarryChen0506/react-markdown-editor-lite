@@ -74,7 +74,6 @@ function getDecorated(target: string, type: string, option: any): Decorated {
       },
     };
   }
-
   switch (type) {
     case 'unordered':
       return {

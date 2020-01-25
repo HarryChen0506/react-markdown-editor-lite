@@ -57,8 +57,6 @@ class Editor extends React.Component<EditorProps, any> {
 
   private hasContentChanged = true;
 
-  private selection: Selection = { ...initialSelection };
-
   private handleInputScroll: () => void;
   private handlePreviewScroll: () => void;
 
@@ -85,7 +83,6 @@ class Editor extends React.Component<EditorProps, any> {
     this.nodeMdPreviewWraper = React.createRef();
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleInputSelect = this.handleInputSelect.bind(this);
     this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
     this.handleToggleView = this.handleToggleView.bind(this);
@@ -163,7 +160,7 @@ class Editor extends React.Component<EditorProps, any> {
 
   insertMarkdown(type: string, option: any = {}) {
     const { text = '' } = this.state;
-    const { selection } = this;
+    const selection = this.getSelection();
     const beforeContent = text.slice(0, selection.start);
     const afterContent = text.slice(selection.end, text.length);
     let decorateOption = option ? { ...option } : {};
@@ -282,27 +279,6 @@ class Editor extends React.Component<EditorProps, any> {
     this.setText(value, e);
   }
 
-  private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
-    e.persist();
-    if (!this.nodeMdText.current) {
-      return;
-    }
-    const event = e.nativeEvent;
-    const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
-    if (source !== this.nodeMdText.current) {
-      return;
-    }
-    const start = source.selectionStart;
-    const end = source.selectionEnd;
-    const text = (source.value || '').slice(start, end);
-    this.selection = {
-      ...this.selection,
-      start,
-      end,
-      text,
-    };
-  }
-
   private handleScrollEle(node: 'md' | 'html') {
     this.willScrollEle = node;
   }
@@ -322,7 +298,6 @@ class Editor extends React.Component<EditorProps, any> {
    * 清除已选择区域
    */
   clearSelection() {
-    this.selection = { ...initialSelection };
     if (this.nodeMdText.current) {
       this.nodeMdText.current.setSelectionRange(0, 0, 'none');
     }
@@ -332,8 +307,19 @@ class Editor extends React.Component<EditorProps, any> {
    * 获取已选择区域
    * @return {Selection}
    */
-  getSelection() {
-    return { ...this.selection };
+  getSelection(): Selection {
+    const source = this.nodeMdText.current;
+    if (!source) {
+      return { ...initialSelection };
+    }
+    const start = source.selectionStart;
+    const end = source.selectionEnd;
+    const text = (source.value || '').slice(start, end);
+    return {
+      start,
+      end,
+      text,
+    };
   }
 
   /**
@@ -346,7 +332,6 @@ class Editor extends React.Component<EditorProps, any> {
       this.nodeMdText.current.focus();
       to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
     }
-    this.selection = { ...initialSelection, ...to };
   }
 
   /**
@@ -484,7 +469,6 @@ class Editor extends React.Component<EditorProps, any> {
               className={`input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
-              onSelect={this.handleInputSelect}
               onScroll={this.handleInputScroll}
               onMouseOver={() => this.handleScrollEle('md')}
             />
