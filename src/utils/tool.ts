@@ -53,3 +53,12 @@ export function isPromise(obj: any): obj is Promise<any> {
 }
 
 export const noop = () => {};
+
+export function repeat(str: string, num: number) {
+  let result = '';
+  let n = num;
+  while (n--) {
+    result += str;
+  }
+  return result;
+}

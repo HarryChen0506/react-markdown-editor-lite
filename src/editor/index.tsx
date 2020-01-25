@@ -5,7 +5,7 @@ import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
 import emitter from '../share/emitter';
 import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from '../share/var';
-import Decorate from '../utils/decorate';
+import getDecorated from '../utils/decorate';
 import mergeConfig from '../utils/mergeConfig';
 import * as tool from '../utils/tool';
 import defaultConfig from './defaultConfig';
@@ -166,59 +166,38 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   insertMarkdown(type: string, option: any = {}) {
-    const clearList = [
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'bold',
-      'italic',
-      'underline',
-      'strikethrough',
-      'unordered',
-      'order',
-      'quote',
-      'hr',
-      'inlinecode',
-      'code',
-      'table',
-      'image',
-      'link',
-    ];
-    if (clearList.indexOf(type) > -1) {
-      if (!this.selection.isSelected) {
-        return;
-      }
-      const content = this._getDecoratedText(type, option);
-      this.setText(content, undefined, true);
-    } else {
-      const content = this._getDecoratedText(type, option);
-      this.setText(content);
-    }
-  }
-
-  private _getDecoratedText(type: string, option: any) {
     const { text = '' } = this.state;
     const { selection } = this;
     const beforeContent = text.slice(0, selection.start);
     const afterContent = text.slice(selection.end, text.length);
-    const decorate = new Decorate(selection.text);
-    let decoratedText = '';
+    let decorateOption = null;
     if (type === 'image') {
-      decoratedText = decorate.getDecoratedText(type, {
+      decorateOption = {
         target: option.target || '',
         imageUrl: option.imageUrl || this.config.imageUrl,
-      });
-    } else if (type === 'link') {
-      decoratedText = decorate.getDecoratedText(type, {
-        linkUrl: this.config.linkUrl,
-      });
-    } else {
-      decoratedText = decorate.getDecoratedText(type, option);
+      };
     }
-    return beforeContent + decoratedText + afterContent;
+    if (type === 'link') {
+      decorateOption = {
+        linkUrl: this.config.linkUrl,
+      };
+    }
+    const decorate = getDecorated(selection.text, type, decorateOption);
+    this.setText(
+      beforeContent + decorate.text + afterContent,
+      undefined,
+      decorate.selection
+        ? {
+            start: decorate.selection.start + beforeContent.length,
+            end: decorate.selection.end + beforeContent.length,
+            text: '',
+          }
+        : {
+            start: beforeContent.length,
+            end: beforeContent.length,
+            text: '',
+          },
+    );
   }
 
   private renderHTML(markdownText: string): Promise<string> {
@@ -307,18 +286,24 @@ class Editor extends React.Component<EditorProps, any> {
 
   private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
     e.persist();
+    if (!this.nodeMdText.current) {
+      return;
+    }
     const event = e.nativeEvent;
     const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
+    if (source !== this.nodeMdText.current) {
+      return;
+    }
     const start = source.selectionStart;
     const end = source.selectionEnd;
     const text = (source.value || '').slice(start, end);
     this.selection = {
       ...this.selection,
-      isSelected: true,
       start,
       end,
       text,
     };
+    console.log('handleInputSelect', this.selection);
   }
 
   private handleScrollEle(node: 'md' | 'html') {
@@ -359,15 +344,13 @@ class Editor extends React.Component<EditorProps, any> {
    * @param {Selection} to
    */
   setSelection(to: Selection) {
-    if (this.selection.isSelected) {
-      if (this.nodeMdText.current) {
-        this.nodeMdText.current.setSelectionRange(to.start, to.end, 'forward');
-        to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
-      }
-      this.selection = { ...initialSelection, ...to };
-    } else {
-      this.clearSelection();
+    if (this.nodeMdText.current) {
+      this.nodeMdText.current.setSelectionRange(to.start, to.end, 'forward');
+      this.nodeMdText.current.focus();
+      to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
     }
+    this.selection = { ...initialSelection, ...to };
+    console.log('setSelection', this.selection);
   }
 
   /**
@@ -376,18 +359,22 @@ class Editor extends React.Component<EditorProps, any> {
    * @param {string} value
    * @param {any} event
    */
-  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, clearSelection: boolean = false) {
+  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, newSelection?: Selection) {
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
       return;
     }
     emitter.emit(emitter.EVENT_CHANGE, value, event);
-    this.setState({
-      text: value,
-    });
-    if (clearSelection) {
-      this.clearSelection();
-    }
+    this.setState(
+      {
+        text: value,
+      },
+      () => {
+        if (newSelection) {
+          setTimeout(() => this.setSelection(newSelection));
+        }
+      },
+    );
     this.renderHTML(text).then(html => {
       this.setState({
         html,

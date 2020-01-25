@@ -29,14 +29,12 @@ export interface EditorConfig {
 }
 
 export interface Selection {
-  isSelected: boolean;
   start: number;
   end: number;
   text: string;
 }
 
 export const initialSelection: Selection = {
-  isSelected: false,
   start: 0,
   end: 0,
   text: '',
