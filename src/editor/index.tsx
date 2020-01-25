@@ -1,45 +1,18 @@
 // markdown editor
 import * as React from 'react';
-import * as tool from '../utils/tool';
-import Logger from '../utils/logger';
-import Decorate from '../utils/decorate';
-import NavigationBar from '../components/NavigationBar';
-import DropList from '../components/DropList';
-import HeaderList from '../components/HeaderList';
-import TableList from '../components/TableList';
-import InputFile from '../components/InputFile';
 import Icon from '../components/Icon';
+import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
-
-import { HtmlRender, HtmlCode } from './preview';
-
-import defaultConfig from './defaultConfig';
+import emitter from '../share/emitter';
+import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from '../share/var';
+import Decorate from '../utils/decorate';
 import mergeConfig from '../utils/mergeConfig';
+import * as tool from '../utils/tool';
+import defaultConfig from './defaultConfig';
 import './index.less';
+import { HtmlCode, HtmlRender } from './preview';
 
-interface EditorConfig {
-  theme?: string;
-  name?: string;
-  view?: {
-    menu: boolean;
-    md: boolean;
-    html: boolean;
-  };
-  htmlClass?: string;
-  markdownClass?: string;
-  logger?: {
-    interval: number;
-  };
-  imageUrl?: string;
-  imageAccept?: string;
-  linkUrl?: string;
-  table?: {
-    maxRow: number;
-    maxCol: number;
-  };
-  syncScrollMode?: string[];
-  clearTip?: string;
-}
+type Plugin = { comp: any; config: any };
 
 interface EditorProps extends EditorConfig {
   value: string;
@@ -54,9 +27,6 @@ interface EditorProps extends EditorConfig {
     },
     event?: React.ChangeEvent<HTMLTextAreaElement>,
   ) => void;
-  onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
-  onImageUpload?: (file: File, callback: (url: string) => void) => void;
-  onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
 }
 
 class Editor extends React.Component<EditorProps, any> {
@@ -77,14 +47,9 @@ class Editor extends React.Component<EditorProps, any> {
 
   private config: EditorConfig;
 
-  private logger: Logger;
-
-  private loggerTimerId?: number;
-
   private nodeMdText: React.RefObject<HTMLTextAreaElement>;
   private nodeMdPreview?: HtmlCode | HtmlRender;
   private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
-  private inputFile: React.RefObject<InputFile>;
 
   private scale = 0;
 
@@ -92,17 +57,16 @@ class Editor extends React.Component<EditorProps, any> {
 
   private hasContentChanged = true;
 
-  private initialSelection = {
-    isSelected: false,
-    start: 0,
-    end: 0,
-    text: '',
-  };
-
-  private selection = { ...this.initialSelection };
+  private selection: Selection = { ...initialSelection };
 
   private handleInputScroll: () => void;
   private handlePreviewScroll: () => void;
+
+  private static plugins: Plugin[] = [];
+  static use(comp: any, config: any = {}) {
+    Editor.plugins.push({ comp, config });
+  }
+
   constructor(props: any) {
     super(props);
 
@@ -123,22 +87,16 @@ class Editor extends React.Component<EditorProps, any> {
 
     this.nodeMdText = React.createRef();
     this.nodeMdPreviewWraper = React.createRef();
-    this.inputFile = React.createRef();
 
     this.handleChange = this.handleChange.bind(this);
     this.handleInputSelect = this.handleInputSelect.bind(this);
-    this.handleImageUpload = this.handleImageUpload.bind(this);
-    this.handleCustomImageUpload = this.handleCustomImageUpload.bind(this);
-    this.handleEmpty = this.handleEmpty.bind(this);
-    this.handleUndo = this.handleUndo.bind(this);
-    this.handleRedo = this.handleRedo.bind(this);
     this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
     this.handleToggleView = this.handleToggleView.bind(this);
     this.handleMdPreview = this.handleMdPreview.bind(this);
     this.handleHtmlPreview = this.handleHtmlPreview.bind(this);
     this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this);
-    this.handleonKeyDown = this.handleonKeyDown.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
 
     this.handleInputScroll = tool
       .throttle((e: any) => {
@@ -173,9 +131,6 @@ class Editor extends React.Component<EditorProps, any> {
         }
       }, 1000 / 60)
       .bind(this);
-
-    // init Logger
-    this.logger = new Logger();
   }
 
   componentDidMount() {
@@ -184,7 +139,6 @@ class Editor extends React.Component<EditorProps, any> {
         html,
       });
     });
-    this.initLogger();
   }
 
   componentWillReceiveProps(nextProps: EditorProps) {
@@ -203,10 +157,6 @@ class Editor extends React.Component<EditorProps, any> {
     });
   }
 
-  componentWillUnmount() {
-    this.endLogger();
-  }
-
   private formatString(value: string) {
     if (typeof this.props.value !== 'string') {
       console.error('The type of "value" must be String!');
@@ -215,37 +165,7 @@ class Editor extends React.Component<EditorProps, any> {
     return value;
   }
 
-  private initLogger() {
-    this.startLogger();
-    this.logger.pushRecord(this.state.text);
-  }
-
-  private startLogger() {
-    // 清空redo历史
-    this.logger.cleanRedoList();
-  }
-
-  private endLogger() {
-    if (this.loggerTimerId) {
-      clearInterval(this.loggerTimerId);
-      this.loggerTimerId = undefined;
-    }
-  }
-
-  private handleUndo() {
-    this.logger.undo(last => {
-      this.endLogger();
-      this._setMdText(last);
-    });
-  }
-
-  private handleRedo() {
-    this.logger.redo(last => {
-      this._setMdText(last);
-    });
-  }
-
-  private handleDecorate(type: string, option: any = {}) {
+  insertMarkdown(type: string, option: any = {}) {
     const clearList = [
       'h1',
       'h2',
@@ -272,17 +192,13 @@ class Editor extends React.Component<EditorProps, any> {
         return;
       }
       const content = this._getDecoratedText(type, option);
-      this._setMdText(content);
-      if (this.logger.getLastRecord() !== content) {
-        this.logger.pushRecord(content);
-      }
-      this._clearSelection();
+      this.setText(content);
+      emitter.emit(emitter.EVENT_CHANGE, content);
+      this.clearSelection();
     } else {
       const content = this._getDecoratedText(type, option);
-      this._setMdText(content);
-      if (this.logger.getLastRecord() !== content) {
-        this.logger.pushRecord(content);
-      }
+      this.setText(content);
+      emitter.emit(emitter.EVENT_CHANGE, content);
     }
   }
 
@@ -381,94 +297,31 @@ class Editor extends React.Component<EditorProps, any> {
     });
   }
 
-  private handleEmpty() {
-    const { onBeforeClear } = this.props;
-    const clearText = () => {
-      this.setState({
-        text: '',
-        html: '',
-      });
-    };
-    if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear.call(this);
-      if (typeof res === 'object' && typeof res.then === 'function') {
-        res.then(toClear => {
-          if (toClear) {
-            clearText();
-          }
-        });
-      } else if (res === true) {
-        clearText();
-      }
-    } else {
-      clearText();
-    }
-  }
-
-  private handleImageUpload() {
-    const { onImageUpload } = this.props;
-    if (typeof onImageUpload === 'function') {
-      if (this.inputFile.current) {
-        this.inputFile.current.click();
-      }
-    } else {
-      this.handleDecorate('image');
-    }
-  }
-
-  private handleCustomImageUpload(e: any) {
-    if (this.props.onCustomImageUpload) {
-      const res = this.props.onCustomImageUpload.call(this, e);
-      if (tool.isPromise(res)) {
-        res.then(({ url }) => {
-          if (url) {
-            this.handleDecorate('image', { imageUrl: url });
-          }
-        });
-      }
-    }
-  }
-
-  private onImageChanged(file: File) {
-    if (this.props.onImageUpload) {
-      this.props.onImageUpload(file, imageUrl => {
-        this.handleDecorate('image', {
-          target: file.name,
-          imageUrl,
-        });
-      });
-    }
-  }
-
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     e.persist();
-    this.startLogger();
     const value = e.target.value;
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
     }
-    // 历史记录
-    this.startLogger();
-    if (this.loggerTimerId) {
-      window.clearTimeout(this.loggerTimerId);
-      this.loggerTimerId = 0;
-    }
-    this.loggerTimerId = window.setTimeout(
-      () => {
-        if (this.logger.getLastRecord() !== value) {
-          this.logger.pushRecord(value);
-        }
-        window.clearTimeout(this.loggerTimerId);
-        this.loggerTimerId = 0;
-      },
-      this.config.logger ? this.config.logger.interval : defaultConfig.logger.interval,
-    );
-    this._setMdText(value, e);
+    // 触发内部事件
+    emitter.emit(emitter.EVENT_CHANGE, value, e);
+    this.setText(value, e);
   }
 
   private handleInputSelect(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
     e.persist();
-    this.selection = { ...this.selection, isSelected: true, ...this._getSelectionInfo(e) };
+    const event = e.nativeEvent;
+    const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
+    const start = source.selectionStart;
+    const end = source.selectionEnd;
+    const text = (source.value || '').slice(start, end);
+    this.selection = {
+      ...this.selection,
+      isSelected: true,
+      start,
+      end,
+      text,
+    };
   }
 
   private handleScrollEle(node: 'md' | 'html') {
@@ -486,20 +339,31 @@ class Editor extends React.Component<EditorProps, any> {
     this.hasContentChanged = false;
   }
 
-  private _clearSelection() {
-    this.selection = { ...this.initialSelection };
+  // TODO: 将清除作用于DOM上
+  clearSelection() {
+    this.selection = { ...initialSelection };
   }
 
-  private _getSelectionInfo(e: React.SyntheticEvent<HTMLTextAreaElement, Event>) {
-    const event = e.nativeEvent;
-    const source = (event.srcElement || event.currentTarget) as HTMLTextAreaElement;
-    const start = source.selectionStart;
-    const end = source.selectionEnd;
-    const text = (source.value || '').slice(start, end);
-    return { start, end, text };
+  /**
+   * 获取已选择区域
+   * @return {Selection}
+   */
+  getSelection() {
+    return { ...this.selection };
   }
 
-  private _setMdText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>) {
+  // TODO: 将设置作用于DOM上
+  setSelection() {
+    //
+  }
+
+  /**
+   * 设置文本，同时触发onChange
+   * 注意避免在onChange里面调用此方法，以免造成死循环
+   * @param {string} value
+   * @param {any} event
+   */
+  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>) {
     const text = value.replace(/↵/g, '\n');
     this.setState({
       text: value,
@@ -514,12 +378,7 @@ class Editor extends React.Component<EditorProps, any> {
     });
   }
 
-  private _isKeyMatch(
-    event: React.KeyboardEvent<HTMLDivElement>,
-    key: string,
-    keyCode: number,
-    withKey?: ('ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey')[],
-  ) {
+  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: number, key?: string, withKey?: any) {
     if (withKey && withKey.length > 0) {
       for (const it in withKey) {
         // @ts-ignore
@@ -534,19 +393,40 @@ class Editor extends React.Component<EditorProps, any> {
       return event.keyCode === keyCode;
     }
   }
+  /**
+   * 其他事件监听
+   */
+  onChange(cb: (value: string, e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
+    emitter.on(emitter.EVENT_CHANGE, cb);
+  }
+  offChange(cb: any) {
+    emitter.off(emitter.EVENT_CHANGE, cb);
+  }
 
-  private handleonKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    // Mac的Redo比较特殊，是Command+Shift+Z，优先处理
-    // metaKey = command
-    if (this._isKeyMatch(e, 'y', 89, ['ctrlKey']) || this._isKeyMatch(e, 'z', 90, ['metaKey', 'shiftKey'])) {
-      this.handleRedo();
-      e.preventDefault();
-      return;
+  /**
+   * 监听键盘事件
+   */
+  private keyboardListeners: KeyboardEventListener[] = [];
+  onKeyboard(data: KeyboardEventListener) {
+    if (!this.keyboardListeners.includes(data)) {
+      this.keyboardListeners.push(data);
     }
-    if (this._isKeyMatch(e, 'z', 90, ['ctrlKey']) || this._isKeyMatch(e, 'z', 90, ['metaKey'])) {
-      this.handleUndo();
-      e.preventDefault();
-      return;
+  }
+  offKeyboard(data: KeyboardEventListener) {
+    const index = this.keyboardListeners.indexOf(data);
+    if (index >= 0) {
+      this.keyboardListeners.splice(index, 1);
+    }
+  }
+
+  private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    // 遍历监听数组，找找有没有被监听
+    for (const it of this.keyboardListeners) {
+      if (this._isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
+        e.preventDefault();
+        it.callback(e);
+        return;
+      }
     }
   }
 
@@ -566,155 +446,22 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   render() {
-    const { view, dropButton, fullScreen, table } = this.state;
+    const { view, fullScreen } = this.state;
     const renderNavigation = () => {
       return (
         view.menu && (
           <NavigationBar
             left={
               <div className="button-wrap">
-                <span
-                  className="button button-type-header"
-                  title="Header"
-                  onMouseEnter={() => this.showDropList('header', true)}
-                  onMouseLeave={() => this.showDropList('header', false)}
-                >
-                  <Icon type="icon-header" />
-                  <DropList
-                    show={dropButton.header}
-                    onClose={() => {
-                      this.showDropList('header', false);
-                    }}
-                    render={() => {
-                      return (
-                        <HeaderList
-                          onSelectHeader={(header: string) => {
-                            this.handleDecorate(header);
-                          }}
-                        />
-                      );
-                    }}
-                  />
-                </span>
-                <span className="button button-type-bold" title="Bold" onClick={() => this.handleDecorate('bold')}>
-                  <Icon type="icon-bold" />
-                </span>
-                <span
-                  className="button button-type-italic"
-                  title="Italic"
-                  onClick={() => this.handleDecorate('italic')}
-                >
-                  <Icon type="icon-italic" />
-                </span>
-                <span
-                  className="button button-type-underline"
-                  title="Underline"
-                  onClick={() => this.handleDecorate('underline')}
-                >
-                  <Icon type="icon-underline" />
-                </span>
-                <span
-                  className="button button-type-strikethrough"
-                  title="Strikethrough"
-                  onClick={() => this.handleDecorate('strikethrough')}
-                >
-                  <Icon type="icon-strikethrough" />
-                </span>
-                <span
-                  className="button button-type-unordered"
-                  title="Unordered list"
-                  onClick={() => this.handleDecorate('unordered')}
-                >
-                  <Icon type="icon-list-ul" />
-                </span>
-                <span
-                  className="button button-type-ordered"
-                  title="Ordered list"
-                  onClick={() => this.handleDecorate('order')}
-                >
-                  <Icon type="icon-list-ol" />
-                </span>
-                <span className="button button-type-quote" title="Quote" onClick={() => this.handleDecorate('quote')}>
-                  <Icon type="icon-quote-left" />
-                </span>
-                <span className="button button-type-hr" title="Line break" onClick={() => this.handleDecorate('hr')}>
-                  <Icon type="icon-window-minimize" />
-                </span>
-                <span
-                  className="button button-type-inlinecode"
-                  title="Inline code"
-                  onClick={() => this.handleDecorate('inlinecode')}
-                >
-                  <Icon type="icon-embed" />
-                </span>
-                <span
-                  className="button button-type-code"
-                  title="Block code"
-                  onClick={() => this.handleDecorate('code')}
-                >
-                  <Icon type="icon-embed2" />
-                </span>
-                <span
-                  className="button button-type-table"
-                  title="Table"
-                  onMouseEnter={() => this.showDropList('table', true)}
-                  onMouseLeave={() => this.showDropList('table', false)}
-                >
-                  <Icon type="icon-table" />
-                  <DropList
-                    show={dropButton.table}
-                    onClose={() => {
-                      this.showDropList('table', false);
-                    }}
-                    render={() => {
-                      return (
-                        <TableList
-                          maxRow={table.maxRow}
-                          maxCol={table.maxCol}
-                          onSetTable={(option: any) => {
-                            this.handleDecorate('table', option);
-                          }}
-                        />
-                      );
-                    }}
-                  />
-                </span>
-                {this.props.onCustomImageUpload ? (
-                  <span className="button button-type-image" title="Image" onClick={this.handleCustomImageUpload}>
-                    <Icon type="icon-photo" />
-                  </span>
-                ) : (
-                  <span
-                    className="button button-type-image"
-                    title="Image"
-                    onClick={this.handleImageUpload}
-                    style={{ position: 'relative' }}
-                  >
-                    <Icon type="icon-photo" />
-                    <InputFile
-                      accept={this.config.imageAccept || ''}
-                      ref={this.inputFile}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        e.persist();
-                        if (e.target.files && e.target.files.length > 0) {
-                          this.onImageChanged(e.target.files[0]);
-                        }
-                      }}
-                    />
-                  </span>
-                )}
-                <span className="button button-type-link" title="Link" onClick={() => this.handleDecorate('link')}>
-                  <Icon type="icon-link" />
-                </span>
-                <span className="button button-type-clear" title="Clear" onClick={this.handleEmpty}>
-                  <Icon type="icon-trash" />
-                </span>
-                <span className="button button-type-undo" title="Undo" onClick={this.handleUndo}>
-                  <Icon type="icon-reply" />
-                </span>
-                <span className="button button-type-redo" title="Redo" onClick={this.handleRedo}>
-                  <Icon type="icon-share" />
-                </span>
+                {Editor.plugins.map(it => {
+                  // @ts-ignore
+                  return React.createElement(it.comp, {
+                    editor: this,
+                    editorConfig: this.config,
+                    config: it.config,
+                    key: it.comp.name,
+                  });
+                })}
               </div>
             }
             right={
@@ -834,7 +581,7 @@ class Editor extends React.Component<EditorProps, any> {
       <div
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
         style={this.props.style}
-        onKeyDown={this.handleonKeyDown}
+        onKeyDown={this.handleKeyDown}
       >
         {renderNavigation()}
         <div className="editor-container">{renderContent()}</div>

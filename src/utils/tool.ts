@@ -44,6 +44,12 @@ export function throttle(func: any, deltaX: number) {
   };
 }
 
-export function isPromise(obj: any): boolean {
-  return obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+export function isPromise(obj: any): obj is Promise<any> {
+  return (
+    obj &&
+    (obj instanceof Promise ||
+      ((typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function'))
+  );
 }
+
+export const noop = () => {};

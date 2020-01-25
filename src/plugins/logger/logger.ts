@@ -9,7 +9,7 @@ class Logger {
 
   private recycle: string[] = [];
 
-  pushRecord(val: string) {
+  push(val: string) {
     const result = this.record.push(val);
     // 如果超过了最长限制，把之前的清理掉，避免造成内存浪费
     while (this.record.length > MAX_LOG_SIZE) {
@@ -18,11 +18,11 @@ class Logger {
     return result;
   }
 
-  getRecord() {
+  get() {
     return this.record;
   }
 
-  getLastRecord(): string {
+  getLast(): string {
     const length = this.record.length;
     return this.record[length - 1];
   }
@@ -32,7 +32,7 @@ class Logger {
     if (lastRecord) {
       this.recycle.push(lastRecord);
       if (typeof cb === 'function') {
-        cb(this.getLastRecord());
+        cb(this.getLast());
       }
     }
   }
@@ -40,14 +40,14 @@ class Logger {
   redo(cb?: (obj: string) => void) {
     const history = this.recycle.pop();
     if (history) {
-      this.pushRecord(history);
+      this.push(history);
       if (typeof cb === 'function') {
-        cb(this.getLastRecord());
+        cb(this.getLast());
       }
     }
   }
 
-  cleanRedoList(cb?: () => void) {
+  cleanRedo(cb?: () => void) {
     this.recycle = [];
     if (typeof cb === 'function') {
       cb();
