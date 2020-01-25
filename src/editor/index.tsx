@@ -77,10 +77,6 @@ class Editor extends React.Component<EditorProps, any> {
       html: '',
       view: this.config.view,
       htmlType: 'render', // 'render' 'source'
-      dropButton: {
-        header: false,
-        table: false,
-      },
       fullScreen: false,
       table: this.config.table,
     };
@@ -170,15 +166,17 @@ class Editor extends React.Component<EditorProps, any> {
     const { selection } = this;
     const beforeContent = text.slice(0, selection.start);
     const afterContent = text.slice(selection.end, text.length);
-    let decorateOption = null;
+    let decorateOption = option ? { ...option } : {};
     if (type === 'image') {
       decorateOption = {
+        ...decorateOption,
         target: option.target || '',
         imageUrl: option.imageUrl || this.config.imageUrl,
       };
     }
     if (type === 'link') {
       decorateOption = {
+        ...decorateOption,
         linkUrl: this.config.linkUrl,
       };
     }
@@ -303,7 +301,6 @@ class Editor extends React.Component<EditorProps, any> {
       end,
       text,
     };
-    console.log('handleInputSelect', this.selection);
   }
 
   private handleScrollEle(node: 'md' | 'html') {
@@ -350,7 +347,6 @@ class Editor extends React.Component<EditorProps, any> {
       to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
     }
     this.selection = { ...initialSelection, ...to };
-    console.log('setSelection', this.selection);
   }
 
   /**
