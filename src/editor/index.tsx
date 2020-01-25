@@ -527,11 +527,12 @@ class Editor extends React.Component<EditorProps, any> {
           return false;
         }
       }
-    }
-    if (event.key) {
-      return event.key === key;
     } else {
-      return event.keyCode === keyCode;
+      if (event.key) {
+        return event.key === key;
+      } else {
+        return event.keyCode === keyCode;
+      }
     }
   }
 
