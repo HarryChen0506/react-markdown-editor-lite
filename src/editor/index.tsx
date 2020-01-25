@@ -521,7 +521,7 @@ class Editor extends React.Component<EditorProps, any> {
     withKey?: ('ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey')[],
   ) {
     if (withKey && withKey.length > 0) {
-      for (const it in withKey) {
+      for (const it of withKey) {
         // @ts-ignore
         if (typeof event[it] !== 'undefined' && !event[it]) {
           return false;
