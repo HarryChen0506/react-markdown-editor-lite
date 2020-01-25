@@ -199,11 +199,6 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
-  insertText(value: string, replaceSelection: boolean = false) {
-    // if ()
-    this.setText(value);
-  }
-
   private _getDecoratedText(type: string, option: any) {
     const { text = '' } = this.state;
     const { selection } = this;
@@ -455,49 +450,24 @@ class Editor extends React.Component<EditorProps, any> {
     }
   }
 
+  /**
+   * 获取文本值
+   * @return {string}
+   */
   getMdValue(): string {
     return this.state.text;
   }
 
+  /**
+   * 获取渲染后的HTML
+   * @returns {string}
+   */
   getHtmlValue(): string {
     return this.state.html;
   }
 
   render() {
     const { view, fullScreen } = this.state;
-    const renderNavigation = () => {
-      return (
-        view.menu && (
-          <NavigationBar
-            left={
-              <div className="button-wrap">
-                {Editor.plugins.map(it => {
-                  return React.createElement(it.comp, {
-                    editor: this,
-                    editorConfig: this.config,
-                    config: it.config,
-                    key: it.comp.name,
-                  });
-                })}
-              </div>
-            }
-            right={
-              <div className="button-wrap">
-                {view.fullScreen && (
-                  <span
-                    className="button button-type-fullscreen"
-                    title="Full screen"
-                    onClick={this.handleToggleFullScreen}
-                  >
-                    {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
-                  </span>
-                )}
-              </div>
-            }
-          />
-        )
-      );
-    };
     const renderContent = () => {
       const { html, text, htmlType } = this.state;
       const res = [];
@@ -600,7 +570,35 @@ class Editor extends React.Component<EditorProps, any> {
         style={this.props.style}
         onKeyDown={this.handleKeyDown}
       >
-        {renderNavigation()}
+        {view.menu && (
+          <NavigationBar
+            left={
+              <div className="button-wrap">
+                {Editor.plugins.map(it => {
+                  return React.createElement(it.comp, {
+                    editor: this,
+                    editorConfig: this.config,
+                    config: it.config,
+                    key: it.comp.name,
+                  });
+                })}
+              </div>
+            }
+            right={
+              <div className="button-wrap">
+                {view.fullScreen && (
+                  <span
+                    className="button button-type-fullscreen"
+                    title="Full screen"
+                    onClick={this.handleToggleFullScreen}
+                  >
+                    {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
+                  </span>
+                )}
+              </div>
+            }
+          />
+        )}
         <div className="editor-container">{renderContent()}</div>
       </div>
     );

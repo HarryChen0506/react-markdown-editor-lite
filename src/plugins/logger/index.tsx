@@ -11,6 +11,7 @@ export default class Logger extends PluginComponent {
   private logger: LoggerPlugin;
   private timerId?: number;
   private handleKeyboards: KeyboardEventListener[] = [];
+  private lastPop: string | null = null;
 
   constructor(props: any) {
     super(props);
@@ -32,18 +33,22 @@ export default class Logger extends PluginComponent {
   private handleUndo() {
     this.logger.undo(last => {
       this.pause();
+      this.lastPop = last;
       this.editor.setText(last);
+      this.forceUpdate();
     });
   }
 
   private handleRedo() {
     this.logger.redo(last => {
+      this.lastPop = last;
       this.editor.setText(last);
+      this.forceUpdate();
     });
   }
 
   handleChange(value: string) {
-    if (this.logger.getLast() === value) {
+    if (this.logger.getLast() === value || (this.lastPop && this.lastPop === value)) {
       return;
     }
     if (this.timerId) {
@@ -54,6 +59,8 @@ export default class Logger extends PluginComponent {
     this.timerId = window.setTimeout(() => {
       if (this.logger.getLast() !== value) {
         this.logger.push(value);
+        this.lastPop = null;
+        this.forceUpdate();
       }
       window.clearTimeout(this.timerId);
       this.timerId = 0;
@@ -82,10 +89,18 @@ export default class Logger extends PluginComponent {
   render() {
     return (
       <React.Fragment>
-        <span className="button button-type-undo" title="Undo" onClick={this.handleUndo}>
+        <span
+          className={`button button-type-undo ${this.logger.hasUndo() ? '' : 'disabled'}`}
+          title="Undo"
+          onClick={this.handleUndo}
+        >
           <Icon type="icon-reply" />
         </span>
-        <span className="button button-type-redo" title="Redo" onClick={this.handleRedo}>
+        <span
+          className={`button button-type-redo ${this.logger.hasRedo() ? '' : 'disabled'}`}
+          title="Redo"
+          onClick={this.handleRedo}
+        >
           <Icon type="icon-share" />
         </span>
       </React.Fragment>

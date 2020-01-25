@@ -53,6 +53,14 @@ class Logger {
       cb();
     }
   }
+
+  hasUndo() {
+    return this.record.length > 0;
+  }
+
+  hasRedo() {
+    return this.recycle.length > 0;
+  }
 }
 
 export default Logger;
