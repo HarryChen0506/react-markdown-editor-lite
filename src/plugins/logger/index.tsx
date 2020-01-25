@@ -16,6 +16,8 @@ export default class Logger extends PluginComponent {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleRedo = this.handleRedo.bind(this);
+    this.handleUndo = this.handleUndo.bind(this);
     // Mac的Redo比较特殊，是Command+Shift+Z，优先处理
     this.handleKeyboards = [
       { key: 'y', keyCode: 89, withKey: ['ctrlKey'], callback: this.handleRedo },

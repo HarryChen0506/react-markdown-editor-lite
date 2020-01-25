@@ -1,6 +1,5 @@
 // TableList
 import * as React from 'react';
-import './index.less';
 
 interface InputFileProps {
   accept: string;

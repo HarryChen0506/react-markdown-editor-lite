@@ -192,14 +192,16 @@ class Editor extends React.Component<EditorProps, any> {
         return;
       }
       const content = this._getDecoratedText(type, option);
-      this.setText(content);
-      emitter.emit(emitter.EVENT_CHANGE, content);
-      this.clearSelection();
+      this.setText(content, undefined, true);
     } else {
       const content = this._getDecoratedText(type, option);
       this.setText(content);
-      emitter.emit(emitter.EVENT_CHANGE, content);
     }
+  }
+
+  insertText(value: string, replaceSelection: boolean = false) {
+    // if ()
+    this.setText(value);
   }
 
   private _getDecoratedText(type: string, option: any) {
@@ -339,9 +341,14 @@ class Editor extends React.Component<EditorProps, any> {
     this.hasContentChanged = false;
   }
 
-  // TODO: 将清除作用于DOM上
+  /**
+   * 清除已选择区域
+   */
   clearSelection() {
     this.selection = { ...initialSelection };
+    if (this.nodeMdText.current) {
+      this.nodeMdText.current.setSelectionRange(0, 0, 'none');
+    }
   }
 
   /**
@@ -352,9 +359,20 @@ class Editor extends React.Component<EditorProps, any> {
     return { ...this.selection };
   }
 
-  // TODO: 将设置作用于DOM上
-  setSelection() {
-    //
+  /**
+   * 设置已选择区域
+   * @param {Selection} to
+   */
+  setSelection(to: Selection) {
+    if (this.selection.isSelected) {
+      if (this.nodeMdText.current) {
+        this.nodeMdText.current.setSelectionRange(to.start, to.end, 'forward');
+        to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
+      }
+      this.selection = { ...initialSelection, ...to };
+    } else {
+      this.clearSelection();
+    }
   }
 
   /**
@@ -363,11 +381,18 @@ class Editor extends React.Component<EditorProps, any> {
    * @param {string} value
    * @param {any} event
    */
-  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>) {
+  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, clearSelection: boolean = false) {
     const text = value.replace(/↵/g, '\n');
+    if (this.state.text === value) {
+      return;
+    }
+    emitter.emit(emitter.EVENT_CHANGE, value, event);
     this.setState({
       text: value,
     });
+    if (clearSelection) {
+      this.clearSelection();
+    }
     this.renderHTML(text).then(html => {
       this.setState({
         html,
@@ -380,7 +405,7 @@ class Editor extends React.Component<EditorProps, any> {
 
   private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: number, key?: string, withKey?: any) {
     if (withKey && withKey.length > 0) {
-      for (const it in withKey) {
+      for (const it of withKey) {
         // @ts-ignore
         if (typeof event[it] !== 'undefined' && !event[it]) {
           return false;
@@ -396,7 +421,7 @@ class Editor extends React.Component<EditorProps, any> {
   /**
    * 其他事件监听
    */
-  onChange(cb: (value: string, e: React.ChangeEvent<HTMLTextAreaElement>) => void) {
+  onChange(cb: (value: string, e?: React.ChangeEvent<HTMLTextAreaElement>) => void) {
     emitter.on(emitter.EVENT_CHANGE, cb);
   }
   offChange(cb: any) {
@@ -438,13 +463,6 @@ class Editor extends React.Component<EditorProps, any> {
     return this.state.html;
   }
 
-  private showDropList(type: 'header' | 'table', flag: boolean) {
-    const { dropButton } = this.state;
-    this.setState({
-      dropButton: { ...dropButton, [type]: flag },
-    });
-  }
-
   render() {
     const { view, fullScreen } = this.state;
     const renderNavigation = () => {
@@ -454,7 +472,6 @@ class Editor extends React.Component<EditorProps, any> {
             left={
               <div className="button-wrap">
                 {Editor.plugins.map(it => {
-                  // @ts-ignore
                   return React.createElement(it.comp, {
                     editor: this,
                     editorConfig: this.config,

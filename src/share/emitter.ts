@@ -1,4 +1,4 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 class Emitter extends EventEmitter {
   EVENT_CHANGE = 'a1';
