@@ -47,15 +47,21 @@ export default class Logger extends PluginComponent {
     });
   }
 
-  handleChange(value: string) {
+  handleChange(value: string, e: any, isChange: boolean) {
     if (this.logger.getLast() === value || (this.lastPop && this.lastPop === value)) {
+      return;
+    }
+    if (isChange) {
+      this.logger.push(value);
+      this.lastPop = null;
+      this.forceUpdate();
       return;
     }
     if (this.timerId) {
       window.clearTimeout(this.timerId);
       this.timerId = 0;
     }
-    const interval = this.editorConfig.logger ? this.editorConfig.logger.interval : defaultConfig.logger.interval;
+    const interval = this.editorConfig.logger ? this.editorConfig.logger.interval : defaultConfig.logger!.interval;
     this.timerId = window.setTimeout(() => {
       if (this.logger.getLast() !== value) {
         this.logger.push(value);
@@ -69,13 +75,15 @@ export default class Logger extends PluginComponent {
 
   componentDidMount() {
     // 监听变化事件
-    this.editor.onChange(this.handleChange);
+    this.editor.on('change', this.handleChange);
     // 监听键盘事件
     this.handleKeyboards.forEach(it => this.editor.onKeyboard(it));
+    // 初始化时，把已有值填充进logger
+    this.logger.push(this.editor.getMdValue());
   }
 
   componentWillUnmount() {
-    this.editor.offChange(this.handleChange);
+    this.editor.off('change', this.handleChange);
     this.handleKeyboards.forEach(it => this.editor.offKeyboard(it));
   }
 

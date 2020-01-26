@@ -24,6 +24,8 @@ export interface EditorConfig {
   };
   syncScrollMode?: string[];
   clearTip?: string;
+  allowPasteImage?: boolean;
+  onPasteImage?: (image: File) => Promise<string>;
   onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
   onImageUpload?: (file: File, callback: (url: string) => void) => void;
   onCustomImageUpload?: (event: any) => Promise<{ url: string }>;

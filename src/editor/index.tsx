@@ -85,10 +85,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.state = {
       text: (this.props.value || '').replace(/↵/g, '\n'),
       html: '',
-      view: this.config.view || defaultConfig.view,
+      view: this.config.view || defaultConfig.view!,
       htmlType: 'render', // 'render' 'source'
       fullScreen: false,
-      table: this.config.table || defaultConfig.table,
+      table: this.config.table || defaultConfig.table!,
     };
 
     this.nodeMdText = React.createRef();
@@ -248,7 +248,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.hasContentChanged = true;
     }
     // 触发内部事件
-    emitter.emit(emitter.EVENT_CHANGE, value, e);
+    emitter.emit(emitter.EVENT_CHANGE, value, e, false);
     this.setText(value, e);
   }
 
@@ -314,19 +314,20 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
     }
     const decorate = getDecorated(selection.text, type, decorateOption);
-    this.insertText(decorate.text, decorate.selection);
+    this.insertText(decorate.text, !!decorate.selection, decorate.selection);
   }
 
   /**
-   * 插入文本，注意会替换掉当前选择的文本
-   * @param {string} value
-   * @param {Selection} newSelection
+   * 插入文本
+   * @param {string} value 要插入的文本
+   * @param {boolean} replaceSelected 是否替换掉当前选择的文本
+   * @param {Selection} newSelection 新的选择区域
    */
-  insertText(value: string = '', newSelection?: { start: number; end: number }) {
+  insertText(value: string = '', replaceSelected: boolean = false, newSelection?: { start: number; end: number }) {
     const { text = '' } = this.state;
     const selection = this.getSelection();
     const beforeContent = text.slice(0, selection.start);
-    const afterContent = text.slice(selection.end, text.length);
+    const afterContent = text.slice(replaceSelected ? selection.start : selection.end, text.length);
 
     this.setText(
       beforeContent + value + afterContent,
@@ -356,7 +357,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.state.text === value) {
       return;
     }
-    emitter.emit(emitter.EVENT_CHANGE, value, event);
+    emitter.emit(emitter.EVENT_CHANGE, value, event, true);
     this.setState(
       {
         text: value,
@@ -392,11 +393,23 @@ class Editor extends React.Component<EditorProps, EditorState> {
   /**
    * 其他事件监听
    */
-  onChange(cb: (value: string, e?: React.ChangeEvent<HTMLTextAreaElement>) => void) {
-    emitter.on(emitter.EVENT_CHANGE, cb);
+  private getEventType(event: string) {
+    switch (event) {
+      case 'change':
+        return emitter.EVENT_CHANGE;
+    }
   }
-  offChange(cb: any) {
-    emitter.off(emitter.EVENT_CHANGE, cb);
+  on(event: 'change', cb: any) {
+    const eventType = this.getEventType(event);
+    if (eventType) {
+      emitter.on(eventType, cb);
+    }
+  }
+  off(event: 'change', cb: any) {
+    const eventType = this.getEventType(event);
+    if (eventType) {
+      emitter.off(eventType, cb);
+    }
   }
 
   /**
@@ -451,11 +464,40 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 监听粘贴事件
+   * 监听粘贴事件，实现自动上传图片
    */
   handlePaste(e: React.SyntheticEvent) {
+    if (!this.config.allowPasteImage) {
+      return;
+    }
+    const onPasteImage = this.config.onPasteImage || defaultConfig.onPasteImage!;
+    e.preventDefault();
     const event = e.nativeEvent as ClipboardEvent;
-    console.log((event.clipboardData || window.clipboardData).getData('text'));
+    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
+    const queue: Promise<string>[] = [];
+    Array.prototype.forEach.call(items, (it: DataTransferItem) => {
+      if (it.kind === 'file' && it.type.includes('image')) {
+        const file = it.getAsFile();
+        if (file) {
+          queue.push(
+            onPasteImage(file)
+              .then(url =>
+                getDecorated('', 'image', {
+                  target: file.name || '',
+                  imageUrl: url,
+                }),
+              )
+              .then(decorated => decorated.text),
+          );
+        }
+      } else {
+        queue.push(new Promise(resolve => it.getAsString(resolve)));
+      }
+    });
+    Promise.all(queue).then(res => {
+      const text = res.join('');
+      this.insertText(text, true);
+    });
   }
 
   render() {

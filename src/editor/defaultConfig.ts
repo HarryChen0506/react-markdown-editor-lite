@@ -1,4 +1,6 @@
-export default {
+import { EditorConfig } from 'share/var';
+
+const defaultConfig: EditorConfig = {
   theme: 'default',
   view: {
     menu: true,
@@ -20,4 +22,17 @@ export default {
     maxCol: 6,
   },
   clearTip: 'Are you sure you want to clear your markdown ?',
+  allowPasteImage: true,
+  onPasteImage: (image: File) => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = data => {
+        // @ts-ignore
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(image);
+    });
+  },
 };
+
+export default defaultConfig;

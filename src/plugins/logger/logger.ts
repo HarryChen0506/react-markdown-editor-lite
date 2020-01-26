@@ -55,7 +55,7 @@ class Logger {
   }
 
   hasUndo() {
-    return this.record.length > 0;
+    return this.record.length > 1;
   }
 
   hasRedo() {
