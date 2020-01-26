@@ -1,4 +1,4 @@
-const content =  `
+const content = `
 # 手把手教你写一个markdown编辑器
 ### 前言
 >笔者在18年年末的时候接到一个开发任务——搭建一个AI项目的开放平台，其中的产品文档为转化为HTML格式的markdown文档。考虑到文档的即时更新，将文档信息做成了Ajax接口的形式。因此管理后台只需将textarea表单的内容通过markdown解析器进行HTML格式转化，然后将markdown内容和经转化的HTML文档都保存到数据库即可。
@@ -178,5 +178,6 @@ export default class Demo extends React.Component {
 
    欢迎大家使用和反馈，[项目地址](https://github.com/HarryChen0506/react-markdown-editor-lite) (https://github.com/HarryChen0506/react-markdown-editor-lite)， 你的点赞将是我莫大的动力😊
 
-`
-export default content
+`;
+export default content;
+// export default `aaa\nbbb\nccc`

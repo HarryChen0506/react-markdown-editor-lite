@@ -10,13 +10,13 @@ import mergeConfig from '../utils/mergeConfig';
 import * as tool from '../utils/tool';
 import defaultConfig from './defaultConfig';
 import './index.less';
-import { HtmlCode, HtmlRender } from './preview';
+import { HtmlCode, HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
 
 interface EditorProps extends EditorConfig {
   value: string;
-  renderHTML: (text: string) => string | Promise<string> | (() => string);
+  renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
   config?: any;
   // Configs
@@ -29,7 +29,24 @@ interface EditorProps extends EditorConfig {
   ) => void;
 }
 
-class Editor extends React.Component<EditorProps, any> {
+interface EditorState {
+  text: string;
+  html: HtmlType;
+  htmlType: 'render' | 'source';
+  fullScreen: boolean;
+  view: {
+    menu: boolean;
+    md: boolean;
+    html: boolean;
+    fullScreen: boolean;
+  };
+  table: {
+    maxRow: number;
+    maxCol: number;
+  };
+}
+
+class Editor extends React.Component<EditorProps, EditorState> {
   static defaultProps = {
     value: '',
     onBeforeClear(this: Editor): Promise<boolean> {
@@ -51,8 +68,6 @@ class Editor extends React.Component<EditorProps, any> {
   private nodeMdPreview?: HtmlCode | HtmlRender;
   private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
 
-  private scale = 0;
-
   private willScrollEle: 'md' | 'html' | '' = ''; // 即将滚动的元素 md html
 
   private hasContentChanged = true;
@@ -71,12 +86,12 @@ class Editor extends React.Component<EditorProps, any> {
     this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
-      text: (this.formatString(this.props.value) || '').replace(/↵/g, '\n'),
+      text: (this.props.value || '').replace(/↵/g, '\n'),
       html: '',
-      view: this.config.view,
+      view: this.config.view || defaultConfig.view,
       htmlType: 'render', // 'render' 'source'
       fullScreen: false,
-      table: this.config.table,
+      table: this.config.table || defaultConfig.table,
     };
 
     this.nodeMdText = React.createRef();
@@ -91,124 +106,91 @@ class Editor extends React.Component<EditorProps, any> {
     this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
 
-    this.handleInputScroll = tool
-      .throttle((e: any) => {
-        const { syncScrollMode = [] } = this.config;
-        if (!syncScrollMode.includes('rightFollowLeft')) {
-          return;
-        }
-        e.persist();
-        if (this.willScrollEle === 'md') {
-          if (this.hasContentChanged) {
-            this._setScrollValue();
-          }
-          if (this.nodeMdPreviewWraper.current && this.nodeMdText.current) {
-            this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scale;
-          }
-        }
-      }, 1000 / 60)
-      .bind(this);
-    this.handlePreviewScroll = tool
-      .throttle((e: any) => {
-        const { syncScrollMode = [] } = this.config;
-        if (!syncScrollMode.includes('leftFollowRight')) {
-          return;
-        }
-        e.persist();
-        if (this.willScrollEle === 'html') {
-          if (this.hasContentChanged) {
-            this._setScrollValue();
-          }
-          if (this.nodeMdText.current && this.nodeMdPreviewWraper.current)
-            this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scale;
-        }
-      }, 1000 / 60)
-      .bind(this);
+    this.handleInputScroll = this.handleSyncScroll.bind(this, 'input');
+    this.handlePreviewScroll = this.handleSyncScroll.bind(this, 'preview');
   }
 
   componentDidMount() {
-    this.renderHTML(this.props.value || '').then(html => {
-      this.setState({
-        html,
-      });
-    });
+    this.renderHTML(this.props.value || '');
   }
 
-  componentWillReceiveProps(nextProps: EditorProps) {
-    if (nextProps.value === this.props.value) {
-      // console.log('value not change')
-      return;
-    }
-    let { value } = nextProps;
-    value = this.formatString(value);
-    value = value && value.replace(/↵/g, '\n');
-    this.renderHTML(value).then(html => {
+  componentDidUpdate(prevProps: EditorProps) {
+    if (prevProps.value !== this.props.value) {
+      let value = this.props.value;
+      if (typeof value !== 'string') {
+        value = String(value).toString();
+      }
+      value = value.replace(/↵/g, '\n');
       this.setState({
         text: value,
-        html,
       });
-    });
+      this.renderHTML(value);
+    }
   }
 
-  private formatString(value: string) {
-    if (typeof this.props.value !== 'string') {
-      console.error('The type of "value" must be String!');
-      return String(value).toString();
-    }
-    return value;
-  }
-
-  insertMarkdown(type: string, option: any = {}) {
-    const { text = '' } = this.state;
-    const selection = this.getSelection();
-    const beforeContent = text.slice(0, selection.start);
-    const afterContent = text.slice(selection.end, text.length);
-    let decorateOption = option ? { ...option } : {};
-    if (type === 'image') {
-      decorateOption = {
-        ...decorateOption,
-        target: option.target || '',
-        imageUrl: option.imageUrl || this.config.imageUrl,
-      };
-    }
-    if (type === 'link') {
-      decorateOption = {
-        ...decorateOption,
-        linkUrl: this.config.linkUrl,
-      };
-    }
-    const decorate = getDecorated(selection.text, type, decorateOption);
-    this.setText(
-      beforeContent + decorate.text + afterContent,
-      undefined,
-      decorate.selection
+  // 左右同步滚动
+  private scale = 0;
+  private lastSyncScroll = 0;
+  private handleSyncScroll(type: 'input' | 'preview') {
+    const delay = 1000 / 60;
+    const time = new Date().getTime();
+    const typeConfig =
+      type === 'input'
         ? {
-            start: decorate.selection.start + beforeContent.length,
-            end: decorate.selection.end + beforeContent.length,
-            text: '',
+            include: 'rightFollowLeft',
+            ele: 'md',
+            toSet: this.nodeMdPreviewWraper.current,
+            toCalc: this.nodeMdText.current,
           }
         : {
-            start: beforeContent.length,
-            end: beforeContent.length,
-            text: '',
-          },
-    );
+            include: 'leftFollowRight',
+            ele: 'html',
+            toSet: this.nodeMdText.current,
+            toCalc: this.nodeMdPreviewWraper.current,
+          };
+    if (time - this.lastSyncScroll > delay) {
+      const { syncScrollMode = [] } = this.config;
+      if (!syncScrollMode.includes(typeConfig.include)) {
+        return;
+      }
+      if (this.willScrollEle === typeConfig.ele) {
+        if (
+          this.hasContentChanged &&
+          this.nodeMdText.current &&
+          this.nodeMdPreviewWraper.current &&
+          this.nodeMdPreview
+        ) {
+          this.scale =
+            (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight + 35) /
+            (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight + 35);
+          this.hasContentChanged = false;
+        }
+        if (typeConfig.toSet && typeConfig.toCalc)
+          typeConfig.toSet.scrollTop = typeConfig.toCalc.scrollTop * this.scale;
+      }
+    }
   }
 
-  private renderHTML(markdownText: string): Promise<string> {
+  private renderHTML(markdownText: string): Promise<void> {
     if (!this.props.renderHTML) {
       console.error('renderHTML props is required!');
-      return Promise.resolve('');
+      return Promise.resolve();
     }
     const res = this.props.renderHTML(markdownText);
-    if (typeof res === 'string') {
-      return Promise.resolve(res);
+    if (tool.isPromise(res)) {
+      // @ts-ignore
+      return res.then((r: HtmlType) => this.setHtml(r));
     } else if (typeof res === 'function') {
-      return Promise.resolve(res() as string);
-    } else if (typeof res === 'object' && typeof res.then === 'function') {
-      return res;
+      return this.setHtml(res());
+    } else {
+      return this.setHtml(res);
     }
-    return Promise.resolve('');
+  }
+
+  private setHtml(html: HtmlType): Promise<void> {
+    return new Promise(resolve => {
+      this.setState({ html }, resolve);
+    });
   }
 
   private handleToggleFullScreen() {
@@ -283,17 +265,6 @@ class Editor extends React.Component<EditorProps, any> {
     this.willScrollEle = node;
   }
 
-  private _setScrollValue() {
-    // 设置值，方便 scrollBy 操作
-    if (!this.nodeMdText.current || !this.nodeMdPreview || !this.nodeMdPreviewWraper.current) {
-      return;
-    }
-    this.scale =
-      (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight + 35) /
-      (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight + 35);
-    this.hasContentChanged = false;
-  }
-
   /**
    * 清除已选择区域
    */
@@ -335,6 +306,59 @@ class Editor extends React.Component<EditorProps, any> {
   }
 
   /**
+   * 插入Markdown语法
+   * @param type
+   * @param option
+   */
+  insertMarkdown(type: string, option: any = {}) {
+    const selection = this.getSelection();
+    let decorateOption = option ? { ...option } : {};
+    if (type === 'image') {
+      decorateOption = {
+        ...decorateOption,
+        target: option.target || '',
+        imageUrl: option.imageUrl || this.config.imageUrl,
+      };
+    }
+    if (type === 'link') {
+      decorateOption = {
+        ...decorateOption,
+        linkUrl: this.config.linkUrl,
+      };
+    }
+    const decorate = getDecorated(selection.text, type, decorateOption);
+    this.insertText(decorate.text, decorate.selection);
+  }
+
+  /**
+   * 插入文本，注意会替换掉当前选择的文本
+   * @param {string} value
+   * @param {Selection} newSelection
+   */
+  insertText(value: string = '', newSelection?: { start: number; end: number }) {
+    const { text = '' } = this.state;
+    const selection = this.getSelection();
+    const beforeContent = text.slice(0, selection.start);
+    const afterContent = text.slice(selection.end, text.length);
+
+    this.setText(
+      beforeContent + value + afterContent,
+      undefined,
+      newSelection
+        ? {
+            start: newSelection.start + beforeContent.length,
+            end: newSelection.end + beforeContent.length,
+            text: '',
+          }
+        : {
+            start: beforeContent.length,
+            end: beforeContent.length,
+            text: '',
+          },
+    );
+  }
+
+  /**
    * 设置文本，同时触发onChange
    * 注意避免在onChange里面调用此方法，以免造成死循环
    * @param {string} value
@@ -356,12 +380,9 @@ class Editor extends React.Component<EditorProps, any> {
         }
       },
     );
-    this.renderHTML(text).then(html => {
-      this.setState({
-        html,
-      });
+    this.renderHTML(text).then(() => {
       if (this.props.onChange) {
-        this.props.onChange({ text, html }, event);
+        this.props.onChange({ text, html: this.getHtmlValue() }, event);
       }
     });
   }
@@ -431,7 +452,15 @@ class Editor extends React.Component<EditorProps, any> {
    * @returns {string}
    */
   getHtmlValue(): string {
-    return this.state.html;
+    if (typeof this.state.html === 'string') {
+      return this.state.html;
+    } else {
+      if (this.nodeMdPreview) {
+        return this.nodeMdPreview.getHtml();
+      } else {
+        return '';
+      }
+    }
   }
 
   render() {

@@ -1,6 +1,5 @@
 node_modules/
 coverage/
-lib/
 .idea/
 .vscode/
 ~*
@@ -22,6 +21,8 @@ lib/
 .npm
 
 # dist
+lib/
+lib/*
 dist/
 dist/*
 

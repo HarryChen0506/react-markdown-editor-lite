@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as MarkdownIt from 'markdown-it';
+import * as ReactMarkdown from 'react-markdown';
 import MdEditor from '../index';
 import content from './content';
 import './index.less';
@@ -10,10 +11,11 @@ const MOCK_DATA = content;
 class Demo extends React.Component {
   mdEditor?: MdEditor = undefined;
 
-  mdParser?: MarkdownIt = undefined;
+  mdParser: MarkdownIt;
 
   constructor(props: any) {
     super(props);
+    this.renderHTML = this.renderHTML.bind(this);
     // initial a parser
     this.mdParser = new MarkdownIt({
       html: true,
@@ -94,6 +96,14 @@ class Demo extends React.Component {
     }
   };
 
+  renderHTML(text: string) {
+    // return this.mdParser.render(text);
+    // Using react-markdown
+    return React.createElement(ReactMarkdown, {
+      source: text,
+    });
+  }
+
   render() {
     return (
       <div className="demo-wrap">
@@ -107,7 +117,7 @@ class Demo extends React.Component {
             ref={node => (this.mdEditor = node || undefined)}
             value={MOCK_DATA}
             style={{ height: '500px', width: '100%' }}
-            renderHTML={text => (this.mdParser ? this.mdParser.render(text) : '')}
+            renderHTML={this.renderHTML}
             config={{
               view: {
                 menu: true,

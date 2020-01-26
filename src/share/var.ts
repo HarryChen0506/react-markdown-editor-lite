@@ -8,6 +8,7 @@ export interface EditorConfig {
     menu: boolean;
     md: boolean;
     html: boolean;
+    fullScreen: boolean;
   };
   htmlClass?: string;
   markdownClass?: string;

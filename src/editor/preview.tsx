@@ -1,7 +1,10 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+
+export type HtmlType = string | React.ReactElement;
 
 export interface PreviewProps {
-  html: string;
+  html: HtmlType;
   className?: string;
 }
 
@@ -11,18 +14,29 @@ export abstract class Preview<T extends HTMLElement> extends React.Component<Pre
     super(props);
     this.el = React.createRef();
   }
+  abstract getHtml(): string;
   getHeight() {
     return this.el.current ? this.el.current.offsetHeight : 0;
   }
 }
 
+function getHtmlFromReact(node: React.ReactElement) {
+  return '';
+  // const element = document.createElement("div");
+  // ReactDOM.render(node, element);
+  // return element.innerHTML;
+}
+
 export class HtmlCode extends Preview<HTMLTextAreaElement> {
+  getHtml() {
+    return typeof this.props.html === 'string' ? this.props.html : getHtmlFromReact(this.props.html);
+  }
   render() {
     return (
       <textarea
         ref={this.el}
         className={`html-code ${this.props.className || ''}`}
-        value={this.props.html}
+        value={this.getHtml()}
         onChange={() => {}}
       />
     );
@@ -30,14 +44,31 @@ export class HtmlCode extends Preview<HTMLTextAreaElement> {
 }
 
 export class HtmlRender extends Preview<HTMLDivElement> {
+  getHtml() {
+    if (typeof this.props.html === 'string') {
+      return this.props.html;
+    }
+    if (this.el.current) {
+      return this.el.current.innerHTML;
+    } else {
+      return '';
+    }
+  }
   render() {
-    return (
-      <div
-        ref={this.el}
-        dangerouslySetInnerHTML={{ __html: this.props.html }}
-        className={`custom-html-style ${this.props.className || ''}`}
-      />
-    );
+    console.log(this.props);
+    return typeof this.props.html === 'string'
+      ? React.createElement('div', {
+          ref: this.el,
+          dangerouslySetInnerHTML: { __html: this.props.html },
+          className: `custom-html-style ${this.props.className || ''}`,
+        })
+      : React.createElement(
+          'div',
+          {
+            ref: this.el,
+          },
+          this.props.html,
+        );
   }
 }
 
