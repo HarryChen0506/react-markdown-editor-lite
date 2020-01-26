@@ -68,8 +68,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private nodeMdPreview?: HtmlCode | HtmlRender;
   private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
 
-  private willScrollEle: 'md' | 'html' | '' = ''; // 即将滚动的元素 md html
-
   private hasContentChanged = true;
 
   private handleInputScroll: () => void;
@@ -129,45 +127,38 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   // 左右同步滚动
-  private scale = 0;
-  private lastSyncScroll = 0;
+  private scrollScale = 1;
+  private isSyncingScroll = false;
+  private shouldSyncScroll: 'input' | 'preview' = 'input';
   private handleSyncScroll(type: 'input' | 'preview') {
-    const delay = 1000 / 60;
-    const time = new Date().getTime();
-    const typeConfig =
-      type === 'input'
-        ? {
-            include: 'rightFollowLeft',
-            ele: 'md',
-            toSet: this.nodeMdPreviewWraper.current,
-            toCalc: this.nodeMdText.current,
+    // 防止死循环
+    if (type !== this.shouldSyncScroll) {
+      return;
+    }
+    const { syncScrollMode = [] } = this.config;
+    // 根据配置，看看是否需要同步滚动
+    if (!syncScrollMode.includes(type === 'input' ? 'rightFollowLeft' : 'leftFollowRight')) {
+      return;
+    }
+    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreview) {
+      // 计算出左右的比例
+      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreview.getHeight();
+      this.hasContentChanged = false;
+    }
+    if (!this.isSyncingScroll) {
+      this.isSyncingScroll = true;
+      requestAnimationFrame(() => {
+        if (this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
+          if (type === 'input') {
+            // left to right
+            this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scrollScale;
+          } else {
+            // right to left
+            this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scrollScale;
           }
-        : {
-            include: 'leftFollowRight',
-            ele: 'html',
-            toSet: this.nodeMdText.current,
-            toCalc: this.nodeMdPreviewWraper.current,
-          };
-    if (time - this.lastSyncScroll > delay) {
-      const { syncScrollMode = [] } = this.config;
-      if (!syncScrollMode.includes(typeConfig.include)) {
-        return;
-      }
-      if (this.willScrollEle === typeConfig.ele) {
-        if (
-          this.hasContentChanged &&
-          this.nodeMdText.current &&
-          this.nodeMdPreviewWraper.current &&
-          this.nodeMdPreview
-        ) {
-          this.scale =
-            (this.nodeMdText.current.scrollHeight - this.nodeMdText.current.offsetHeight + 35) /
-            (this.nodeMdPreview.getHeight() - this.nodeMdPreviewWraper.current.offsetHeight + 35);
-          this.hasContentChanged = false;
         }
-        if (typeConfig.toSet && typeConfig.toCalc)
-          typeConfig.toSet.scrollTop = typeConfig.toCalc.scrollTop * this.scale;
-      }
+        this.isSyncingScroll = false;
+      });
     }
   }
 
@@ -259,10 +250,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     // 触发内部事件
     emitter.emit(emitter.EVENT_CHANGE, value, e);
     this.setText(value, e);
-  }
-
-  private handleScrollEle(node: 'md' | 'html') {
-    this.willScrollEle = node;
   }
 
   /**
@@ -499,7 +486,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               wrap="hard"
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
-              onMouseOver={() => this.handleScrollEle('md')}
+              onMouseOver={() => (this.shouldSyncScroll = 'input')}
             />
           </section>,
         );
@@ -537,7 +524,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               <div
                 className="html-wrap"
                 ref={this.nodeMdPreviewWraper}
-                onMouseOver={() => this.handleScrollEle('html')}
+                onMouseOver={() => (this.shouldSyncScroll = 'preview')}
                 onScroll={this.handlePreviewScroll}
               >
                 <HtmlRender
@@ -547,7 +534,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
                 />
               </div>
             ) : (
-              <div className={'html-code-wrap'} ref={this.nodeMdPreviewWraper} onScroll={this.handlePreviewScroll}>
+              <div
+                className={'html-code-wrap'}
+                ref={this.nodeMdPreviewWraper}
+                onScroll={this.handlePreviewScroll}
+                onMouseOver={() => (this.shouldSyncScroll = 'preview')}
+              >
                 <HtmlCode
                   html={html}
                   className={this.config.htmlClass}

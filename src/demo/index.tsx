@@ -35,7 +35,7 @@ class Demo extends React.Component {
   }
 
   handleEditorChange = (it: { text: string; html: string }, event: any) => {
-    console.log('handleEditorChange', it.text, it.html, event);
+    // console.log('handleEditorChange', it.text, it.html, event);
   };
 
   handleImageUpload = (file: File, callback: (url: string) => void) => {
@@ -130,7 +130,7 @@ class Demo extends React.Component {
                 maxCol: 6,
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
-              syncScrollMode: ['rightFollowLeft'],
+              syncScrollMode: ['leftFollowRight', 'rightFollowLeft'],
               clearTip: 'Are you sure you want to clear your markdown ???',
             }}
             onChange={this.handleEditorChange}

@@ -55,7 +55,6 @@ export class HtmlRender extends Preview<HTMLDivElement> {
     }
   }
   render() {
-    console.log(this.props);
     return typeof this.props.html === 'string'
       ? React.createElement('div', {
           ref: this.el,
@@ -66,6 +65,7 @@ export class HtmlRender extends Preview<HTMLDivElement> {
           'div',
           {
             ref: this.el,
+            className: `custom-html-style ${this.props.className || ''}`,
           },
           this.props.html,
         );
