@@ -1,6 +1,6 @@
+import * as MarkdownIt from 'markdown-it';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as MarkdownIt from 'markdown-it';
 import * as ReactMarkdown from 'react-markdown';
 import MdEditor from '../index';
 import content from './content';

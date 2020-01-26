@@ -1,5 +1,5 @@
+import Editor from 'editor';
 import * as React from 'react';
-import Editor from '../editor';
 
 export interface EditorConfig {
   theme?: string;

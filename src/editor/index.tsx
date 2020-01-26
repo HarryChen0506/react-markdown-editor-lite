@@ -1,13 +1,12 @@
-// markdown editor
+import Icon from 'components/Icon';
+import NavigationBar from 'components/NavigationBar';
+import ToolBar from 'components/ToolBar';
 import * as React from 'react';
-import Icon from '../components/Icon';
-import NavigationBar from '../components/NavigationBar';
-import ToolBar from '../components/ToolBar';
-import emitter from '../share/emitter';
-import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from '../share/var';
-import getDecorated from '../utils/decorate';
-import mergeConfig from '../utils/mergeConfig';
-import * as tool from '../utils/tool';
+import emitter from 'share/emitter';
+import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from 'share/var';
+import getDecorated from 'utils/decorate';
+import mergeConfig from 'utils/mergeConfig';
+import * as tool from 'utils/tool';
 import defaultConfig from './defaultConfig';
 import './index.less';
 import { HtmlCode, HtmlRender, HtmlType } from './preview';
@@ -96,6 +95,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.nodeMdPreviewWraper = React.createRef();
 
     this.handleChange = this.handleChange.bind(this);
+    this.handlePaste = this.handlePaste.bind(this);
     this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
     this.handleToggleView = this.handleToggleView.bind(this);
@@ -450,6 +450,14 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
+  /**
+   * 监听粘贴事件
+   */
+  handlePaste(e: React.SyntheticEvent) {
+    const event = e.nativeEvent as ClipboardEvent;
+    console.log((event.clipboardData || window.clipboardData).getData('text'));
+  }
+
   render() {
     const { view, fullScreen } = this.state;
     const renderContent = () => {
@@ -487,6 +495,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'input')}
+              onPaste={this.handlePaste}
             />
           </section>,
         );

@@ -1,7 +1,7 @@
+import Icon from 'components/Icon';
+import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
-import Icon from '../../components/Icon';
-import { isPromise } from '../../utils/tool';
-import { PluginComponent, PluginProps } from '../Plugin';
+import { isPromise } from 'utils/tool';
 import InputFile from './inputFile';
 
 interface State {

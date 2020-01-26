@@ -1,8 +1,8 @@
+import Icon from 'components/Icon';
+import defaultConfig from 'editor/defaultConfig';
+import { PluginComponent } from 'plugins/Plugin';
 import * as React from 'react';
-import Icon from '../../components/Icon';
-import defaultConfig from '../../editor/defaultConfig';
-import { KeyboardEventListener } from '../../share/var';
-import { PluginComponent } from '../Plugin';
+import { KeyboardEventListener } from 'share/var';
 import LoggerPlugin from './logger';
 
 export default class Logger extends PluginComponent {

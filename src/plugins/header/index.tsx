@@ -1,7 +1,7 @@
+import DropList from 'components/DropList';
+import Icon from 'components/Icon';
+import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
-import DropList from '../../components/DropList';
-import Icon from '../../components/Icon';
-import { PluginComponent, PluginProps } from '../Plugin';
 import HeaderList from './HeaderList';
 
 interface State {
