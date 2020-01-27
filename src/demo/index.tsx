@@ -129,7 +129,6 @@ class Demo extends React.Component {
               },
               imageUrl: 'https://octodex.github.com/images/minion.png',
               syncScrollMode: ['leftFollowRight', 'rightFollowLeft'],
-              clearTip: 'Are you sure you want to clear your markdown ???',
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}

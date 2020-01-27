@@ -1,5 +1,6 @@
 import DropList from 'components/DropList';
 import Icon from 'components/Icon';
+import i18n from 'i18n';
 import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
 import TableList from './table';
@@ -42,7 +43,12 @@ export default class Table extends PluginComponent<Props, State> {
 
   render() {
     return (
-      <span className="button button-type-table" title="Table" onMouseEnter={this.show} onMouseLeave={this.hide}>
+      <span
+        className="button button-type-table"
+        title={i18n.get('btnTable')}
+        onMouseEnter={this.show}
+        onMouseLeave={this.hide}
+      >
         <Icon type="icon-table" />
         <DropList
           show={this.state.show}

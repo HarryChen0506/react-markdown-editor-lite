@@ -1,4 +1,5 @@
 import Icon from 'components/Icon';
+import i18n from 'i18n';
 import * as React from 'react';
 import { isPromise } from 'utils/tool';
 import { PluginComponent } from './Plugin';
@@ -38,7 +39,7 @@ export default class Clear extends PluginComponent {
 
   render() {
     return (
-      <span className="button button-type-clear" title="Clear" onClick={this.handleClick}>
+      <span className="button button-type-clear" title={i18n.get('btnClear')} onClick={this.handleClick}>
         <Icon type="icon-trash" />
       </span>
     );

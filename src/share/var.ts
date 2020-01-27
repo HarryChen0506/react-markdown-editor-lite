@@ -25,7 +25,6 @@ export interface EditorConfig {
     maxCol: number;
   };
   syncScrollMode?: string[];
-  clearTip?: string;
   allowPasteImage?: boolean;
   onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
   onImageUpload?: UploadFunc;

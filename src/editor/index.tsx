@@ -53,7 +53,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     onBeforeClear(this: Editor): Promise<boolean> {
       return new Promise(resolve => {
         if (window.confirm && typeof window.confirm === 'function') {
-          const result = window.confirm(this.config.clearTip);
+          const result = window.confirm(i18n.get('clearTip'));
           const toClear = result ? true : false;
           resolve(toClear);
         } else {
@@ -137,6 +137,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   componentDidMount() {
     this.renderHTML(this.props.value || '');
+    emitter.on(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
+  }
+
+  componentWillUnmount() {
+    emitter.off(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
   }
 
   componentDidUpdate(prevProps: EditorProps) {
@@ -277,6 +282,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
     // 触发内部事件
     emitter.emit(emitter.EVENT_CHANGE, value, e, false);
     this.setText(value, e);
+  }
+
+  // 语言变化事件
+  handleLocaleUpdate() {
+    this.forceUpdate();
   }
 
   /**

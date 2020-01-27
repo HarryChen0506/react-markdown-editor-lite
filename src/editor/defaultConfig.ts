@@ -21,7 +21,6 @@ const defaultConfig: EditorConfig = {
     maxRow: 4,
     maxCol: 6,
   },
-  clearTip: 'Are you sure you want to clear your markdown ?',
   allowPasteImage: true,
   onBeforeClear: undefined,
   onImageUpload: undefined,

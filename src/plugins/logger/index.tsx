@@ -4,6 +4,7 @@ import { PluginComponent } from 'plugins/Plugin';
 import * as React from 'react';
 import { KeyboardEventListener } from 'share/var';
 import LoggerPlugin from './logger';
+import i18n from 'i18n';
 
 export default class Logger extends PluginComponent {
   name = 'logger';
@@ -51,6 +52,7 @@ export default class Logger extends PluginComponent {
     if (this.logger.getLast() === value || (this.lastPop && this.lastPop === value)) {
       return;
     }
+    this.logger.cleanRedo();
     if (isChange) {
       this.logger.push(value);
       this.lastPop = null;
@@ -99,14 +101,14 @@ export default class Logger extends PluginComponent {
       <React.Fragment>
         <span
           className={`button button-type-undo ${this.logger.hasUndo() ? '' : 'disabled'}`}
-          title="Undo"
+          title={i18n.get('btnUndo')}
           onClick={this.handleUndo}
         >
           <Icon type="icon-reply" />
         </span>
         <span
           className={`button button-type-redo ${this.logger.hasRedo() ? '' : 'disabled'}`}
-          title="Redo"
+          title={i18n.get('btnRedo')}
           onClick={this.handleRedo}
         >
           <Icon type="icon-share" />

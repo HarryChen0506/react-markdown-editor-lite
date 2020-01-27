@@ -1,4 +1,5 @@
 import Icon from 'components/Icon';
+import i18n from 'i18n';
 import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
 import { isPromise } from 'utils/tool';
@@ -63,13 +64,13 @@ export default class Upload extends PluginComponent<PluginProps, State> {
   render() {
     const isCustom = this.getConfig('onCustomImageUpload', null) !== null;
     return isCustom ? (
-      <span className="button button-type-image" title="Image" onClick={this.handleCustomImageUpload}>
+      <span className="button button-type-image" title={i18n.get('btnImage')} onClick={this.handleCustomImageUpload}>
         <Icon type="icon-photo" />
       </span>
     ) : (
       <span
         className="button button-type-image"
-        title="Image"
+        title={i18n.get('btnImage')}
         onClick={this.handleImageUpload}
         style={{ position: 'relative' }}
       >

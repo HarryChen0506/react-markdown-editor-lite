@@ -1,5 +1,6 @@
 import DropList from 'components/DropList';
 import Icon from 'components/Icon';
+import i18n from 'i18n';
 import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
 import HeaderList from './HeaderList';
@@ -35,7 +36,12 @@ export default class Header extends PluginComponent<PluginProps, State> {
 
   render() {
     return (
-      <span className="button button-type-header" title="Header" onMouseEnter={this.show} onMouseLeave={this.hide}>
+      <span
+        className="button button-type-header"
+        title={i18n.get('btnHeader')}
+        onMouseEnter={this.show}
+        onMouseLeave={this.hide}
+      >
         <Icon type="icon-header" />
         <DropList
           show={this.state.show}

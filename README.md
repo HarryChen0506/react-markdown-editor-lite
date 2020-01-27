@@ -48,7 +48,6 @@ yarn add react-markdown-editor-lite
 | config.table | Max amount of rows and columns that a table created through the toolbar can have | Object | `{maxRow: 4, maxCol: 6}` | |
 | config.logger | How often to log events for undo/redo ms | Object | `{interval: 3000}` | |
 | config.syncScrollMode | Scroll sync mode between editor and preview | Array | `['rightFollowLeft', 'leftFollowRight']` | |
-| config.clearTip | default clear tip| String | `'Are you sure you want to clear your markdown ?'` | |
 | config.imageAccept | Accepted file extensions for images, list of comma seperated values i.e `.jpg,.png` | String | `''` | |
 | onChange | Callback called on editor change | Function | `({html, text}, event) => {}` |  |
 | onImageUpload | Called on image upload, return a Promise that resolved with image url | `(file: File) => Promise<string>;` | undefined |  |
