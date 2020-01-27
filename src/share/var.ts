@@ -1,6 +1,8 @@
 import Editor from 'editor';
 import * as React from 'react';
 
+export type UploadFunc = ((file: File) => Promise<string>) | ((file: File, callback: (url: string) => void) => void);
+
 export interface EditorConfig {
   theme?: string;
   name?: string;
@@ -25,9 +27,8 @@ export interface EditorConfig {
   syncScrollMode?: string[];
   clearTip?: string;
   allowPasteImage?: boolean;
-  onPasteImage?: (image: File) => Promise<string>;
   onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
-  onImageUpload?: (file: File, callback: (url: string) => void) => void;
+  onImageUpload?: UploadFunc;
   onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
 }
 

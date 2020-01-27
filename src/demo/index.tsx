@@ -38,17 +38,15 @@ class Demo extends React.Component {
     // console.log('handleEditorChange', it.text, it.html, event);
   };
 
-  handleImageUpload = (file: File, callback: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.onload = (_: ProgressEvent) => {
-      setTimeout(() => {
-        // setTimeout 模拟oss异步上传图片
-        // 当oss异步上传获取图片地址后，执行calback回调（参数为imageUrl字符串），即可将图片地址写入markdown
-        const url = 'https://avatars0.githubusercontent.com/u/21263805?s=80&v=4';
-        callback(url);
-      }, 1000);
-    };
-    reader.readAsDataURL(file);
+  handleImageUpload = (file: File): Promise<string> => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = data => {
+        // @ts-ignore
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   onBeforeClear(): Promise<boolean> {

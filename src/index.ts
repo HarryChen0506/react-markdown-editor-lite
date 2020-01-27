@@ -19,5 +19,8 @@ Editor.use(Logger);
 // 导出声明
 export { PluginComponent, PluginProps } from './plugins/Plugin';
 
+// 导出实用工具
+export { default as getDecorated } from './utils/decorate';
+
 // 导出编辑器
 export default Editor;

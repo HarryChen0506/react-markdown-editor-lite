@@ -1,12 +1,14 @@
 import Icon from 'components/Icon';
 import NavigationBar from 'components/NavigationBar';
 import ToolBar from 'components/ToolBar';
+import i18n from 'i18n';
 import * as React from 'react';
 import emitter from 'share/emitter';
 import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from 'share/var';
 import getDecorated from 'utils/decorate';
 import mergeConfig from 'utils/mergeConfig';
 import * as tool from 'utils/tool';
+import getUploadPlaceholder from 'utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import './index.less';
 import { HtmlCode, HtmlRender, HtmlType } from './preview';
@@ -61,6 +63,35 @@ class Editor extends React.Component<EditorProps, EditorState> {
     },
   };
 
+  private static plugins: Plugin[] = [];
+  /**
+   * 注册插件
+   * @param comp 插件
+   * @param config 其他配置
+   */
+  static use(comp: any, config: any = {}) {
+    Editor.plugins.push({ comp, config });
+  }
+  /**
+   * 设置插件顺序，并剔除不在列表中的插件
+   * @param {string[]} plugins 插件名称
+   */
+  static setPlugins(plugins: string[]) {
+    const findPlugin = (name: string) => {
+      for (const it of Editor.plugins) {
+        if (it.comp.name === name) {
+          return it;
+        }
+      }
+    };
+    Editor.plugins = plugins.map(name => findPlugin(name)).filter(it => !!it) as Plugin[];
+  }
+  /**
+   * 设置所使用的语言文案
+   */
+  static addLocale = i18n.add;
+  static useLocale = i18n.setCurrent;
+
   private config: EditorConfig;
 
   private nodeMdText: React.RefObject<HTMLTextAreaElement>;
@@ -71,11 +102,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private handleInputScroll: () => void;
   private handlePreviewScroll: () => void;
-
-  private static plugins: Plugin[] = [];
-  static use(comp: any, config: any = {}) {
-    Editor.plugins.push({ comp, config });
-  }
 
   constructor(props: any) {
     super(props);
@@ -103,6 +129,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handleHtmlPreview = this.handleHtmlPreview.bind(this);
     this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
     this.handleInputScroll = this.handleSyncScroll.bind(this, 'input');
     this.handlePreviewScroll = this.handleSyncScroll.bind(this, 'preview');
@@ -316,7 +343,18 @@ class Editor extends React.Component<EditorProps, EditorState> {
     const decorate = getDecorated(selection.text, type, decorateOption);
     this.insertText(decorate.text, !!decorate.selection, decorate.selection);
   }
-
+  /**
+   * 插入占位符，并在Promise结束后自动覆盖
+   * @param placeholder
+   * @param wait
+   */
+  insertPlaceholder(placeholder: string, wait: Promise<string>) {
+    this.insertText(placeholder, true);
+    wait.then(str => {
+      const text = this.getMdValue().replace(placeholder, str);
+      this.setText(text);
+    });
+  }
   /**
    * 插入文本
    * @param {string} value 要插入的文本
@@ -470,7 +508,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!this.config.allowPasteImage) {
       return;
     }
-    const onPasteImage = this.config.onPasteImage || defaultConfig.onPasteImage!;
+    const { onImageUpload } = this.config;
+    if (!onImageUpload) {
+      return;
+    }
     e.preventDefault();
     const event = e.nativeEvent as ClipboardEvent;
     const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
@@ -479,16 +520,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
       if (it.kind === 'file' && it.type.includes('image')) {
         const file = it.getAsFile();
         if (file) {
-          queue.push(
-            onPasteImage(file)
-              .then(url =>
-                getDecorated('', 'image', {
-                  target: file.name || '',
-                  imageUrl: url,
-                }),
-              )
-              .then(decorated => decorated.text),
-          );
+          const placeholder = getUploadPlaceholder(file, onImageUpload);
+          queue.push(Promise.resolve(placeholder.placeholder));
+          placeholder.uploaded.then(str => {
+            const text = this.getMdValue().replace(placeholder.placeholder, str);
+            this.setText(text);
+          });
         }
       } else {
         queue.push(new Promise(resolve => it.getAsString(resolve)));

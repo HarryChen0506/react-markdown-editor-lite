@@ -23,16 +23,9 @@ const defaultConfig: EditorConfig = {
   },
   clearTip: 'Are you sure you want to clear your markdown ?',
   allowPasteImage: true,
-  onPasteImage: (image: File) => {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = data => {
-        // @ts-ignore
-        resolve(data.target.result);
-      };
-      reader.readAsDataURL(image);
-    });
-  },
+  onBeforeClear: undefined,
+  onImageUpload: undefined,
+  onCustomImageUpload: undefined,
 };
 
 export default defaultConfig;

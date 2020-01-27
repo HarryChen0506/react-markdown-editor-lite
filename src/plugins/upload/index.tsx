@@ -2,21 +2,14 @@ import Icon from 'components/Icon';
 import { PluginComponent, PluginProps } from 'plugins/Plugin';
 import * as React from 'react';
 import { isPromise } from 'utils/tool';
+import getUploadPlaceholder from 'utils/uploadPlaceholder';
 import InputFile from './inputFile';
 
 interface State {
   show: boolean;
 }
 
-interface Props extends PluginProps {
-  config?: {
-    onImageUpload?: (file: File, callback: (url: string) => void) => void;
-    onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
-    imageAccept?: string;
-  };
-}
-
-export default class Upload extends PluginComponent<Props, State> {
+export default class Upload extends PluginComponent<PluginProps, State> {
   name = 'upload';
 
   private inputFile: React.RefObject<InputFile>;
@@ -35,7 +28,7 @@ export default class Upload extends PluginComponent<Props, State> {
   }
 
   private handleImageUpload() {
-    const onImageUpload = this.getConfig('onImageUpload', null);
+    const { onImageUpload } = this.editorConfig;
     if (typeof onImageUpload === 'function') {
       if (this.inputFile.current) {
         this.inputFile.current.click();
@@ -46,14 +39,10 @@ export default class Upload extends PluginComponent<Props, State> {
   }
 
   private onImageChanged(file: File) {
-    const onImageUpload = this.getConfig('onImageUpload', null);
+    const { onImageUpload } = this.editorConfig;
     if (onImageUpload) {
-      onImageUpload(file, (imageUrl: string) => {
-        this.editor.insertMarkdown('image', {
-          target: file.name,
-          imageUrl,
-        });
-      });
+      const placeholder = getUploadPlaceholder(file, onImageUpload);
+      this.editor.insertPlaceholder(placeholder.placeholder, placeholder.uploaded);
     }
   }
 
