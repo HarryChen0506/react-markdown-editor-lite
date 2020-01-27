@@ -52,8 +52,6 @@ export function isPromise(obj: any): obj is Promise<any> {
   );
 }
 
-export const noop = () => {};
-
 export function repeat(str: string, num: number) {
   let result = '';
   let n = num;
@@ -61,4 +59,20 @@ export function repeat(str: string, num: number) {
     result += str;
   }
   return result;
+}
+
+export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: number, key?: string, withKey?: any) {
+  if (withKey && withKey.length > 0) {
+    for (const it of withKey) {
+      // @ts-ignore
+      if (typeof event[it] !== 'undefined' && !event[it]) {
+        return false;
+      }
+    }
+  }
+  if (event.key) {
+    return event.key === key;
+  } else {
+    return event.keyCode === keyCode;
+  }
 }

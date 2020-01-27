@@ -7,7 +7,7 @@ import emitter from 'share/emitter';
 import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from 'share/var';
 import getDecorated from 'utils/decorate';
 import mergeConfig from 'utils/mergeConfig';
-import * as tool from 'utils/tool';
+import { isKeyMatch, isPromise } from 'utils/tool';
 import getUploadPlaceholder from 'utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import './index.less';
@@ -201,7 +201,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       return Promise.resolve();
     }
     const res = this.props.renderHTML(markdownText);
-    if (tool.isPromise(res)) {
+    if (isPromise(res)) {
       // @ts-ignore
       return res.then((r: HtmlType) => this.setHtml(r));
     } else if (typeof res === 'function') {
@@ -274,6 +274,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     });
   }
 
+  /**
+   * 文本区域变化事件
+   * @param {React.ChangeEvent} e
+   */
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     e.persist();
     const value = e.target.value;
@@ -285,8 +289,33 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.setText(value, e);
   }
 
+  /**
+   * 监听粘贴事件，实现自动上传图片
+   */
+  private handlePaste(e: React.SyntheticEvent) {
+    if (!this.config.allowPasteImage) {
+      return;
+    }
+    const event = e.nativeEvent as ClipboardEvent;
+    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
+    if (items) {
+      e.preventDefault();
+      this.uploadWithDataTransfer(items);
+    }
+  }
+
+  // 拖放上传
+  private handleDrop(e: React.SyntheticEvent) {
+    const event = e.nativeEvent as DragEvent;
+    const items = event.dataTransfer?.items;
+    if (items) {
+      e.preventDefault();
+      this.uploadWithDataTransfer(items);
+    }
+  }
+
   // 语言变化事件
-  handleLocaleUpdate() {
+  private handleLocaleUpdate() {
     this.forceUpdate();
   }
 
@@ -424,21 +453,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     });
   }
 
-  private _isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: number, key?: string, withKey?: any) {
-    if (withKey && withKey.length > 0) {
-      for (const it of withKey) {
-        // @ts-ignore
-        if (typeof event[it] !== 'undefined' && !event[it]) {
-          return false;
-        }
-      }
-    }
-    if (event.key) {
-      return event.key === key;
-    } else {
-      return event.keyCode === keyCode;
-    }
-  }
   /**
    * 其他事件监听
    */
@@ -476,11 +490,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.keyboardListeners.splice(index, 1);
     }
   }
-
   private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     // 遍历监听数组，找找有没有被监听
     for (const it of this.keyboardListeners) {
-      if (this._isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
+      if (isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
         e.preventDefault();
         it.callback(e);
         return;
@@ -509,31 +522,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       } else {
         return '';
       }
-    }
-  }
-
-  /**
-   * 监听粘贴事件，实现自动上传图片
-   */
-  handlePaste(e: React.SyntheticEvent) {
-    if (!this.config.allowPasteImage) {
-      return;
-    }
-    const event = e.nativeEvent as ClipboardEvent;
-    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
-    if (items) {
-      e.preventDefault();
-      this.uploadWithDataTransfer(items);
-    }
-  }
-
-  // 拖放上传
-  handleDrop(e: React.SyntheticEvent) {
-    const event = e.nativeEvent as DragEvent;
-    const items = event.dataTransfer?.items;
-    if (items) {
-      e.preventDefault();
-      this.uploadWithDataTransfer(items);
     }
   }
 
