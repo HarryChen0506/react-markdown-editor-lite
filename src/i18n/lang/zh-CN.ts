@@ -17,4 +17,6 @@ export default {
   btnLink: '链接',
   btnUndo: '撤销',
   btnRedo: '重做',
+  btnFullScreen: '全屏',
+  btnExitFullScreen: '退出全屏',
 };

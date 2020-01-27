@@ -17,4 +17,6 @@ export default {
   btnLink: 'Link',
   btnUndo: 'Undo',
   btnRedo: 'Redo',
+  btnFullScreen: 'Full screen',
+  btnExitFullScreen: 'Exit full screen',
 };

@@ -693,10 +693,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
                 {view.fullScreen && (
                   <span
                     className="button button-type-fullscreen"
-                    title="Full screen"
+                    title={i18n.get(fullScreen ? 'btnExitFullScreen' : 'btnFullScreen')}
                     onClick={this.handleToggleFullScreen}
                   >
-                    {fullScreen ? <Icon type="icon-shrink" /> : <Icon type="icon-enlarge" />}
+                    <Icon type={`icon-${fullScreen ? 'shrink' : 'enlarge'}`} />
                   </span>
                 )}
               </div>
