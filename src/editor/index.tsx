@@ -376,7 +376,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     const { text = '' } = this.state;
     const selection = this.getSelection();
     const beforeContent = text.slice(0, selection.start);
-    const afterContent = text.slice(replaceSelected ? selection.start : selection.end, text.length);
+    const afterContent = text.slice(replaceSelected ? selection.end : selection.start, text.length);
 
     this.setText(
       beforeContent + value + afterContent,
