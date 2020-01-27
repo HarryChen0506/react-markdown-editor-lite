@@ -122,6 +122,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
     this.handleChange = this.handleChange.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
     this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
     this.handleToggleView = this.handleToggleView.bind(this);
@@ -518,13 +519,29 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!this.config.allowPasteImage) {
       return;
     }
+    const event = e.nativeEvent as ClipboardEvent;
+    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
+    if (items) {
+      e.preventDefault();
+      this.uploadWithDataTransfer(items);
+    }
+  }
+
+  // 拖放上传
+  handleDrop(e: React.SyntheticEvent) {
+    const event = e.nativeEvent as DragEvent;
+    const items = event.dataTransfer?.items;
+    if (items) {
+      e.preventDefault();
+      this.uploadWithDataTransfer(items);
+    }
+  }
+
+  private uploadWithDataTransfer(items: DataTransferItemList) {
     const { onImageUpload } = this.config;
     if (!onImageUpload) {
       return;
     }
-    e.preventDefault();
-    const event = e.nativeEvent as ClipboardEvent;
-    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
     const queue: Promise<string>[] = [];
     Array.prototype.forEach.call(items, (it: DataTransferItem) => {
       if (it.kind === 'file' && it.type.includes('image')) {
@@ -655,6 +672,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
         style={this.props.style}
         onKeyDown={this.handleKeyDown}
+        onDrop={this.handleDrop}
       >
         {view.menu && (
           <NavigationBar
