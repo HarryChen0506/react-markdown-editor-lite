@@ -1,11 +1,11 @@
-import FullScreen from 'plugins/fullScreen';
-import ModeToggle from 'plugins/modeToggle';
 import Editor from './editor';
 import Clear from './plugins/clear';
 import Fonts from './plugins/fonts';
+import FullScreen from './plugins/fullScreen';
 import Header from './plugins/header';
 import Link from './plugins/link';
 import Logger from './plugins/logger';
+import ModeToggle from './plugins/modeToggle';
 import Table from './plugins/table';
 import Upload from './plugins/upload';
 
