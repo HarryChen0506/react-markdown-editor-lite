@@ -19,4 +19,7 @@ export default {
   btnRedo: '重做',
   btnFullScreen: '全屏',
   btnExitFullScreen: '退出全屏',
+  btnModeEditor: '仅显示编辑器',
+  btnModePreview: '仅显示预览',
+  btnModeAll: '显示编辑器与预览',
 };

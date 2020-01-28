@@ -7,6 +7,7 @@ const defaultConfig: EditorConfig = {
     md: true,
     html: true,
     fullScreen: true,
+    hideMenu: true,
   },
   htmlClass: '',
   markdownClass: '',

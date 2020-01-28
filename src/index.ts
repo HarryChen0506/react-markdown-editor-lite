@@ -1,4 +1,5 @@
 import FullScreen from 'plugins/fullScreen';
+import ModeToggle from 'plugins/modeToggle';
 import Editor from './editor';
 import Clear from './plugins/clear';
 import Fonts from './plugins/fonts';
@@ -16,6 +17,7 @@ Editor.use(Upload);
 Editor.use(Link);
 Editor.use(Clear);
 Editor.use(Logger);
+Editor.use(ModeToggle);
 Editor.use(FullScreen);
 
 // 导出声明

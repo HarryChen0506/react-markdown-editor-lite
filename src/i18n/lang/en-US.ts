@@ -19,4 +19,7 @@ export default {
   btnRedo: 'Redo',
   btnFullScreen: 'Full screen',
   btnExitFullScreen: 'Exit full screen',
+  btnModeEditor: 'Only display editor',
+  btnModePreview: 'Only display preview',
+  btnModeAll: 'Display both editor and preview',
 };

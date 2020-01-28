@@ -4,14 +4,14 @@ import ToolBar from 'components/ToolBar';
 import i18n from 'i18n';
 import * as React from 'react';
 import emitter from 'share/emitter';
-import { EditorConfig, initialSelection, KeyboardEventListener, Selection } from 'share/var';
+import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from 'share/var';
 import getDecorated from 'utils/decorate';
 import mergeConfig from 'utils/mergeConfig';
 import { isKeyMatch, isPromise } from 'utils/tool';
 import getUploadPlaceholder from 'utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import './index.less';
-import { HtmlCode, HtmlRender, HtmlType } from './preview';
+import { HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
 
@@ -33,7 +33,6 @@ interface EditorProps extends EditorConfig {
 interface EditorState {
   text: string;
   html: HtmlType;
-  htmlType: 'render' | 'source';
   fullScreen: boolean;
   view: {
     menu: boolean;
@@ -95,7 +94,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private config: EditorConfig;
 
   private nodeMdText: React.RefObject<HTMLTextAreaElement>;
-  private nodeMdPreview?: HtmlCode | HtmlRender;
+  private nodeMdPreview?: HtmlRender;
   private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
 
   private hasContentChanged = true;
@@ -112,7 +111,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       text: (this.props.value || '').replace(/↵/g, '\n'),
       html: '',
       view: this.config.view || defaultConfig.view!,
-      htmlType: 'render', // 'render' 'source'
       fullScreen: false,
       table: this.config.table || defaultConfig.table!,
     };
@@ -127,7 +125,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handleToggleView = this.handleToggleView.bind(this);
     this.handleMdPreview = this.handleMdPreview.bind(this);
     this.handleHtmlPreview = this.handleHtmlPreview.bind(this);
-    this.handleToggleHtmlType = this.handleToggleHtmlType.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
@@ -252,18 +249,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleHtmlPreview() {
     this.changeView({
       md: !this.state.view.md,
-    });
-  }
-
-  private handleToggleHtmlType() {
-    let { htmlType } = this.state;
-    if (htmlType === 'render') {
-      htmlType = 'source';
-    } else if (htmlType === 'source') {
-      htmlType = 'render';
-    }
-    this.setState({
-      htmlType,
     });
   }
 
@@ -449,25 +434,47 @@ class Editor extends React.Component<EditorProps, EditorState> {
   /**
    * 其他事件监听
    */
-  private getEventType(event: string) {
+  private getEventType(event: EditorEvent) {
     switch (event) {
       case 'change':
         return emitter.EVENT_CHANGE;
       case 'fullscreen':
         return emitter.EVENT_FULL_SCREEN;
+      case 'viewchange':
+        return emitter.EVENT_VIEW_CHANGE;
     }
   }
-  on(event: 'change' | 'fullscreen', cb: any) {
+  on(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.on(eventType, cb);
     }
   }
-  off(event: 'change' | 'fullscreen', cb: any) {
+  off(event: EditorEvent | 'fullscreen', cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.off(eventType, cb);
     }
+  }
+
+  /**
+   * 设置视图属性
+   * 可显示或隐藏：编辑器，预览区域，菜单栏
+   * @param enable
+   */
+  setView(to: { md?: boolean; menu?: boolean; html?: boolean }) {
+    const newView = { ...this.state.view, ...to };
+    this.setState(
+      {
+        view: newView,
+      },
+      () => {
+        emitter.emit(emitter.EVENT_VIEW_CHANGE, newView);
+      },
+    );
+  }
+  getView() {
+    return { ...this.state.view };
   }
 
   /**
@@ -567,108 +574,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
+    const showHideMenu = this.config.view && this.config.view.hideMenu === true;
     const { view, fullScreen } = this.state;
-    const renderContent = () => {
-      const { html, text, htmlType } = this.state;
-      const res = [];
-      if (view.md) {
-        res.push(
-          <section className={'sec-md'} key="md">
-            <ToolBar>
-              <span
-                className="button button-type-menu"
-                title={view.menu ? 'Hide menu' : 'Show menu'}
-                onClick={this.handleToggleMenu}
-              >
-                {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
-              </span>
-              <span
-                className="button button-type-preview"
-                title={view.html ? 'Hide preview' : 'Show preview'}
-                onClick={this.handleMdPreview}
-              >
-                {view.html ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
-              </span>
-              <span className="button button-type-md" title={'Preview'} onClick={() => this.handleToggleView('md')}>
-                <Icon type="icon-refresh" />
-              </span>
-            </ToolBar>
-            <textarea
-              id="textarea"
-              ref={this.nodeMdText}
-              name={this.props.name || 'textarea'}
-              value={text}
-              className={`input ${this.config.markdownClass || ''}`}
-              wrap="hard"
-              onChange={this.handleChange}
-              onScroll={this.handleInputScroll}
-              onMouseOver={() => (this.shouldSyncScroll = 'input')}
-              onPaste={this.handlePaste}
-            />
-          </section>,
-        );
-      }
-      if (view.html) {
-        res.push(
-          <section className={'sec-html'} key="html">
-            <ToolBar style={{ right: '20px' }}>
-              <span
-                className="button button-type-menu"
-                title={view.menu ? 'hidden menu' : 'show menu'}
-                onClick={this.handleToggleMenu}
-              >
-                {view.menu ? <Icon type="icon-chevron-up" /> : <Icon type="icon-chevron-down" />}
-              </span>
-              <span
-                className="button button-type-editor"
-                title={view.md ? 'Hide editor' : 'Show editor'}
-                onClick={this.handleHtmlPreview}
-              >
-                {view.md ? <Icon type="icon-desktop" /> : <Icon type="icon-columns" />}
-              </span>
-              <span
-                className="button button-type-toggle"
-                title={'Toggle'}
-                onClick={() => this.handleToggleView('html')}
-              >
-                <Icon type="icon-refresh" />
-              </span>
-              <span className="button button-type-html" title="Show HTML" onClick={this.handleToggleHtmlType}>
-                {htmlType === 'render' ? <Icon type="icon-embed" /> : <Icon type="icon-eye" />}
-              </span>
-            </ToolBar>
-            {htmlType === 'render' ? (
-              <div
-                className="html-wrap"
-                ref={this.nodeMdPreviewWraper}
-                onMouseOver={() => (this.shouldSyncScroll = 'preview')}
-                onScroll={this.handlePreviewScroll}
-              >
-                <HtmlRender
-                  html={html}
-                  className={this.config.htmlClass}
-                  ref={(instance: HtmlRender) => (this.nodeMdPreview = instance)}
-                />
-              </div>
-            ) : (
-              <div
-                className={'html-code-wrap'}
-                ref={this.nodeMdPreviewWraper}
-                onScroll={this.handlePreviewScroll}
-                onMouseOver={() => (this.shouldSyncScroll = 'preview')}
-              >
-                <HtmlCode
-                  html={html}
-                  className={this.config.htmlClass}
-                  ref={(instance: HtmlCode) => (this.nodeMdPreview = instance)}
-                />
-              </div>
-            )}
-          </section>,
-        );
-      }
-      return res;
-    };
     const getPluginAt = (at: 'left' | 'right') => {
       return Editor.plugins
         .filter(it => it.comp.align === at)
@@ -681,6 +588,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           });
         });
     };
+    const isShowMenu = !!view.menu;
     return (
       <div
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
@@ -688,8 +596,48 @@ class Editor extends React.Component<EditorProps, EditorState> {
         onKeyDown={this.handleKeyDown}
         onDrop={this.handleDrop}
       >
-        {view.menu && <NavigationBar left={getPluginAt('left')} right={getPluginAt('right')} />}
-        <div className="editor-container">{renderContent()}</div>
+        <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
+        <div className="editor-container">
+          {showHideMenu && (
+            <ToolBar>
+              <span
+                className="button button-type-menu"
+                title={isShowMenu ? 'hidden menu' : 'show menu'}
+                onClick={this.handleToggleMenu}
+              >
+                <Icon type={`icon-chevron-${isShowMenu ? 'up' : 'down'}`} />
+              </span>
+            </ToolBar>
+          )}
+          <section className={`section sec-md ${view.md ? 'visible' : 'in-visible'}`}>
+            <textarea
+              id="textarea"
+              ref={this.nodeMdText}
+              name={this.props.name || 'textarea'}
+              value={this.state.text}
+              className={`section-container input ${this.config.markdownClass || ''}`}
+              wrap="hard"
+              onChange={this.handleChange}
+              onScroll={this.handleInputScroll}
+              onMouseOver={() => (this.shouldSyncScroll = 'input')}
+              onPaste={this.handlePaste}
+            />
+          </section>
+          <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
+            <div
+              className="section-container html-wrap"
+              ref={this.nodeMdPreviewWraper}
+              onMouseOver={() => (this.shouldSyncScroll = 'preview')}
+              onScroll={this.handlePreviewScroll}
+            >
+              <HtmlRender
+                html={this.state.html}
+                className={this.config.htmlClass}
+                ref={(instance: HtmlRender) => (this.nodeMdPreview = instance)}
+              />
+            </div>
+          </section>
+        </div>
       </div>
     );
   }

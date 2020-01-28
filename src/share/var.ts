@@ -3,6 +3,8 @@ import * as React from 'react';
 
 export type UploadFunc = ((file: File) => Promise<string>) | ((file: File, callback: (url: string) => void) => void);
 
+export type EditorEvent = 'change' | 'fullscreen' | 'viewchange';
+
 export interface EditorConfig {
   theme?: string;
   name?: string;
@@ -11,6 +13,7 @@ export interface EditorConfig {
     md: boolean;
     html: boolean;
     fullScreen: boolean;
+    hideMenu: boolean;
   };
   htmlClass?: string;
   markdownClass?: string;

@@ -122,6 +122,7 @@ class Demo extends React.Component {
                 md: true,
                 html: true,
                 fullScreen: true,
+                hideMenu: true,
               },
               table: {
                 maxRow: 5,

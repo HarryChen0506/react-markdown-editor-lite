@@ -20,54 +20,6 @@ export abstract class Preview<T extends HTMLElement> extends React.Component<Pre
   }
 }
 
-function getHtmlFromReact(node: React.ReactElement) {
-  return new Promise(resolve => {
-    const element = document.createElement('div');
-    ReactDOM.render(node, element, () => {
-      resolve(element.innerHTML);
-    });
-  });
-}
-
-export class HtmlCode extends Preview<HTMLTextAreaElement> {
-  getHtml() {
-    return this.state.html;
-  }
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      html: '',
-    };
-  }
-  updateHtml() {
-    if (typeof this.props.html === 'string') {
-      this.setState({ html: this.props.html });
-    } else {
-      getHtmlFromReact(this.props.html).then(html => {
-        this.setState({ html });
-      });
-    }
-  }
-  componentDidMount() {
-    this.updateHtml();
-  }
-  componentDidUpdate(prevProps: PreviewProps) {
-    if (prevProps.html !== this.props.html) {
-      this.updateHtml();
-    }
-  }
-  render() {
-    return (
-      <textarea
-        ref={this.el}
-        className={`html-code ${this.props.className || ''}`}
-        value={this.state.html}
-        onChange={() => {}}
-      />
-    );
-  }
-}
-
 export class HtmlRender extends Preview<HTMLDivElement> {
   getHtml() {
     if (typeof this.props.html === 'string') {
