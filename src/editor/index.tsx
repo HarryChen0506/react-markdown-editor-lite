@@ -142,7 +142,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   componentDidUpdate(prevProps: EditorProps) {
-    if (prevProps.value !== this.props.value) {
+    if (prevProps.value !== this.props.value && this.props.value !== this.state.text) {
       let value = this.props.value;
       if (typeof value !== 'string') {
         value = String(value).toString();
