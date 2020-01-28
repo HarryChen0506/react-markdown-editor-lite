@@ -4,7 +4,7 @@ import { PluginComponent } from './Plugin';
 import i18n from 'i18n';
 
 export default class Fonts extends PluginComponent {
-  name = 'fonts';
+  static pluginName = 'fonts';
 
   render() {
     return (

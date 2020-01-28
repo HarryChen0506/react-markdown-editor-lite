@@ -9,7 +9,8 @@ export interface PluginProps {
 }
 
 export abstract class PluginComponent<P extends PluginProps = PluginProps, S = {}> extends React.Component<P, S> {
-  abstract name: string;
+  static pluginName: string = '';
+  static align: string = 'left';
 
   get editor(): Editor {
     return this.props.editor;

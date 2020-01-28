@@ -1,3 +1,4 @@
+import FullScreen from 'plugins/fullScreen';
 import Editor from './editor';
 import Clear from './plugins/clear';
 import Fonts from './plugins/fonts';
@@ -15,10 +16,10 @@ Editor.use(Upload);
 Editor.use(Link);
 Editor.use(Clear);
 Editor.use(Logger);
+Editor.use(FullScreen);
 
 // 导出声明
 export { PluginComponent, PluginProps } from './plugins/Plugin';
-
 // 导出实用工具
 export { default as getDecorated } from './utils/decorate';
 

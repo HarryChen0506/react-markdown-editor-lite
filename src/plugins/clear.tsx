@@ -5,7 +5,7 @@ import { isPromise } from 'utils/tool';
 import { PluginComponent } from './Plugin';
 
 export default class Clear extends PluginComponent {
-  name = 'clear';
+  static pluginName = 'clear';
 
   constructor(props: any) {
     super(props);

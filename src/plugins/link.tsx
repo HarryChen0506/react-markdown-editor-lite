@@ -4,7 +4,7 @@ import * as React from 'react';
 import { PluginComponent } from './Plugin';
 
 export default class Link extends PluginComponent {
-  name = 'link';
+  static pluginName = 'link';
 
   render() {
     return (

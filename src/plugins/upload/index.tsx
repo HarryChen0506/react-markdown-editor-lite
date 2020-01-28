@@ -11,7 +11,7 @@ interface State {
 }
 
 export default class Upload extends PluginComponent<PluginProps, State> {
-  name = 'upload';
+  static pluginName = 'upload';
 
   private inputFile: React.RefObject<InputFile>;
 

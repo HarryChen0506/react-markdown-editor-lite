@@ -7,7 +7,7 @@ import LoggerPlugin from './logger';
 import i18n from 'i18n';
 
 export default class Logger extends PluginComponent {
-  name = 'logger';
+  static pluginName = 'logger';
 
   private logger: LoggerPlugin;
   private timerId?: number;

@@ -10,7 +10,7 @@ interface State {
 }
 
 export default class Header extends PluginComponent<PluginProps, State> {
-  name = 'header';
+  static pluginName = 'header';
 
   constructor(props: any) {
     super(props);

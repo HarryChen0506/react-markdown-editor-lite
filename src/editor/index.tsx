@@ -123,7 +123,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handleChange = this.handleChange.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
-    this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
     this.handleToggleView = this.handleToggleView.bind(this);
     this.handleMdPreview = this.handleMdPreview.bind(this);
@@ -214,12 +213,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private setHtml(html: HtmlType): Promise<void> {
     return new Promise(resolve => {
       this.setState({ html }, resolve);
-    });
-  }
-
-  private handleToggleFullScreen() {
-    this.setState({
-      fullScreen: !this.state.fullScreen,
     });
   }
 
@@ -460,21 +453,42 @@ class Editor extends React.Component<EditorProps, EditorState> {
     switch (event) {
       case 'change':
         return emitter.EVENT_CHANGE;
+      case 'fullscreen':
+        return emitter.EVENT_FULL_SCREEN;
     }
   }
-  on(event: 'change', cb: any) {
+  on(event: 'change' | 'fullscreen', cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.on(eventType, cb);
     }
   }
-  off(event: 'change', cb: any) {
+  off(event: 'change' | 'fullscreen', cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.off(eventType, cb);
     }
   }
 
+  /**
+   * 进入或退出全屏模式
+   * @param {boolean} enable 是否开启全屏模式
+   */
+  fullScreen(enable: boolean) {
+    if (this.state.fullScreen !== enable) {
+      this.setState(
+        {
+          fullScreen: enable,
+        },
+        () => {
+          emitter.emit(emitter.EVENT_FULL_SCREEN, enable);
+        },
+      );
+    }
+  }
+  isFullScreen() {
+    return this.state.fullScreen;
+  }
   /**
    * 监听键盘事件
    */
@@ -655,6 +669,18 @@ class Editor extends React.Component<EditorProps, EditorState> {
       }
       return res;
     };
+    const getPluginAt = (at: 'left' | 'right') => {
+      return Editor.plugins
+        .filter(it => it.comp.align === at)
+        .map(it => {
+          return React.createElement(it.comp, {
+            editor: this,
+            editorConfig: this.config,
+            config: it.config,
+            key: it.comp.name,
+          });
+        });
+    };
     return (
       <div
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
@@ -662,35 +688,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         onKeyDown={this.handleKeyDown}
         onDrop={this.handleDrop}
       >
-        {view.menu && (
-          <NavigationBar
-            left={
-              <div className="button-wrap">
-                {Editor.plugins.map(it => {
-                  return React.createElement(it.comp, {
-                    editor: this,
-                    editorConfig: this.config,
-                    config: it.config,
-                    key: it.comp.name,
-                  });
-                })}
-              </div>
-            }
-            right={
-              <div className="button-wrap">
-                {view.fullScreen && (
-                  <span
-                    className="button button-type-fullscreen"
-                    title={i18n.get(fullScreen ? 'btnExitFullScreen' : 'btnFullScreen')}
-                    onClick={this.handleToggleFullScreen}
-                  >
-                    <Icon type={`icon-${fullScreen ? 'shrink' : 'enlarge'}`} />
-                  </span>
-                )}
-              </div>
-            }
-          />
-        )}
+        {view.menu && <NavigationBar left={getPluginAt('left')} right={getPluginAt('right')} />}
         <div className="editor-container">{renderContent()}</div>
       </div>
     );
