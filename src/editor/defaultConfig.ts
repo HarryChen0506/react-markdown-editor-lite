@@ -6,14 +6,16 @@ const defaultConfig: EditorConfig = {
     menu: true,
     md: true,
     html: true,
+  },
+  canView: {
+    menu: true,
+    md: true,
+    html: true,
     fullScreen: true,
     hideMenu: true,
   },
   htmlClass: '',
   markdownClass: '',
-  logger: {
-    interval: 800,
-  },
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
   imageUrl: '',
   imageAccept: '',
@@ -23,7 +25,6 @@ const defaultConfig: EditorConfig = {
     maxCol: 6,
   },
   allowPasteImage: true,
-  onBeforeClear: undefined,
   onImageUpload: undefined,
   onCustomImageUpload: undefined,
 };

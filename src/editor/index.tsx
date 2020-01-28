@@ -16,7 +16,7 @@ import { HtmlRender, HtmlType } from './preview';
 type Plugin = { comp: any; config: any };
 
 interface EditorProps extends EditorConfig {
-  value: string;
+  value?: string;
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
   config?: any;
@@ -38,7 +38,6 @@ interface EditorState {
     menu: boolean;
     md: boolean;
     html: boolean;
-    fullScreen: boolean;
   };
   table: {
     maxRow: number;
@@ -49,17 +48,6 @@ interface EditorState {
 class Editor extends React.Component<EditorProps, EditorState> {
   static defaultProps = {
     value: '',
-    onBeforeClear(this: Editor): Promise<boolean> {
-      return new Promise(resolve => {
-        if (window.confirm && typeof window.confirm === 'function') {
-          const result = window.confirm(i18n.get('clearTip'));
-          const toClear = result ? true : false;
-          resolve(toClear);
-        } else {
-          resolve(true);
-        }
-      });
-    },
   };
 
   private static plugins: Plugin[] = [];
@@ -574,7 +562,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
-    const showHideMenu = this.config.view && this.config.view.hideMenu === true;
+    const showHideMenu = this.config.canView && this.config.canView.hideMenu === true;
     const { view, fullScreen } = this.state;
     const getPluginAt = (at: 'left' | 'right') => {
       return Editor.plugins

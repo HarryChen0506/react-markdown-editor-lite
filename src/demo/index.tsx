@@ -49,22 +49,6 @@ class Demo extends React.Component {
     });
   };
 
-  onBeforeClear(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      const result = window.confirm('Are you sure you want to clear your markdown :-)');
-      const toClear = result ? true : false;
-      resolve(toClear);
-      // custom confirm message pseudo code
-      // YourCustomDialog.open(() => {
-      //   // confirm callback
-      //   resolve(true)
-      // }, () => {
-      //   // cancel callback
-      //   resolve(false)
-      // })
-    });
-  }
-
   onCustomImageUpload = (e: any) => {
     console.log('onCustomImageUpload', e);
     return new Promise((resolve, reject) => {
@@ -134,7 +118,6 @@ class Demo extends React.Component {
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
             // onCustomImageUpload={this.onCustomImageUpload}
-            onBeforeClear={this.onBeforeClear}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>

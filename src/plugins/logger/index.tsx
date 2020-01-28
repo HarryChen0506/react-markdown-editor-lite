@@ -6,6 +6,8 @@ import { KeyboardEventListener } from 'share/var';
 import LoggerPlugin from './logger';
 import i18n from 'i18n';
 
+const LOGGER_INTERVAL = 800;
+
 export default class Logger extends PluginComponent {
   static pluginName = 'logger';
 
@@ -63,7 +65,6 @@ export default class Logger extends PluginComponent {
       window.clearTimeout(this.timerId);
       this.timerId = 0;
     }
-    const interval = this.editorConfig.logger ? this.editorConfig.logger.interval : defaultConfig.logger!.interval;
     this.timerId = window.setTimeout(() => {
       if (this.logger.getLast() !== value) {
         this.logger.push(value);
@@ -72,7 +73,7 @@ export default class Logger extends PluginComponent {
       }
       window.clearTimeout(this.timerId);
       this.timerId = 0;
-    }, interval);
+    }, LOGGER_INTERVAL);
   }
 
   componentDidMount() {

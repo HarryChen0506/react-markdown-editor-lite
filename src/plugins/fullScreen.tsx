@@ -39,7 +39,7 @@ export default class FullScreen extends PluginComponent<PluginProps, FullScreenS
   }
 
   render() {
-    if (this.editorConfig.view && this.editorConfig.view.fullScreen) {
+    if (this.editorConfig.canView && this.editorConfig.canView.fullScreen) {
       const { enable } = this.state;
       return (
         <span

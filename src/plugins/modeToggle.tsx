@@ -21,8 +21,8 @@ export default class ModeToggle extends PluginComponent<PluginProps, ModeToggleS
   static align = 'right';
 
   private get isDisplay() {
-    if (this.editorConfig.view) {
-      return this.editorConfig.view.html && this.editorConfig.view.md;
+    if (this.editorConfig.canView) {
+      return this.editorConfig.canView.html && this.editorConfig.canView.md;
     }
     return false;
   }

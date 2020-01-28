@@ -14,26 +14,14 @@ export default class Clear extends PluginComponent {
   }
 
   handleClick() {
-    const { onBeforeClear } = this.editorConfig;
     if (this.editor.getMdValue() === '') {
       return;
     }
-    const clearText = () => {
-      this.editor.setText('');
-    };
-    if (typeof onBeforeClear === 'function') {
-      const res = onBeforeClear.call(this.editor);
-      if (isPromise(res)) {
-        res.then((toClear: boolean) => {
-          if (toClear) {
-            clearText();
-          }
-        });
-      } else if (res === true) {
-        clearText();
+    if (window.confirm && typeof window.confirm === 'function') {
+      const result = window.confirm(i18n.get('clearTip'));
+      if (result) {
+        this.editor.setText('');
       }
-    } else {
-      clearText();
     }
   }
 

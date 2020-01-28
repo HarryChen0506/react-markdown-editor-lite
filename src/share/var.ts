@@ -12,14 +12,16 @@ export interface EditorConfig {
     menu: boolean;
     md: boolean;
     html: boolean;
+  };
+  canView?: {
+    menu: boolean;
+    md: boolean;
+    html: boolean;
     fullScreen: boolean;
     hideMenu: boolean;
   };
   htmlClass?: string;
   markdownClass?: string;
-  logger?: {
-    interval: number;
-  };
   imageUrl?: string;
   imageAccept?: string;
   linkUrl?: string;
@@ -29,7 +31,6 @@ export interface EditorConfig {
   };
   syncScrollMode?: string[];
   allowPasteImage?: boolean;
-  onBeforeClear?: (this: Editor) => Promise<boolean> | boolean;
   onImageUpload?: UploadFunc;
   onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
 }
