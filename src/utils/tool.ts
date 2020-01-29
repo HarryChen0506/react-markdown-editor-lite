@@ -48,6 +48,10 @@ export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: 
         return false;
       }
     }
+  } else {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return false;
+    }
   }
   if (event.key) {
     return event.key === key;

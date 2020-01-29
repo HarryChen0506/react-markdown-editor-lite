@@ -52,5 +52,6 @@ describe('Test tools', function() {
   it('Test isKeyMatch (Not match)', function() {
     expect(Tools.isKeyMatch(zWithCommand, 90, 'z', ['metaKey', 'altKey'])).to.be.false;
     expect(Tools.isKeyMatch(zWithCommand, 90, 'z', ['altKey'])).to.be.false;
+    expect(Tools.isKeyMatch(zWithCommand, 90, 'z')).to.be.false;
   });
 });

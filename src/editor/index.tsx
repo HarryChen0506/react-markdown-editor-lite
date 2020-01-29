@@ -439,7 +439,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       emitter.on(eventType, cb);
     }
   }
-  off(event: EditorEvent | 'fullscreen', cb: any) {
+  off(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.off(eventType, cb);
