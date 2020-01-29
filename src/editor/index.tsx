@@ -1,14 +1,14 @@
-import Icon from 'components/Icon';
-import NavigationBar from 'components/NavigationBar';
-import ToolBar from 'components/ToolBar';
-import i18n from 'i18n';
 import * as React from 'react';
-import emitter from 'share/emitter';
-import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from 'share/var';
-import getDecorated from 'utils/decorate';
-import mergeConfig from 'utils/mergeConfig';
-import { isKeyMatch, isPromise } from 'utils/tool';
-import getUploadPlaceholder from 'utils/uploadPlaceholder';
+import Icon from 'src/components/Icon';
+import NavigationBar from 'src/components/NavigationBar';
+import ToolBar from 'src/components/ToolBar';
+import i18n from 'src/i18n';
+import emitter from 'src/share/emitter';
+import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from 'src/share/var';
+import getDecorated from 'src/utils/decorate';
+import mergeConfig from 'src/utils/mergeConfig';
+import { isKeyMatch, isPromise } from 'src/utils/tool';
+import getUploadPlaceholder from 'src/utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import './index.less';
 import { HtmlRender, HtmlType } from './preview';
@@ -78,6 +78,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   static addLocale = i18n.add;
   static useLocale = i18n.setCurrent;
+  static getLocale = i18n.getCurrent;
 
   private config: EditorConfig;
 

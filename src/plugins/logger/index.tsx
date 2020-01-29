@@ -1,10 +1,9 @@
-import Icon from 'components/Icon';
-import defaultConfig from 'editor/defaultConfig';
-import { PluginComponent } from 'plugins/Plugin';
 import * as React from 'react';
-import { KeyboardEventListener } from 'share/var';
+import Icon from 'src/components/Icon';
+import i18n from 'src/i18n';
+import { PluginComponent } from 'src/plugins/Plugin';
+import { KeyboardEventListener } from 'src/share/var';
 import LoggerPlugin from './logger';
-import i18n from 'i18n';
 
 const LOGGER_INTERVAL = 800;
 

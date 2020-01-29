@@ -1,6 +1,6 @@
-import Editor from 'editor';
 import * as React from 'react';
-import { EditorConfig } from 'share/var';
+import Editor from 'src/editor';
+import { EditorConfig } from 'src/share/var';
 
 export interface PluginProps {
   editor: Editor;
@@ -12,11 +12,11 @@ export abstract class PluginComponent<P extends PluginProps = PluginProps, S = {
   static pluginName: string = '';
   static align: string = 'left';
 
-  get editor(): Editor {
+  protected get editor(): Editor {
     return this.props.editor;
   }
 
-  get editorConfig(): EditorConfig {
+  protected get editorConfig(): EditorConfig {
     return this.props.editorConfig;
   }
 

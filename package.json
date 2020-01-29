@@ -71,6 +71,9 @@
     "eventemitter3": "^4.0.0",
     "uuid": "^3.4.0"
   },
+  "peerDependencies": {
+    "react": "^16"
+  },
   "lint-staged": {
     "./src/**/*.{ts,tsx}": [
       "tslint --fix",

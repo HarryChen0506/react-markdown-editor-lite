@@ -1,4 +1,3 @@
-import Editor from 'editor';
 import * as React from 'react';
 
 export type UploadFunc = ((file: File) => Promise<string>) | ((file: File, callback: (url: string) => void) => void);

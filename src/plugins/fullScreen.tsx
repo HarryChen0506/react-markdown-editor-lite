@@ -1,7 +1,7 @@
-import Icon from 'components/Icon';
 import * as React from 'react';
+import Icon from 'src/components/Icon';
+import i18n from 'src/i18n';
 import { PluginComponent, PluginProps } from './Plugin';
-import i18n from 'i18n';
 
 interface FullScreenState {
   enable: boolean;

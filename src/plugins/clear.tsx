@@ -1,7 +1,6 @@
-import Icon from 'components/Icon';
-import i18n from 'i18n';
 import * as React from 'react';
-import { isPromise } from 'utils/tool';
+import Icon from 'src/components/Icon';
+import i18n from 'src/i18n';
 import { PluginComponent } from './Plugin';
 
 export default class Clear extends PluginComponent {

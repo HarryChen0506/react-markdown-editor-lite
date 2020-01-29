@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "lib": [
@@ -19,6 +19,11 @@
     "strict": true,
     "target": "es5",
     "declaration": true
+  },
+  "paths": {
+    "src/*":[
+      "./src/*"
+    ]
   },
   "exclude": ["./lib", "./image"],
   "include": ["./src"]

@@ -1,6 +1,6 @@
+import emitter from 'src/share/emitter';
 import enUS from './lang/en-US';
 import zhCN from './lang/zh-CN';
-import emitter from 'share/emitter';
 
 type LangItem = { [x: string]: string };
 type Langs = { [x: string]: LangItem };
@@ -59,6 +59,10 @@ class I18n {
       });
     }
     return str;
+  }
+
+  getCurrent() {
+    return this.current;
   }
 }
 
