@@ -29,7 +29,7 @@ function decorateTableText(option: any) {
   const rowData = ['|'];
   const rowDivision = ['|'];
   let colStr = '';
-  for (let i = 0; i <= col; i++) {
+  for (let i = 1; i < col; i++) {
     rowHeader.push(' Head |');
     rowDivision.push(' --- |');
     rowData.push(' Data |');
@@ -93,7 +93,7 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
       };
     case 'image':
       return {
-        text: `![${option.target}](${option.imageUrl || ''})`,
+        text: `![${target || option.target}](${option.imageUrl || ''})`,
         selection: {
           start: 2,
           end: target.length + 2,

@@ -7,11 +7,16 @@
 # Code and libs
 src/
 image/
-coverage/
-mochawesome-report/
+docs/
 .idea/
 .vscode/
 ~*
+
+# tests and coverages
+.nyc_output/
+coverage/
+coverage/*
+mochawesome-report/
 
 # Packages #
 ############

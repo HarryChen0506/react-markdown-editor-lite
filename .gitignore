@@ -32,7 +32,8 @@ dist/*
 *.sql
 *.sqlite
 
-# karma
+# tests and coverages
+.nyc_output/
 coverage/
 coverage/*
 mochawesome-report/

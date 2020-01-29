@@ -23,27 +23,6 @@ export function isEmpty(obj: any) {
   return typeof obj === 'undefined' || obj === null || obj === '';
 }
 
-export function isRepeat(arr: any[]) {
-  const hash: any = {};
-  for (let i = 0; i < arr.length; i++) {
-    if (hash[arr[i]]) {
-      return true;
-    }
-    hash[arr[i]] = true;
-  }
-  return false;
-}
-
-export function throttle(func: any, deltaX: number) {
-  let lastCalledAt = new Date().getTime();
-  return function(this: any) {
-    if (new Date().getTime() - lastCalledAt >= deltaX) {
-      func.apply(this, arguments);
-      lastCalledAt = new Date().getTime();
-    }
-  };
-}
-
 export function isPromise(obj: any): obj is Promise<any> {
   return (
     obj &&

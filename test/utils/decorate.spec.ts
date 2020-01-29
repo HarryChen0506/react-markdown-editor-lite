@@ -34,4 +34,37 @@ describe('Test getDecorated', function() {
       text: "\n* a\n* b\n* c\n"
     });
   });
+  // 图片
+  it('Image', function() {
+    expect(getDecorated('text', 'image', {
+      imageUrl: 'https://example.com/img.jpg'
+    })).to.deep.equal({
+      text: "![text](https://example.com/img.jpg)",
+      selection: {
+        start: 2,
+        end: 6
+      }
+    });
+  });
+  // 链接
+  it('Link', function() {
+    expect(getDecorated('text', 'link', {
+      linkUrl: 'https://example.com'
+    })).to.deep.equal({
+      text: "[text](https://example.com)",
+      selection: {
+        start: 1,
+        end: 5
+      }
+    });
+  });
+  // 表格
+  it('Table', function() {
+    expect(getDecorated('', 'table', {
+      row: 2,
+      col: 3
+    })).to.deep.equal({
+      text: "\n| Head | Head |\n| --- | --- |\n| Data | Data |\n| Data | Data |\n| Data | Data |\n"
+    });
+  });
 });

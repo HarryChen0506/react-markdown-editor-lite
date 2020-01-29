@@ -337,7 +337,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (type === 'image') {
       decorateOption = {
         ...decorateOption,
-        target: option.target || '',
+        target: option.target || selection.text || '',
         imageUrl: option.imageUrl || this.config.imageUrl,
       };
     }

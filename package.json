@@ -17,7 +17,8 @@
     "dev": "nowa2 server",
     "build": "nowa2 build",
     "prod": "nowa2 build -o",
-    "test": "ts-mocha --reporter mochawesome -p ./tsconfig.json tests/**/*.spec.ts",
+    "test": "mocha",
+    "coverage": "nyc mocha",
     "precommit": "lint-staged"
   },
   "repository": {
@@ -61,11 +62,13 @@
     "markdown-it": "^8.4.2",
     "mocha": "^5.2.0",
     "mochawesome": "^4.1.0",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-markdown": "^4.3.1",
-    "ts-mocha": "^6.0.0",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.6.2",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
@@ -85,5 +88,18 @@
       "tslint --fix",
       "git add"
     ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true  
   }
 }
