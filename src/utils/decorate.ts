@@ -64,7 +64,7 @@ function decorateList(type: 'order' | 'unordered', target: string) {
  * @param option 附加参数
  * @returns {Decorated}
  */
-function getDecorated(target: string, type: string, option: any): Decorated {
+function getDecorated(target: string, type: string, option?: any): Decorated {
   if (typeof SIMPLE_DECORATOR[type] !== 'undefined') {
     return {
       text: `${SIMPLE_DECORATOR[type][0]}${target}${SIMPLE_DECORATOR[type][1]}`,

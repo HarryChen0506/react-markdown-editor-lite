@@ -19,6 +19,7 @@ install:
 
 script:
   - yarn build
+  - yarn run test
 
 after_success:
   - zip -rq lib.zip lib

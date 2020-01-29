@@ -35,6 +35,7 @@ dist/*
 # karma
 coverage/
 coverage/*
+mochawesome-report/
 
 # OS generated files #
 ######################
