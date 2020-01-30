@@ -16,7 +16,7 @@ interface Props extends PluginProps {
   };
 }
 
-export default class Table extends PluginComponent<Props, State> {
+export default class Table extends PluginComponent<State, Props> {
   static pluginName = 'table';
 
   constructor(props: any) {

@@ -8,7 +8,7 @@ export interface PluginProps {
   config?: any;
 }
 
-export abstract class PluginComponent<P extends PluginProps = PluginProps, S = {}> extends React.Component<P, S> {
+export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProps> extends React.Component<P, S> {
   static pluginName: string = '';
   static align: string = 'left';
 

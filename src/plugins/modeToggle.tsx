@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Icon from 'src/components/Icon';
 import i18n from 'src/i18n';
-import { PluginComponent, PluginProps } from './Plugin';
+import { PluginComponent } from './Plugin';
 
 interface ModeToggleState {
   view: {
@@ -16,8 +16,8 @@ enum NEXT_ACTION {
   SHOW_HTML,
 }
 
-export default class ModeToggle extends PluginComponent<PluginProps, ModeToggleState> {
-  static pluginName = 'modeToggle';
+export default class ModeToggle extends PluginComponent<ModeToggleState> {
+  static pluginName = 'mode-toggle';
   static align = 'right';
 
   private get isDisplay() {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Icon from 'src/components/Icon';
 import i18n from 'src/i18n';
-import { PluginComponent, PluginProps } from 'src/plugins/Plugin';
+import { PluginComponent } from 'src/plugins/Plugin';
 import { isPromise } from 'src/utils/tool';
 import getUploadPlaceholder from 'src/utils/uploadPlaceholder';
 import InputFile from './inputFile';
@@ -10,8 +10,8 @@ interface State {
   show: boolean;
 }
 
-export default class Upload extends PluginComponent<PluginProps, State> {
-  static pluginName = 'upload';
+export default class Image extends PluginComponent<State> {
+  static pluginName = 'image';
 
   private inputFile: React.RefObject<InputFile>;
 

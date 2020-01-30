@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Icon from 'src/components/Icon';
 import i18n from 'src/i18n';
-import { PluginComponent, PluginProps } from './Plugin';
+import { PluginComponent } from './Plugin';
 
 interface FullScreenState {
   enable: boolean;
 }
 
-export default class FullScreen extends PluginComponent<PluginProps, FullScreenState> {
-  static pluginName = 'fullScreen';
+export default class FullScreen extends PluginComponent<FullScreenState> {
+  static pluginName = 'full-screen';
   static align = 'right';
 
   constructor(props: any) {

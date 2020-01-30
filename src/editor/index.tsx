@@ -111,9 +111,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handlePaste = this.handlePaste.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
-    this.handleToggleView = this.handleToggleView.bind(this);
-    this.handleMdPreview = this.handleMdPreview.bind(this);
-    this.handleHtmlPreview = this.handleHtmlPreview.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
@@ -202,42 +199,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
     });
   }
 
-  private changeView(to: any) {
-    const view = { ...this.state.view, ...to };
-    this.setState({
-      view,
-    });
-  }
-
   private handleToggleMenu() {
-    this.changeView({
+    this.setView({
       menu: !this.state.view.menu,
-    });
-  }
-
-  private handleToggleView(type: 'md' | 'html') {
-    if (type === 'md') {
-      this.changeView({
-        md: false,
-        html: true,
-      });
-    } else {
-      this.changeView({
-        md: true,
-        html: false,
-      });
-    }
-  }
-
-  private handleMdPreview() {
-    this.changeView({
-      html: !this.state.view.html,
-    });
-  }
-
-  private handleHtmlPreview() {
-    this.changeView({
-      md: !this.state.view.md,
     });
   }
 
@@ -294,7 +258,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.nodeMdText.current.setSelectionRange(0, 0, 'none');
     }
   }
-
   /**
    * 获取已选择区域
    * @return {Selection}
@@ -402,12 +365,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.state.text === value) {
       return;
     }
-    emitter.emit(emitter.EVENT_CHANGE, value, event, true);
     this.setState(
       {
         text: value,
       },
       () => {
+        emitter.emit(emitter.EVENT_CHANGE, value, event, true);
         if (newSelection) {
           setTimeout(() => this.setSelection(newSelection));
         }
@@ -418,6 +381,56 @@ class Editor extends React.Component<EditorProps, EditorState> {
         this.props.onChange({ text, html: this.getHtmlValue() }, event);
       }
     });
+  }
+
+  /**
+   * 获取文本值
+   * @return {string}
+   */
+  getMdValue(): string {
+    return this.state.text;
+  }
+
+  /**
+   * 获取渲染后的HTML
+   * @returns {string}
+   */
+  getHtmlValue(): string {
+    if (typeof this.state.html === 'string') {
+      return this.state.html;
+    } else {
+      if (this.nodeMdPreview) {
+        return this.nodeMdPreview.getHtml();
+      } else {
+        return '';
+      }
+    }
+  }
+
+  /**
+   * 监听键盘事件
+   */
+  private keyboardListeners: KeyboardEventListener[] = [];
+  onKeyboard(data: KeyboardEventListener) {
+    if (!this.keyboardListeners.includes(data)) {
+      this.keyboardListeners.push(data);
+    }
+  }
+  offKeyboard(data: KeyboardEventListener) {
+    const index = this.keyboardListeners.indexOf(data);
+    if (index >= 0) {
+      this.keyboardListeners.splice(index, 1);
+    }
+  }
+  private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    // 遍历监听数组，找找有没有被监听
+    for (const it of this.keyboardListeners) {
+      if (isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
+        e.preventDefault();
+        it.callback(e);
+        return;
+      }
+    }
   }
 
   /**
@@ -484,55 +497,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
   isFullScreen() {
     return this.state.fullScreen;
-  }
-  /**
-   * 监听键盘事件
-   */
-  private keyboardListeners: KeyboardEventListener[] = [];
-  onKeyboard(data: KeyboardEventListener) {
-    if (!this.keyboardListeners.includes(data)) {
-      this.keyboardListeners.push(data);
-    }
-  }
-  offKeyboard(data: KeyboardEventListener) {
-    const index = this.keyboardListeners.indexOf(data);
-    if (index >= 0) {
-      this.keyboardListeners.splice(index, 1);
-    }
-  }
-  private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    // 遍历监听数组，找找有没有被监听
-    for (const it of this.keyboardListeners) {
-      if (isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
-        e.preventDefault();
-        it.callback(e);
-        return;
-      }
-    }
-  }
-
-  /**
-   * 获取文本值
-   * @return {string}
-   */
-  getMdValue(): string {
-    return this.state.text;
-  }
-
-  /**
-   * 获取渲染后的HTML
-   * @returns {string}
-   */
-  getHtmlValue(): string {
-    if (typeof this.state.html === 'string') {
-      return this.state.html;
-    } else {
-      if (this.nodeMdPreview) {
-        return this.nodeMdPreview.getHtml();
-      } else {
-        return '';
-      }
-    }
   }
 
   private uploadWithDataTransfer(items: DataTransferItemList) {

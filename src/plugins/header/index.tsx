@@ -2,14 +2,14 @@ import * as React from 'react';
 import DropList from 'src/components/DropList';
 import Icon from 'src/components/Icon';
 import i18n from 'src/i18n';
-import { PluginComponent, PluginProps } from 'src/plugins/Plugin';
+import { PluginComponent } from 'src/plugins/Plugin';
 import HeaderList from './HeaderList';
 
 interface State {
   show: boolean;
 }
 
-export default class Header extends PluginComponent<PluginProps, State> {
+export default class Header extends PluginComponent<State> {
   static pluginName = 'header';
 
   constructor(props: any) {

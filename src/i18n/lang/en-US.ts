@@ -1,5 +1,5 @@
 export default {
-  clearTip: 'Are you sure you want to clear all contents ?',
+  clearTip: 'Are you sure you want to clear all contents?',
   btnHeader: 'Header',
   btnClear: 'Clear',
   btnBold: 'Bold',

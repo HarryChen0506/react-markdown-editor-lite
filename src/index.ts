@@ -3,17 +3,17 @@ import Clear from './plugins/clear';
 import Fonts from './plugins/fonts';
 import FullScreen from './plugins/fullScreen';
 import Header from './plugins/header';
+import Image from './plugins/Image';
 import Link from './plugins/link';
 import Logger from './plugins/logger';
 import ModeToggle from './plugins/modeToggle';
 import Table from './plugins/table';
-import Upload from './plugins/upload';
 
 // 注册默认插件
 Editor.use(Header);
 Editor.use(Fonts);
 Editor.use(Table);
-Editor.use(Upload);
+Editor.use(Image);
 Editor.use(Link);
 Editor.use(Clear);
 Editor.use(Logger);
