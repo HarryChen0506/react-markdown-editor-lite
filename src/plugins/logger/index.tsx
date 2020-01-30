@@ -33,6 +33,9 @@ export default class Logger extends PluginComponent {
   }
 
   private handleUndo() {
+    if (!this.logger.hasUndo()) {
+      return;
+    }
     this.logger.undo(last => {
       this.pause();
       this.lastPop = last;
@@ -42,6 +45,9 @@ export default class Logger extends PluginComponent {
   }
 
   private handleRedo() {
+    if (!this.logger.hasRedo()) {
+      return;
+    }
     this.logger.redo(last => {
       this.lastPop = last;
       this.editor.setText(last);
