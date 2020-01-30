@@ -48,7 +48,7 @@ export default class Image extends PluginComponent<State> {
   }
 
   private handleCustomImageUpload(e: any) {
-    const onCustomImageUpload = this.getConfig('onCustomImageUpload', null);
+    const { onCustomImageUpload } = this.editorConfig;
     if (onCustomImageUpload) {
       const res = onCustomImageUpload.call(this, e);
       if (isPromise(res)) {

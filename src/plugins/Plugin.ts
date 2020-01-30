@@ -25,7 +25,7 @@ export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProp
   }
 
   protected getConfig(key: string, defaultValue?: any) {
-    return this.props.config && typeof this.props.config[key] !== 'undefined' && this.props.config[key] === null
+    return this.props.config && typeof this.props.config[key] !== 'undefined' && this.props.config[key] !== null
       ? this.props.config[key]
       : defaultValue;
   }
