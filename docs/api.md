@@ -1,6 +1,7 @@
 # API
-
 ## 插件
+### 编写插件
+见[plugin.md](./plugin.md)
 ### Editor.use
 注册插件
 ```js
@@ -194,8 +195,9 @@ isFullScreen(): boolean;
 ```
 
 # API
-
 ## Plugins
+### Written a plugin
+See [plugin.md](./plugin.md)
 ### Editor.use
 Register plugin
 ```js
