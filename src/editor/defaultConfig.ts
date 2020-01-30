@@ -1,16 +1,21 @@
-export default {
+import { EditorConfig } from 'src/share/var';
+
+const defaultConfig: EditorConfig = {
   theme: 'default',
   view: {
     menu: true,
     md: true,
     html: true,
+  },
+  canView: {
+    menu: true,
+    md: true,
+    html: true,
     fullScreen: true,
+    hideMenu: true,
   },
   htmlClass: '',
   markdownClass: '',
-  logger: {
-    interval: 800,
-  },
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
   imageUrl: '',
   imageAccept: '',
@@ -19,5 +24,9 @@ export default {
     maxRow: 4,
     maxCol: 6,
   },
-  clearTip: 'Are you sure you want to clear your markdown ?',
+  allowPasteImage: true,
+  onImageUpload: undefined,
+  onCustomImageUpload: undefined,
 };
+
+export default defaultConfig;

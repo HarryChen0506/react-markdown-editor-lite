@@ -1,6 +1,5 @@
 node_modules/
 coverage/
-lib/
 .idea/
 .vscode/
 ~*
@@ -17,11 +16,12 @@ lib/
 *.rar
 *.tar
 *.zip
-=======
 # Optional npm cache directory
 .npm
 
 # dist
+lib/
+lib/*
 dist/
 dist/*
 
@@ -31,9 +31,11 @@ dist/*
 *.sql
 *.sqlite
 
-# karma
+# tests and coverages
+.nyc_output/
 coverage/
 coverage/*
+mochawesome-report/
 
 # OS generated files #
 ######################
@@ -45,3 +47,6 @@ coverage/*
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# NPM
+package-lock.json

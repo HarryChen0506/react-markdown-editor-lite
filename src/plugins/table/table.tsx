@@ -1,6 +1,5 @@
-// TableList
 import * as React from 'react';
-import './index.less';
+import './table.less';
 
 interface TableListProps {
   maxRow?: number;
@@ -74,7 +73,10 @@ class TableList extends React.Component<TableListProps, TableListState> {
   handleSetTable(i: number, j: number) {
     const { onSetTable } = this.props;
     if (typeof onSetTable === 'function') {
-      onSetTable({ row: i, col: j });
+      onSetTable({
+        row: i + 1,
+        col: j + 1,
+      });
     }
   }
 
