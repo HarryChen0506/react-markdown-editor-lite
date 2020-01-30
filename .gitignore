@@ -16,7 +16,6 @@ coverage/
 *.rar
 *.tar
 *.zip
-=======
 # Optional npm cache directory
 .npm
 

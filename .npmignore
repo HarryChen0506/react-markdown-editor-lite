@@ -3,6 +3,7 @@
 .browserslistrc
 .gitignore
 .npmignore
+yarn.lock
 
 # Code and libs
 src/
