@@ -25,7 +25,8 @@ import MyPlugin from './MyPlugin';
 Editor.use(MyPlugin);
 
 // 这里去掉了内置的image插件
-Editor.setPlugins(['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']);
+const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
+<Editor plugins={plugins} />
 ```
 ## 编写插件
 插件本身是一个React Component，需要继承自PluginComponent。
@@ -115,7 +116,8 @@ import MyPlugin from './MyPlugin';
 Editor.use(MyPlugin);
 
 // Remove built-in image plugin here
-Editor.setPlugins(['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']);
+const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
+<Editor plugins={plugins} />
 ```
 ## Written a plugin
 Plugin is a React Component, and must extend PluginComponent.

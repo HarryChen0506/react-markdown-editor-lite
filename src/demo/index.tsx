@@ -8,6 +8,9 @@ import './index.less';
 
 const MOCK_DATA = content;
 
+const PLUGINS = undefined;
+// const PLUGINS = ['header'];
+
 class Demo extends React.Component {
   mdEditor?: MdEditor = undefined;
 
@@ -100,6 +103,7 @@ class Demo extends React.Component {
             value={MOCK_DATA}
             style={{ height: '500px', width: '100%' }}
             renderHTML={this.renderHTML}
+            plugins={PLUGINS}
             config={{
               view: {
                 menu: true,

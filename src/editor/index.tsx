@@ -20,6 +20,7 @@ interface EditorProps extends EditorConfig {
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
   config?: any;
+  plugins?: string[];
   // Configs
   onChange?: (
     data: {
@@ -34,6 +35,7 @@ interface EditorState {
   text: string;
   html: HtmlType;
   fullScreen: boolean;
+  plugins: { [x: string]: React.ReactElement[] };
   view: {
     menu: boolean;
     md: boolean;
@@ -58,20 +60,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   static use(comp: any, config: any = {}) {
     Editor.plugins.push({ comp, config });
-  }
-  /**
-   * 设置插件顺序，并剔除不在列表中的插件
-   * @param {string[]} plugins 插件名称
-   */
-  static setPlugins(plugins: string[]) {
-    const findPlugin = (name: string) => {
-      for (const it of Editor.plugins) {
-        if (it.comp.name === name) {
-          return it;
-        }
-      }
-    };
-    Editor.plugins = plugins.map(name => findPlugin(name)).filter(it => !!it) as Plugin[];
   }
   /**
    * 设置所使用的语言文案
@@ -102,6 +90,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       view: this.config.view || defaultConfig.view!,
       fullScreen: false,
       table: this.config.table || defaultConfig.table!,
+      plugins: this.getPlugins(),
     };
 
     this.nodeMdText = React.createRef();
@@ -139,6 +128,42 @@ class Editor extends React.Component<EditorProps, EditorState> {
       });
       this.renderHTML(value);
     }
+    if (prevProps.plugins !== this.props.plugins) {
+      this.setState({
+        plugins: this.getPlugins(),
+      });
+    }
+  }
+
+  private getPlugins() {
+    let plugins: Plugin[] = [];
+    if (this.props.plugins) {
+      const findPlugin = (name: string) => {
+        for (const it of Editor.plugins) {
+          if (it.comp.pluginName === name) {
+            return it;
+          }
+        }
+      };
+      plugins = this.props.plugins.map(name => findPlugin(name)).filter(it => !!it) as Plugin[];
+    } else {
+      plugins = [...Editor.plugins];
+    }
+    const result: { [x: string]: React.ReactElement[] } = {};
+    plugins.forEach(it => {
+      if (typeof result[it.comp.align] === 'undefined') {
+        result[it.comp.align] = [];
+      }
+      result[it.comp.align].push(
+        React.createElement(it.comp, {
+          editor: this,
+          editorConfig: this.config,
+          config: it.config,
+          key: it.comp.pluginName,
+        }),
+      );
+    });
+    return result;
   }
 
   // 左右同步滚动
@@ -532,18 +557,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   render() {
     const showHideMenu = this.config.canView && this.config.canView.hideMenu === true;
     const { view, fullScreen } = this.state;
-    const getPluginAt = (at: 'left' | 'right') => {
-      return Editor.plugins
-        .filter(it => it.comp.align === at)
-        .map(it => {
-          return React.createElement(it.comp, {
-            editor: this,
-            editorConfig: this.config,
-            config: it.config,
-            key: it.comp.name,
-          });
-        });
-    };
+    const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
     return (
       <div

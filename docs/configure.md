@@ -6,6 +6,7 @@
 | value | 内容 | String | `''` |  |
 | name | textarea的名称 | String | 'textarea' |  |
 | renderHTML | 将Markdown渲染为HTML或ReactElement | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **必填** |
+| plugins | 插件列表 | string[] | undefined |  |
 | config | 其他配置项 | Object |  |  |
 | config.view | 配置哪些项目默认被显示，包括：menu（菜单栏），md（编辑器)，html（预览区） | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | 配置哪些项目可以被显示，包括：menu（菜单栏），md（编辑器)，html（预览区），fullScreen（全屏），hideMenu（隐藏菜单按钮） | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
@@ -81,6 +82,7 @@ export default (props) => {
 | value | Markdown content | String | `''` |  |
 | name | the name prop of textarea | String | 'textarea' |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **required** |
+| plugins | Plugin list | string[] | undefined |  |
 | config | Configuration object | Object |  |  |
 | config.view | Controls which items will be displayd by default, includes: menu(Menu bar), md(Editor), html(Preview) | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | Controls which items can be displayd, includes: menu(Menu bar), md(Editor), html(Preview), fullScreen(Full screen)，hideMenu(Hide button to toggle menu bar) | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
