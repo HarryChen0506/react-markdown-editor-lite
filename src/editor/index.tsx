@@ -224,7 +224,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * 监听粘贴事件，实现自动上传图片
    */
   private handlePaste(e: React.SyntheticEvent) {
-    if (!this.config.allowPasteImage) {
+    if (!this.config.allowPasteImage || !this.config.onImageUpload) {
       return;
     }
     const event = e.nativeEvent as ClipboardEvent;
@@ -237,6 +237,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   // 拖放上传
   private handleDrop(e: React.SyntheticEvent) {
+    if (!this.config.onImageUpload) {
+      return;
+    }
     const event = e.nativeEvent as DragEvent;
     const items = event.dataTransfer?.items;
     if (items) {
