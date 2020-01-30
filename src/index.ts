@@ -24,6 +24,8 @@ Editor.use(FullScreen);
 export { PluginComponent, PluginProps } from './plugins/Plugin';
 // 导出实用工具
 export { default as getDecorated } from './utils/decorate';
+// 导出工具组件
+export { default as DropList } from './components/DropList/index';
 
 // 导出编辑器
 export default Editor;
