@@ -27,31 +27,34 @@ class Logger {
     return this.record[length - 1];
   }
 
-  undo(cb?: (obj: string) => void) {
-    const lastRecord = this.record.pop();
-    if (lastRecord) {
-      this.recycle.push(lastRecord);
-      if (typeof cb === 'function') {
-        cb(this.getLast());
-      }
+  undo() {
+    if (!this.hasUndo()) {
+      return undefined;
     }
+    // 最顶上的一个是当前状态，所以要pop两次才能得到之前的结果
+    const current = this.record.pop();
+    const last = this.record.pop();
+    if (typeof last !== 'undefined' && this.record.length === 0) {
+      // 如果只剩了初始化值，还是把它给放回去，不然之后就没用的了
+      this.record.push(last);
+    }
+    if (typeof current !== 'undefined') {
+      this.recycle.push(current);
+    }
+    return last;
   }
 
-  redo(cb?: (obj: string) => void) {
+  redo() {
     const history = this.recycle.pop();
-    if (history) {
+    if (typeof history !== 'undefined') {
       this.push(history);
-      if (typeof cb === 'function') {
-        cb(this.getLast());
-      }
+      return history;
     }
+    return undefined;
   }
 
-  cleanRedo(cb?: () => void) {
+  cleanRedo() {
     this.recycle = [];
-    if (typeof cb === 'function') {
-      cb();
-    }
   }
 
   hasUndo() {

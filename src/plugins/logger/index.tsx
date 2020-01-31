@@ -5,7 +5,7 @@ import { PluginComponent } from 'src/plugins/Plugin';
 import { KeyboardEventListener } from 'src/share/var';
 import LoggerPlugin from './logger';
 
-const LOGGER_INTERVAL = 800;
+const LOGGER_INTERVAL = 1000;
 
 export default class Logger extends PluginComponent {
   static pluginName = 'logger';
@@ -36,23 +36,25 @@ export default class Logger extends PluginComponent {
     if (!this.logger.hasUndo()) {
       return;
     }
-    this.logger.undo(last => {
+    const last = this.logger.undo();
+    if (typeof last !== 'undefined') {
       this.pause();
       this.lastPop = last;
       this.editor.setText(last);
       this.forceUpdate();
-    });
+    }
   }
 
   private handleRedo() {
     if (!this.logger.hasRedo()) {
       return;
     }
-    this.logger.redo(last => {
+    const last = this.logger.redo();
+    if (typeof last !== 'undefined') {
       this.lastPop = last;
       this.editor.setText(last);
       this.forceUpdate();
-    });
+    }
   }
 
   handleChange(value: string, e: any, isChange: boolean) {
