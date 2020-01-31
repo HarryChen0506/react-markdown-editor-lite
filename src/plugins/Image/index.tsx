@@ -74,7 +74,7 @@ export default class Image extends PluginComponent<State> {
         onClick={this.handleImageUpload}
         style={{ position: 'relative' }}
       >
-        <Icon type="icon-photo" />
+        <Icon type="image" />
         <InputFile
           accept={this.getConfig('imageAccept', '')}
           ref={this.inputFile}

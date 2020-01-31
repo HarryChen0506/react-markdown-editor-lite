@@ -13,7 +13,7 @@ export default class Link extends PluginComponent {
         title={i18n.get('btnLink')}
         onClick={() => this.editor.insertMarkdown('link')}
       >
-        <Icon type="icon-link" />
+        <Icon type="link" />
       </span>
     );
   }

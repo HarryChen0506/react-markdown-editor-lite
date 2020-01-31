@@ -42,7 +42,7 @@ export default class Header extends PluginComponent<State> {
         onMouseEnter={this.show}
         onMouseLeave={this.hide}
       >
-        <Icon type="icon-header" />
+        <Icon type="font-size" />
         <DropList
           show={this.state.show}
           onClose={this.hide}

@@ -47,7 +47,7 @@ export default class FullScreen extends PluginComponent<FullScreenState> {
           title={i18n.get(enable ? 'btnExitFullScreen' : 'btnFullScreen')}
           onClick={this.handleClick}
         >
-          <Icon type={`icon-${enable ? 'shrink' : 'enlarge'}`} />
+          <Icon type={enable ? 'fullscreen-exit' : 'fullscreen'} />
         </span>
       );
     } else {

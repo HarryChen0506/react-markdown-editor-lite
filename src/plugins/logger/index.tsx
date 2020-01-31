@@ -110,14 +110,14 @@ export default class Logger extends PluginComponent {
           title={i18n.get('btnUndo')}
           onClick={this.handleUndo}
         >
-          <Icon type="icon-reply" />
+          <Icon type="undo" />
         </span>
         <span
           className={`button button-type-redo ${this.logger.hasRedo() ? '' : 'disabled'}`}
           title={i18n.get('btnRedo')}
           onClick={this.handleRedo}
         >
-          <Icon type="icon-share" />
+          <Icon type="redo" />
         </span>
       </React.Fragment>
     );

@@ -49,7 +49,7 @@ export default class Table extends PluginComponent<State, Props> {
         onMouseEnter={this.show}
         onMouseLeave={this.hide}
       >
-        <Icon type="icon-table" />
+        <Icon type="grid" />
         <DropList
           show={this.state.show}
           onClose={this.hide}
