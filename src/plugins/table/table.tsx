@@ -4,6 +4,7 @@ import './table.less';
 interface TableListProps {
   maxRow?: number;
   maxCol?: number;
+  visiblity: boolean;
   onSetTable?: (table: { row: number; col: number }) => void;
 }
 
@@ -58,15 +59,18 @@ class TableList extends React.Component<TableListProps, TableListState> {
     };
   }
 
-  handleHover(i: number, j: number) {
+  private getList(i: number, j: number) {
     const { list } = this.state;
-    const newList = list.map((v, row) => {
+    return list.map((v, row) => {
       return v.map((_, col) => {
         return row <= i && col <= j ? 1 : 0;
       });
     });
+  }
+
+  handleHover(i: number, j: number) {
     this.setState({
-      list: newList,
+      list: this.getList(i, j),
     });
   }
 
@@ -76,6 +80,14 @@ class TableList extends React.Component<TableListProps, TableListState> {
       onSetTable({
         row: i + 1,
         col: j + 1,
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps: TableListProps) {
+    if (this.props.visiblity === false && prevProps.visiblity !== this.props.visiblity) {
+      this.setState({
+        list: this.getList(-1, -1),
       });
     }
   }

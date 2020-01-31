@@ -50,19 +50,14 @@ export default class Table extends PluginComponent<State, Props> {
         onMouseLeave={this.hide}
       >
         <Icon type="grid" />
-        <DropList
-          show={this.state.show}
-          onClose={this.hide}
-          render={() => {
-            return (
-              <TableList
-                maxRow={this.getConfig('maxRow', 6)}
-                maxCol={this.getConfig('maxCol', 6)}
-                onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}
-              />
-            );
-          }}
-        />
+        <DropList show={this.state.show} onClose={this.hide}>
+          <TableList
+            visiblity={this.state.show}
+            maxRow={this.getConfig('maxRow', 6)}
+            maxCol={this.getConfig('maxCol', 6)}
+            onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}
+          />
+        </DropList>
       </span>
     );
   }

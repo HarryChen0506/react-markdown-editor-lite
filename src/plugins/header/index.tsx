@@ -43,11 +43,9 @@ export default class Header extends PluginComponent<State> {
         onMouseLeave={this.hide}
       >
         <Icon type="font-size" />
-        <DropList
-          show={this.state.show}
-          onClose={this.hide}
-          render={() => <HeaderList onSelectHeader={(header: string) => this.editor.insertMarkdown(header)} />}
-        />
+        <DropList show={this.state.show} onClose={this.hide}>
+          <HeaderList onSelectHeader={(header: string) => this.editor.insertMarkdown(header)} />}
+        </DropList>
       </span>
     );
   }
