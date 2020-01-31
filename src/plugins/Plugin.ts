@@ -29,12 +29,4 @@ export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProp
       ? this.props.config[key]
       : defaultValue;
   }
-
-  protected getEditorConfig(key: string, defaultValue?: any) {
-    return this.props.editorConfig &&
-      typeof this.props.editorConfig[key] !== 'undefined' &&
-      this.props.editorConfig[key] !== null
-      ? this.props.editorConfig[key]
-      : defaultValue;
-  }
 }
