@@ -22,11 +22,11 @@ Online demo <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](ht
 
 Default configuration
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
 
 Pluggable bars
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v1.0.0-plugins.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0-plugins.PNG?raw=true)
 
 
 ## Basic usage
