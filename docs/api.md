@@ -12,16 +12,6 @@
   */
 static use(comp: any, config?: any): void;
 ```
-### Editor.setPlugins
-设置插件顺序，并剔除不在列表中的插件。
-* 注意：必须在use完所有插件后再使用
-```js
-/**
-  * 设置插件顺序，并剔除不在列表中的插件
-  * @param {string[]} plugins 插件名称
-  */
-static setPlugins(plugins: string[]): void;
-```
 ## 多语言
 Editor.addLocale / useLocale / getLocale，分别为添加语言包、设置当前语言、获取当前语言
 ```js
@@ -207,15 +197,6 @@ Register plugin
   * @param config Other configurations
   */
 static use(comp: any, config?: any): void;
-```
-### Editor.setPlugins
-Set plugins order and delete the plugin not exists in the list.
-* Note: You mustn't use this before you `use` all plugins.
-```js
-/**
-  * @param {string[]} plugins Plugin names
-  */
-static setPlugins(plugins: string[]): void;
 ```
 ## Locales
 * addLocale: Add language pack
