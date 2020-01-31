@@ -8,8 +8,8 @@ import './index.less';
 
 const MOCK_DATA = content;
 
-// const PLUGINS = undefined;
-const PLUGINS = ['header', 'image', 'full-screen'];
+const PLUGINS = undefined;
+// const PLUGINS = ['header', 'image', 'full-screen'];
 
 class Demo extends React.Component {
   mdEditor?: MdEditor = undefined;
@@ -52,10 +52,10 @@ class Demo extends React.Component {
     });
   };
 
-  onCustomImageUpload = (e: any) => {
-    console.log('onCustomImageUpload', e);
+  onCustomImageUpload = (event: any) => {
+    console.log('onCustomImageUpload', event);
     return new Promise((resolve, reject) => {
-      const result = window.prompt('Please enter image url here');
+      const result = window.prompt('Please enter image url here...') as string;
       resolve({ url: result });
       // custom confirm message pseudo code
       // YourCustomDialog.open(() => {
@@ -120,8 +120,8 @@ class Demo extends React.Component {
               syncScrollMode: ['leftFollowRight', 'rightFollowLeft'],
             }}
             onChange={this.handleEditorChange}
-            onImageUpload={this.handleImageUpload}
-            // onCustomImageUpload={this.onCustomImageUpload}
+            // onImageUpload={this.handleImageUpload}
+            onCustomImageUpload={this.onCustomImageUpload}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>

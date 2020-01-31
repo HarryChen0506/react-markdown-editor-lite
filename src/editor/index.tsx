@@ -254,6 +254,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     const event = e.nativeEvent as ClipboardEvent;
     const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
+
     if (items) {
       e.preventDefault();
       this.uploadWithDataTransfer(items);
@@ -544,7 +545,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             this.setText(text);
           });
         }
-      } else {
+      } else if (it.kind === 'string' && it.type.includes('text/plain')) {
         queue.push(new Promise(resolve => it.getAsString(resolve)));
       }
     });

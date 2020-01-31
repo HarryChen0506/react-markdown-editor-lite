@@ -62,10 +62,10 @@ export default class Image extends PluginComponent<State> {
   }
 
   render() {
-    const isCustom = this.getConfig('onCustomImageUpload', null) !== null;
+    const isCustom = this.getEditorConfig('onCustomImageUpload', null) !== null;
     return isCustom ? (
       <span className="button button-type-image" title={i18n.get('btnImage')} onClick={this.handleCustomImageUpload}>
-        <Icon type="icon-photo" />
+        <Icon type="image" />
       </span>
     ) : (
       <span
