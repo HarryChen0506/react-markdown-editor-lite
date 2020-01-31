@@ -8,8 +8,8 @@ import './index.less';
 
 const MOCK_DATA = content;
 
-const PLUGINS = undefined;
-// const PLUGINS = ['header'];
+// const PLUGINS = undefined;
+const PLUGINS = ['header', 'image', 'full-screen'];
 
 class Demo extends React.Component {
   mdEditor?: MdEditor = undefined;
