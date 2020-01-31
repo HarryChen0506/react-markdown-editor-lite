@@ -340,7 +340,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
     }
     const decorate = getDecorated(selection.text, type, decorateOption);
-    this.insertText(decorate.text, !!decorate.selection, decorate.selection);
+    this.insertText(decorate.text, true, decorate.selection);
   }
   /**
    * 插入占位符，并在Promise结束后自动覆盖
