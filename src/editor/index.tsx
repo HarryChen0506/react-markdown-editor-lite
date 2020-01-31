@@ -545,7 +545,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             this.setText(text);
           });
         }
-      } else if (it.kind === 'string' && it.type.includes('text/plain')) {
+      } else if (it.kind === 'string' && it.type === 'text/plain') {
         queue.push(new Promise(resolve => it.getAsString(resolve)));
       }
     });

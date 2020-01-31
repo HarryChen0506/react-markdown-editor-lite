@@ -120,7 +120,7 @@ class Demo extends React.Component {
               syncScrollMode: ['leftFollowRight', 'rightFollowLeft'],
             }}
             onChange={this.handleEditorChange}
-            // onImageUpload={this.handleImageUpload}
+            onImageUpload={this.handleImageUpload}
             onCustomImageUpload={this.onCustomImageUpload}
           />
         </div>
