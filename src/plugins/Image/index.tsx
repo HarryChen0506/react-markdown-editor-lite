@@ -52,9 +52,12 @@ export default class Image extends PluginComponent<State> {
     if (onCustomImageUpload) {
       const res = onCustomImageUpload.call(this, e);
       if (isPromise(res)) {
-        res.then(({ url }) => {
-          if (url) {
-            this.editor.insertMarkdown('image', { imageUrl: url });
+        res.then(result => {
+          if (result && result.url) {
+            this.editor.insertMarkdown('image', {
+              target: result.text,
+              imageUrl: result.url,
+            });
           }
         });
       }

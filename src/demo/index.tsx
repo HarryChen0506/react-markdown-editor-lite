@@ -52,7 +52,7 @@ class Demo extends React.Component {
     });
   };
 
-  onCustomImageUpload = (event: any) => {
+  onCustomImageUpload = (event: any): Promise<any> => {
     console.log('onCustomImageUpload', event);
     return new Promise((resolve, reject) => {
       const result = window.prompt('Please enter image url here...') as string;

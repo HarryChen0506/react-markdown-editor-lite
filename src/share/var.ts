@@ -31,7 +31,7 @@ export interface EditorConfig {
   syncScrollMode?: string[];
   allowPasteImage?: boolean;
   onImageUpload?: UploadFunc;
-  onCustomImageUpload?: (event: any) => Promise<{ url: string }>;
+  onCustomImageUpload?: (event: any) => Promise<{ url: string; text?: string }>;
 }
 
 export interface Selection {
