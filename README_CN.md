@@ -5,7 +5,7 @@ react-markdown-editor-lite
 [![NPM downloads][npm-downloads-image]][npm-url]
 [![MIT License][license-image]][license-url]
 
-[中文文档](README_CN.md)
+[English Docs](README.md)
 
 * A light-weight(20KB zipped) Markdown editor of React component
 * Supports TypeScript
@@ -24,19 +24,19 @@ react-markdown-editor-lite
 * 支持图片上传
 * 支持编辑区和预览区同步滚动
 
-## Demo
-Online demo <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
+## 案例
+在线案例 <br>[https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
 
-Default configuration
+默认配置
 
 ![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
 
-Pluggable bars
+可插拔的功能键
 
 ![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0-plugins.PNG?raw=true)
 
 
-## Install
+## 安装
 
 ```shell
 npm install react-markdown-editor-lite --save
@@ -44,29 +44,29 @@ npm install react-markdown-editor-lite --save
 yarn add react-markdown-editor-lite
 ```
 
-## Basic usage
-Following steps:
-* Import react-markdown-editor-lite
-* Register plugins if required
-* Initialize a markdown parser, such as markdown-it
-* Start usage
+## 基本使用
+
+基本使用分为以下几步：
+* 导入react-markdown-editor-lite
+* 注册插件（如果需要）
+* 初始化任意Markdown解析器，例如markdown-it
+* 开始使用
 
 ```js
-// import react, react-markdown-editor-lite, and a markdown parser you like
+// 导入React、react-markdown-editor-lite，以及一个你喜欢的Markdown渲染器
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
 import MarkdownIt from 'markdown-it'
 import MdEditor from 'react-markdown-editor-lite'
-// import style manually
+// 导入编辑器的样式
 import 'react-markdown-editor-lite/lib/index.css';
 
-// Register plugins if required
+// 注册插件（如果有的话）
 // MdEditor.use(YOUR_PLUGINS_HERE);
 
-// Initialize a markdown parser
+// 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-// Finish!
+// 完成！
 function handleEditorChange({html, text}) {    
   console.log('handleEditorChange', html, text)
 }
@@ -81,7 +81,7 @@ export default (props) => {
 }
 ```
 
-## Usage in Next.js
+## 在Next.js中使用
 
 ```js
 import dynamic from 'next/dynamic'
@@ -103,15 +103,15 @@ export default function() {
 }
 ```
 
+## 更多
 
-## More
+* 配置项目：点击[这里](./docs/configure.md)查看
+* API：点击[这里](./docs/api.md)查看
+* 插件开发：点击[这里](./docs/plugin.md)查看
+* 完整Demo见[src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
 
-* Configuration items see [here](./docs/configure.md)
-* APIs see [here](./docs/api.md)
-* Plugins developer see [here](./docs/plugin.md)
-* Full demo see [src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
 
-## Authors
+## 主要作者
 - ShuangYa [github/sylingd](https://github.com/sylingd)
 - HarryChen0506 [github/HarryChen0506](https://github.com/HarryChen0506)
 
