@@ -27,7 +27,7 @@ export default class Clear extends PluginComponent {
   render() {
     return (
       <span className="button button-type-clear" title={i18n.get('btnClear')} onClick={this.handleClick}>
-        <Icon type="clear" />
+        <Icon type="delete" />
       </span>
     );
   }

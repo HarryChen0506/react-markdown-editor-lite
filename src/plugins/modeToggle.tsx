@@ -105,7 +105,7 @@ export default class ModeToggle extends PluginComponent<ModeToggleState> {
         };
       default:
         return {
-          icon: 'edit',
+          icon: 'keyboard',
           title: 'Editor',
         };
     }
