@@ -104,6 +104,6 @@
     "reporter": [
       "html"
     ],
-    "all": true  
+    "all": true
   }
 }
