@@ -1,5 +1,4 @@
 node_modules/
-coverage/
 .idea/
 .vscode/
 ~*
@@ -47,6 +46,3 @@ mochawesome-report/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# NPM
-package-lock.json
