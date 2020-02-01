@@ -1,11 +1,9 @@
-// DropList
 import * as React from 'react';
 import './index.less';
 
 interface DropListProps {
   show: boolean;
   onClose?: () => void;
-  render: () => JSX.Element;
 }
 
 class DropList extends React.Component<DropListProps, any> {
@@ -23,7 +21,7 @@ class DropList extends React.Component<DropListProps, any> {
   render() {
     return (
       <div className={`drop-wrap ${this.props.show ? 'show' : 'hidden'}`} onClick={this.handleClose}>
-        {typeof this.props.render === 'function' && this.props.render()}
+        {this.props.children}
       </div>
     );
   }

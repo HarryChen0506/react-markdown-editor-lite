@@ -19,6 +19,8 @@ install:
 
 script:
   - yarn build
+  - yarn run test
+  # - yarn run coverage
 
 after_success:
   - zip -rq lib.zip lib

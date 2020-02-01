@@ -7,5 +7,5 @@ interface IconProps {
 }
 
 export default function Icon(props: IconProps) {
-  return <span className={`rmel-${props.type}`} />;
+  return <i className={`rmel-iconfont rmel-icon-${props.type}`} />;
 }

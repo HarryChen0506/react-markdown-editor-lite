@@ -1,77 +1,120 @@
-class Decorate {
-  constructor(target: string) {
-    this.target = target;
+import { repeat } from './tool';
+
+interface Decorated {
+  text: string;
+  selection?: {
+    start: number;
+    end: number;
+  };
+}
+
+// 最简单的Decorator，即在现有文字的基础上加上前缀、后缀即可
+const SIMPLE_DECORATOR: { [x: string]: [string, string] } = {
+  bold: ['**', '**'],
+  italic: ['*', '*'],
+  underline: ['++', '++'],
+  strikethrough: ['~~', '~~'],
+  quote: ['\n> ', '\n'],
+  inlinecode: ['`', '`'],
+  code: ['\n```\n', '\n```\n'],
+};
+// 插入H1-H6
+for (let i = 1; i < 6; i++) {
+  SIMPLE_DECORATOR[`h${i}`] = [`\n${repeat('#', i)} `, '\n'];
+}
+
+function decorateTableText(option: any) {
+  const { row = 2, col = 2 } = option;
+  const rowHeader = ['|'];
+  const rowData = ['|'];
+  const rowDivision = ['|'];
+  let colStr = '';
+  for (let i = 1; i < col; i++) {
+    rowHeader.push(' Head |');
+    rowDivision.push(' --- |');
+    rowData.push(' Data |');
   }
-  name = 'selection decoration';
-  target = '';
-  type = '';
-  option = {};
-  result = '';
-  getDecoratedText(type: string, option = {}) {
-    this.type = type;
-    this.option = option;
-    return (this.result = this.calcDecorateText(this.type, option));
+  for (let j = 0; j <= row; j++) {
+    colStr += '\n' + rowData.join('');
   }
-  calcDecorateText(type: string, option: any = {}): string {
-    switch (type) {
-      case 'h1':
-        return `\n# ${this.target} \n`;
-      case 'h2':
-        return `\n## ${this.target} \n`;
-      case 'h3':
-        return `\n### ${this.target} \n`;
-      case 'h4':
-        return `\n#### ${this.target} \n`;
-      case 'h5':
-        return `\n##### ${this.target} \n`;
-      case 'h6':
-        return `\n###### ${this.target} \n`;
-      case 'bold':
-        return `**${this.target}**`;
-      case 'italic':
-        return `*${this.target}*`;
-      case 'underline':
-        return `++${this.target}++`;
-      case 'strikethrough':
-        return `~~${this.target}~~`;
-      case 'unordered':
-        return `\n- ${this.target}\n`;
-      case 'order':
-        return `\n1. ${this.target}\n`;
-      case 'quote':
-        return `\n> ${this.target}\n`;
-      case 'hr':
-        return '\n---\n';
-      case 'inlinecode':
-        return `\`${this.target}\``;
-      case 'code':
-        return `\n\`\`\`\n${this.target}\n\`\`\`\n`;
-      case 'table':
-        // return `\n| ${this.target} |  |\n| -- | -- |\n|  |  |\n`
-        return this.formatTableText(this.target, option);
-      case 'image':
-        return `![${option.target}](${option.imageUrl || ''})`;
-      case 'link':
-        return `[${this.target}](${option.linkUrl || ''})`;
-    }
-    return `${this.target}`;
+  return `\n${rowHeader.join('')}\n${rowDivision.join('')}${colStr}\n`;
+}
+
+function decorateList(type: 'order' | 'unordered', target: string) {
+  let text = target;
+  if (text.indexOf('\n') !== 0) {
+    text = '\n' + text;
   }
-  formatTableText(target: string, option: any) {
-    const { row = 2, col = 2 } = option;
-    const rowHeader = ['|'];
-    const rowData = ['|'];
-    const rowDivision = ['|'];
-    let colStr = '';
-    for (let i = 0; i <= col; i++) {
-      rowHeader.push(' Head |');
-      rowDivision.push(' --- |');
-      rowData.push(' Data |');
-    }
-    for (let j = 0; j <= row; j++) {
-      colStr += '\n' + rowData.join('');
-    }
-    return `\n${rowHeader.join('')}\n${rowDivision.join('')}${colStr}\n`;
+  if (type === 'unordered') {
+    return text.replace(/\n/g, '\n* ') + '\n';
+  } else {
+    let count = 1;
+    return (
+      text.replace(/\n/g, () => {
+        return `\n${count++}. `;
+      }) + '\n'
+    );
   }
 }
 
-export default Decorate;
+/**
+ * 获取装饰后的Markdown文本
+ * @param target 原文字
+ * @param type 装饰类型
+ * @param option 附加参数
+ * @returns {Decorated}
+ */
+function getDecorated(target: string, type: string, option?: any): Decorated {
+  if (typeof SIMPLE_DECORATOR[type] !== 'undefined') {
+    return {
+      text: `${SIMPLE_DECORATOR[type][0]}${target}${SIMPLE_DECORATOR[type][1]}`,
+      selection: {
+        start: SIMPLE_DECORATOR[type][0].length,
+        end: SIMPLE_DECORATOR[type][0].length + target.length,
+      },
+    };
+  }
+  switch (type) {
+    case 'unordered':
+      return {
+        text: decorateList('unordered', target),
+      };
+    case 'order':
+      return {
+        text: decorateList('order', target),
+      };
+    case 'hr':
+      return {
+        text: '\n---\n',
+      };
+    case 'table':
+      return {
+        text: decorateTableText(option),
+      };
+    case 'image':
+      return {
+        text: `![${target || option.target}](${option.imageUrl || ''})`,
+        selection: {
+          start: 2,
+          end: target.length + 2,
+        },
+      };
+    case 'link':
+      return {
+        text: `[${target}](${option.linkUrl || ''})`,
+        selection: {
+          start: 1,
+          end: target.length + 1,
+        },
+      };
+  }
+  return {
+    text: target,
+    selection: {
+      start: 0,
+      end: target.length,
+    },
+  };
+}
+
+export default getDecorated;

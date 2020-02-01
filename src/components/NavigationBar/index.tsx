@@ -1,18 +1,21 @@
-// navigationBar
 import * as React from 'react';
+import './index.less';
 
 interface NavigationBarProps {
-  left?: JSX.Element;
-  middle?: JSX.Element;
-  right?: JSX.Element;
+  left?: React.ReactElement[];
+  right?: React.ReactElement[];
+  visible: boolean;
 }
 
 export default function NavigationBar(props: NavigationBarProps) {
   return (
-    <div className={'rc-md-navigation'}>
-      <div className="navigation-nav left">{props.left}</div>
-      <div className="navigation-nav middle">{props.middle}</div>
-      <div className="navigation-nav right">{props.right}</div>
+    <div className={`rc-md-navigation ${props.visible ? 'visible' : 'in-visible'}`}>
+      <div className="navigation-nav left">
+        <div className="button-wrap">{props.left}</div>
+      </div>
+      <div className="navigation-nav right">
+        <div className="button-wrap">{props.right}</div>
+      </div>
     </div>
   );
 }

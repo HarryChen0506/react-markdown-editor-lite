@@ -1,7 +1,7 @@
-const webpack = require('webpack');
 const dts = require('dts-bundle');
 const fs = require('fs');
 const glob = require('glob');
+const path = require('path');
 
 function hasArgument(name) {
   for (const it of process.argv) {
@@ -21,6 +21,13 @@ function tryRemoveDir(dir) {
 }
 
 module.exports = config => {
+  // Alias
+  if (config.resolve) {
+    if (typeof (config.resolve.alias) === "undefined") {
+      config.resolve.alias = {};
+    }
+    config.resolve.alias.src = path.resolve(__dirname, "src");
+  }
   // 启用静态文件支持
   if (config.module && config.module.rules) {
     config.module.rules.push({
@@ -48,19 +55,30 @@ module.exports = config => {
     config.plugins.push({
       apply: (compiler) => {
         compiler.hooks.afterEmit.tap('BundleDTS', () => {
-          dts.bundle({
-            name: "react-markdown-editor-lite",
-            main: "lib/index.d.ts",
-            baseDir: "lib",
-            out: "temp_dts.tmp",
-            newLine: "\n",
-            indent: "  ",
-            verbose: true,
-            outputAsModuleFolder: true
-          });
-          console.log('bundle dts finished');
-          // 移除其他d.ts文件
+          // TS生成的dts不会自动转换paths，这里手动进行
+          const libPath = path.resolve(__dirname, 'lib');
           glob("./lib/**/*.d.ts", null, function (er, files) {
+            files.forEach(filePath => {
+              let content = fs.readFileSync(filePath, { encoding: "utf8" });
+              if (content.includes("from 'src/")) {
+                content = content.replace(/from 'src\/(.*?)'/g, "from '" + libPath + "/$1'");
+                fs.writeFileSync(filePath, content, { encoding: "utf8" })
+              }
+            });
+
+            dts.bundle({
+              name: "react-markdown-editor-lite",
+              main: "lib/index.d.ts",
+              baseDir: "lib",
+              out: "temp_dts.tmp",
+              newLine: "\n",
+              indent: "  ",
+              verbose: false,
+              outputAsModuleFolder: false
+            });
+
+            console.log('bundle dts finished');
+            // 移除其他d.ts文件
             files.forEach(it => {
               fs.unlinkSync(it);
               tryRemoveDir(it.substr(0, it.lastIndexOf('/')));

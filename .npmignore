@@ -3,14 +3,21 @@
 .browserslistrc
 .gitignore
 .npmignore
+yarn.lock
 
 # Code and libs
 src/
 image/
-coverage/
+docs/
 .idea/
 .vscode/
 ~*
+
+# tests and coverages
+.nyc_output/
+coverage/
+coverage/*
+mochawesome-report/
 
 # Packages #
 ############
