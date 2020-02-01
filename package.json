@@ -6,7 +6,9 @@
   "typings": "./lib/index.d.ts",
   "files": [
     "lib",
-    "src"
+    "src",
+    "package.json",
+    "README.md"
   ],
   "directories": {
     "example": "example",
@@ -31,9 +33,11 @@
     "editor",
     "parser",
     "react",
-    "component"
+    "component",
+    "plugins",
+    "pluggable"
   ],
-  "author": "HarryChen",
+  "author": "HarryChen && ShuangYa",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/HarryChen0506/react-markdown-editor-lite/issues"

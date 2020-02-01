@@ -13,15 +13,15 @@ react-markdown-editor-lite
 * Full markdown support
 * Supports pluggable function bars
 * Full control over UI
-* Supports image upload
+* Supports image uploading and dragging
 * Supports synced scrolling between editor and preview
 * 一款轻量的基于React的Markdown编辑器, 压缩后代码只有20KB
 * 支持TypeScript
 * 支持自定义Markdown解析器
-* 支持常用的markdown编辑功能，如加粗，斜体等等...
-* 支持插件化的功能按钮
+* 支持常用的Markdown编辑功能，如加粗，斜体等等...
+* 支持插件化的功能键
 * 界面可配置, 如只显示编辑区或预览区
-* 支持图片上传
+* 支持图片上传或拖拽
 * 支持编辑区和预览区同步滚动
 
 ## 案例
@@ -29,11 +29,11 @@ react-markdown-editor-lite
 
 默认配置
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
 
 可插拔的功能键
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/dev/image/react-markdown-editor-lite-v1.0.0-plugins.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v1.0.0-plugins.PNG?raw=true)
 
 
 ## 安装

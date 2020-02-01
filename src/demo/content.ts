@@ -7,7 +7,7 @@ const content = `
 ### 预览
 在线体验 [https://harrychen0506.github.io/react-markdown-editor-lite/](https://harrychen0506.github.io/react-markdown-editor-lite/)
 
-![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/example/react-markdown-editor-lite-v-0-3-6.PNG?raw=true)
+![image](https://github.com//HarryChen0506/react-markdown-editor-lite/blob/master/image/react-markdown-editor-lite-v1.0.0.PNG?raw=true)
 
 ### 特点
 * 轻量、基于React
