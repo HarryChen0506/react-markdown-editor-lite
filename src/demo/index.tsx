@@ -121,7 +121,7 @@ class Demo extends React.Component {
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
-            onCustomImageUpload={this.onCustomImageUpload}
+            // onCustomImageUpload={this.onCustomImageUpload}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>
