@@ -15,7 +15,7 @@ before_install:
 install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
-  - yarn --frozen-lockfile
+  - yarn install --frozen-lockfile
 
 script:
   - yarn build
