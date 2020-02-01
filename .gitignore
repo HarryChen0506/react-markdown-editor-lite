@@ -46,3 +46,6 @@ mochawesome-report/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# NPM
+package-lock.json
