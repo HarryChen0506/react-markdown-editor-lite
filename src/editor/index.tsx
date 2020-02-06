@@ -460,6 +460,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return;
       }
     }
+    if(this.props.onKeydown){
+      this.props.onKeydown(e);
+    }
   }
 
   /**
