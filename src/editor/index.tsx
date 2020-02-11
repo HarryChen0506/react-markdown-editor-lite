@@ -460,6 +460,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return;
       }
     }
+    // 如果没有，触发默认事件
+    emitter.emit(emitter.EVENT_KEY_DOWN, e);
   }
 
   /**
@@ -473,6 +475,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return emitter.EVENT_FULL_SCREEN;
       case 'viewchange':
         return emitter.EVENT_VIEW_CHANGE;
+      case 'keydown':
+        return emitter.EVENT_KEY_DOWN;
     }
   }
   on(event: EditorEvent, cb: any) {
