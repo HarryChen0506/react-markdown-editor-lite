@@ -25,19 +25,11 @@ for (let i = 1; i < 6; i++) {
 
 function decorateTableText(option: any) {
   const { row = 2, col = 2 } = option;
-  const rowHeader = ['|'];
-  const rowData = ['|'];
-  const rowDivision = ['|'];
-  let colStr = '';
-  for (let i = 1; i < col; i++) {
-    rowHeader.push(' Head |');
-    rowDivision.push(' --- |');
-    rowData.push(' Data |');
-  }
-  for (let j = 0; j <= row; j++) {
-    colStr += '\n' + rowData.join('');
-  }
-  return `\n${rowHeader.join('')}\n${rowDivision.join('')}${colStr}\n`;
+  const headerLine = '|' + ' Head |'.repeat(col);
+  const dividerLine = '|' + ' --- |'.repeat(col);
+  const rowLine = '|' + ' Data |'.repeat(col);
+  const body = (rowLine + '\n').repeat(row - 1);
+  return '\n' + [headerLine, dividerLine, body].join('\n');
 }
 
 function decorateList(type: 'order' | 'unordered', target: string) {
