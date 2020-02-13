@@ -20,6 +20,7 @@ export interface EditorConfig {
     hideMenu: boolean;
   };
   htmlClass?: string;
+  applyDefaultHtmlStyle?: boolean;
   markdownClass?: string;
   imageUrl?: string;
   imageAccept?: string;

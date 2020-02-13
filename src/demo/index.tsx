@@ -136,8 +136,8 @@ class Demo extends React.Component {
               },
               imageUrl: 'https://octodex.github.com/images/minion.png'
             }}
-            onChange={this.handleEditorChange} 
-          />  
+            onChange={this.handleEditorChange}
+          />
         </div> */}
       </div>
     );

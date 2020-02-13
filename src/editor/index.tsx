@@ -604,6 +604,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               <HtmlRender
                 html={this.state.html}
                 className={this.config.htmlClass}
+                applyDefaultHtmlStyle={this.config.applyDefaultHtmlStyle}
                 ref={(instance: HtmlRender) => (this.nodeMdPreview = instance)}
               />
             </div>

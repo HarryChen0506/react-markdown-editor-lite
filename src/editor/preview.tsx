@@ -5,6 +5,7 @@ export type HtmlType = string | React.ReactElement;
 export interface PreviewProps {
   html: HtmlType;
   className?: string;
+  applyDefaultHtmlStyle?: boolean;
 }
 
 export abstract class Preview<T extends HTMLElement> extends React.Component<PreviewProps, any> {
@@ -31,17 +32,20 @@ export class HtmlRender extends Preview<HTMLDivElement> {
     }
   }
   render() {
+    const customHtmlStyle = this.props.applyDefaultHtmlStyle === undefined || this.props.applyDefaultHtmlStyle;
+    const className = [customHtmlStyle ? 'custom-html-style' : '', this.props.className || ''].join(' ');
+
     return typeof this.props.html === 'string'
       ? React.createElement('div', {
           ref: this.el,
           dangerouslySetInnerHTML: { __html: this.props.html },
-          className: `custom-html-style ${this.props.className || ''}`,
+          className,
         })
       : React.createElement(
           'div',
           {
             ref: this.el,
-            className: `custom-html-style ${this.props.className || ''}`,
+            className,
           },
           this.props.html,
         );

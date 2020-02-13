@@ -15,6 +15,7 @@ const defaultConfig: EditorConfig = {
     hideMenu: true,
   },
   htmlClass: '',
+  applyDefaultHtmlStyle: true,
   markdownClass: '',
   syncScrollMode: ['rightFollowLeft', 'leftFollowRight'],
   imageUrl: '',
