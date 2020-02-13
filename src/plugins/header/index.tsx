@@ -44,7 +44,7 @@ export default class Header extends PluginComponent<State> {
       >
         <Icon type="font-size" />
         <DropList show={this.state.show} onClose={this.hide}>
-          <HeaderList onSelectHeader={(header: string) => this.editor.insertMarkdown(header)} />}
+          <HeaderList onSelectHeader={(header: string) => this.editor.insertMarkdown(header)} />
         </DropList>
       </span>
     );
