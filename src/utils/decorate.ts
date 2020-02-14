@@ -19,7 +19,7 @@ const SIMPLE_DECORATOR: { [x: string]: [string, string] } = {
   code: ['\n```\n', '\n```\n'],
 };
 // 插入H1-H6
-for (let i = 1; i < 6; i++) {
+for (let i = 1; i <= 6; i++) {
   SIMPLE_DECORATOR[`h${i}`] = [`\n${repeat('#', i)} `, '\n'];
 }
 
