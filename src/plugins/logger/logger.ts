@@ -31,17 +31,11 @@ class Logger {
     if (!this.hasUndo()) {
       return undefined;
     }
-    // 最顶上的一个是当前状态，所以要pop两次才能得到之前的结果
     const current = this.record.pop();
-    const last = this.record.pop();
-    if (typeof last !== 'undefined' && this.record.length === 0) {
-      // 如果只剩了初始化值，还是把它给放回去，不然之后就没用的了
-      this.record.push(last);
-    }
-    if (typeof current !== 'undefined') {
+    if (current !== undefined) {
       this.recycle.push(current);
     }
-    return last;
+    return this.getLast();
   }
 
   redo() {
