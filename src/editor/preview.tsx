@@ -35,13 +35,13 @@ export class HtmlRender extends Preview<HTMLDivElement> {
       ? React.createElement('div', {
           ref: this.el,
           dangerouslySetInnerHTML: { __html: this.props.html },
-          className: `custom-html-style ${this.props.className || ''}`,
+          className: this.props.className || 'custom-html-style',
         })
       : React.createElement(
           'div',
           {
             ref: this.el,
-            className: `custom-html-style ${this.props.className || ''}`,
+            className: this.props.className || 'custom-html-style',
           },
           this.props.html,
         );
