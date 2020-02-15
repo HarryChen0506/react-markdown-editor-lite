@@ -241,7 +241,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.hasContentChanged = true;
     }
     // 触发内部事件
-    emitter.emit(emitter.EVENT_CHANGE, value, e, false);
     this.setText(value, e);
   }
 
@@ -399,7 +398,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         text: value,
       },
       () => {
-        emitter.emit(emitter.EVENT_CHANGE, value, event, true);
+        emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
         if (newSelection) {
           setTimeout(() => this.setSelection(newSelection));
         }
