@@ -29,12 +29,12 @@ function decorateTableText(option: any) {
   const rowData = ['|'];
   const rowDivision = ['|'];
   let colStr = '';
-  for (let i = 1; i < col; i++) {
+  for (let i = 1; i <= col; i++) {
     rowHeader.push(' Head |');
     rowDivision.push(' --- |');
     rowData.push(' Data |');
   }
-  for (let j = 0; j <= row; j++) {
+  for (let j = 1; j <= row; j++) {
     colStr += '\n' + rowData.join('');
   }
   return `\n${rowHeader.join('')}\n${rowDivision.join('')}${colStr}\n`;

@@ -61,10 +61,10 @@ describe('Test getDecorated', function() {
   // 表格
   it('Table', function() {
     expect(getDecorated('', 'table', {
-      row: 2,
-      col: 3
+      row: 4,
+      col: 2
     })).to.deep.equal({
-      text: "\n| Head | Head |\n| --- | --- |\n| Data | Data |\n| Data | Data |\n| Data | Data |\n"
+      text: "\n| Head | Head |\n| --- | --- |\n| Data | Data |\n| Data | Data |\n| Data | Data |\n| Data | Data |\n"
     });
   });
 });
