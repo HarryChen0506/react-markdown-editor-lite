@@ -79,7 +79,7 @@ export default class Image extends PluginComponent<State> {
       >
         <Icon type="image" />
         <InputFile
-          accept={this.getConfig('imageAccept', '')}
+          accept={this.editorConfig.imageAccept || ''}
           ref={this.inputFile}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             e.persist();

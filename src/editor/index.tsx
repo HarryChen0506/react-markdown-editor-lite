@@ -241,7 +241,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.hasContentChanged = true;
     }
     // 触发内部事件
-    emitter.emit(emitter.EVENT_CHANGE, value, e, false);
     this.setText(value, e);
   }
 
@@ -399,7 +398,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         text: value,
       },
       () => {
-        emitter.emit(emitter.EVENT_CHANGE, value, event, true);
+        emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
         if (newSelection) {
           setTimeout(() => this.setSelection(newSelection));
         }
@@ -460,6 +459,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return;
       }
     }
+    // 如果没有，触发默认事件
+    emitter.emit(emitter.EVENT_KEY_DOWN, e);
   }
 
   /**
@@ -473,6 +474,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return emitter.EVENT_FULL_SCREEN;
       case 'viewchange':
         return emitter.EVENT_VIEW_CHANGE;
+      case 'keydown':
+        return emitter.EVENT_KEY_DOWN;
     }
   }
   on(event: EditorEvent, cb: any) {

@@ -42,6 +42,10 @@ export default class Table extends PluginComponent<State, Props> {
   }
 
   render() {
+    const config = this.editorConfig.table || {
+      maxRow: 6,
+      maxCol: 6,
+    };
     return (
       <span
         className="button button-type-table"
@@ -53,8 +57,8 @@ export default class Table extends PluginComponent<State, Props> {
         <DropList show={this.state.show} onClose={this.hide}>
           <TableList
             visiblity={this.state.show}
-            maxRow={this.getConfig('maxRow', 6)}
-            maxCol={this.getConfig('maxCol', 6)}
+            maxRow={config.maxRow}
+            maxCol={config.maxCol}
             onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}
           />
         </DropList>

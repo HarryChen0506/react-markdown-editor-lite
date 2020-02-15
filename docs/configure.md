@@ -10,7 +10,7 @@
 | config | 其他配置项 | Object |  |  |
 | config.view | 配置哪些项目默认被显示，包括：menu（菜单栏），md（编辑器)，html（预览区） | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | 配置哪些项目可以被显示，包括：menu（菜单栏），md（编辑器)，html（预览区），fullScreen（全屏），hideMenu（隐藏菜单按钮） | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
-| config.htmlClass | 预览区域的className | String | `''` |  |
+| config.htmlClass | 预览区域的className。如果需要默认样式，请保留`custom-html-style`。例如`your-style custom-html-style` | String | `'custom-html-style'` |  |
 | config.markdownClass | 编辑区域的className | String | `''` |  |
 | config.imageUrl | 当没有定义上传函数时，默认插入的图片 | String | `''` |  |
 | config.linkUrl | 默认插入的链接日志 | String | `''` |  |
@@ -86,7 +86,7 @@ export default (props) => {
 | config | Configuration object | Object |  |  |
 | config.view | Controls which items will be displayd by default, includes: menu(Menu bar), md(Editor), html(Preview) | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | Controls which items can be displayd, includes: menu(Menu bar), md(Editor), html(Preview), fullScreen(Full screen)，hideMenu(Hide button to toggle menu bar) | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
-| config.htmlClass | className of preview pane | String | `''` |  |
+| config.htmlClass | className of preview pane. If you require default html, please do not remove `custom-html-style`, like `your-style custom-html-style` | String | `'custom-html-style'` |  |
 | config.markdownClass | className of editorpane | String | `''` |  |
 | config.imageUrl | default image url | String | `''` |  |
 | config.linkUrl | default link url | String | `''` |  |

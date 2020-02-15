@@ -5,7 +5,7 @@ import { PluginComponent } from 'src/plugins/Plugin';
 import { KeyboardEventListener } from 'src/share/var';
 import LoggerPlugin from './logger';
 
-const LOGGER_INTERVAL = 1000;
+const LOGGER_INTERVAL = 600;
 
 export default class Logger extends PluginComponent {
   static pluginName = 'logger';
@@ -33,10 +33,7 @@ export default class Logger extends PluginComponent {
   }
 
   private handleUndo() {
-    if (!this.logger.hasUndo()) {
-      return;
-    }
-    const last = this.logger.undo();
+    const last = this.logger.undo(this.editor.getMdValue());
     if (typeof last !== 'undefined') {
       this.pause();
       this.lastPop = last;
@@ -89,7 +86,8 @@ export default class Logger extends PluginComponent {
     // 监听键盘事件
     this.handleKeyboards.forEach(it => this.editor.onKeyboard(it));
     // 初始化时，把已有值填充进logger
-    this.logger.push(this.editor.getMdValue());
+    this.logger.initValue = this.editor.getMdValue();
+    this.forceUpdate();
   }
 
   componentWillUnmount() {
@@ -105,10 +103,11 @@ export default class Logger extends PluginComponent {
   }
 
   render() {
+    const hasUndo = this.logger.initValue !== this.editor.getMdValue();
     return (
       <React.Fragment>
         <span
-          className={`button button-type-undo ${this.logger.hasUndo() ? '' : 'disabled'}`}
+          className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`}
           title={i18n.get('btnUndo')}
           onClick={this.handleUndo}
         >
