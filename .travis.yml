@@ -8,6 +8,9 @@ notifications:
 cache:
   yarn: true
 
+before_cache:
+  - rm -rf ./node_modules/.cache
+
 before_install:
   - export TZ="Asia/Shanghai"
   - date
@@ -32,9 +35,13 @@ before_deploy:
   - rm -f ./lib/bundle-report.html
 
 deploy:
+  edge: true
   provider: npm
-  email: $NPM_EMAIL
-  api_key: $NPM_TOKEN
+  email: "$NPM_EMAIL"
+  api_key: "$NPM_TOKEN"
+  skip_cleanup: true
+  on:
+    tags: true
 
 env:
   global:
