@@ -41,14 +41,14 @@ class Logger {
     }
     // 否则的话，最顶上的一个是当前状态，所以要pop两次才能得到之前的结果
     const last = this.record.pop();
-    if (typeof last !== 'undefined' && this.record.length === 0) {
-      // 如果只剩了初始化值，还是把它给放回去，不然之后就没用的了
-      this.record.push(last);
-    }
-    if (typeof current !== 'undefined') {
+    if (typeof last === 'undefined') {
+      // 已经没有更老的记录了，把初始值给出去吧
       this.recycle.push(current);
+      return this.initValue;
     }
-    return last || this.initValue;
+    // last 才是真正的上一步
+    this.recycle.push(current);
+    return last;
   }
 
   redo() {
@@ -64,8 +64,12 @@ class Logger {
     this.recycle = [];
   }
 
-  hasRedo() {
-    return this.recycle.length > 0;
+  getUndoCount() {
+    return this.undo.length;
+  }
+
+  getRedoCount() {
+    return this.recycle.length;
   }
 }
 

@@ -43,9 +43,6 @@ export default class Logger extends PluginComponent {
   }
 
   private handleRedo() {
-    if (!this.logger.hasRedo()) {
-      return;
-    }
     const last = this.logger.redo();
     if (typeof last !== 'undefined') {
       this.lastPop = last;
@@ -55,7 +52,7 @@ export default class Logger extends PluginComponent {
   }
 
   handleChange(value: string, e: any, isChange: boolean) {
-    if (this.logger.getLast() === value || (this.lastPop && this.lastPop === value)) {
+    if (this.logger.getLast() === value || (this.lastPop !== null && this.lastPop === value)) {
       return;
     }
     this.logger.cleanRedo();
@@ -103,7 +100,9 @@ export default class Logger extends PluginComponent {
   }
 
   render() {
-    const hasUndo = this.logger.initValue !== this.editor.getMdValue();
+    const hasUndo = this.logger.getUndoCount() > 1 || this.logger.initValue !== this.editor.getMdValue();
+    const hasRedo = this.logger.getRedoCount() > 0;
+    console.log(hasUndo, hasRedo, this.logger.getUndoCount(), this.logger.getRedoCount());
     return (
       <React.Fragment>
         <span
@@ -114,7 +113,7 @@ export default class Logger extends PluginComponent {
           <Icon type="undo" />
         </span>
         <span
-          className={`button button-type-redo ${this.logger.hasRedo() ? '' : 'disabled'}`}
+          className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`}
           title={i18n.get('btnRedo')}
           onClick={this.handleRedo}
         >
