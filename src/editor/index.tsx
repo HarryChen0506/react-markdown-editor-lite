@@ -579,7 +579,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
                 title={isShowMenu ? 'hidden menu' : 'show menu'}
                 onClick={this.handleToggleMenu}
               >
-                <Icon type={`icon-chevron-${isShowMenu ? 'up' : 'down'}`} />
+                <Icon type={`expand-${isShowMenu ? 'less' : 'more'}`} />
               </span>
             </ToolBar>
           )}
