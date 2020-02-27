@@ -309,11 +309,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * 设置已选择区域
    * @param {Selection} to
    */
-  setSelection(to: Selection) {
+  setSelection(to: { start: number; end: number }) {
     if (this.nodeMdText.current) {
       this.nodeMdText.current.setSelectionRange(to.start, to.end, 'forward');
       this.nodeMdText.current.focus();
-      to.text = this.nodeMdText.current.value.substr(to.start, to.end - to.start);
     }
   }
 
@@ -372,12 +371,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
         ? {
             start: newSelection.start + beforeContent.length,
             end: newSelection.end + beforeContent.length,
-            text: '',
           }
         : {
             start: beforeContent.length,
             end: beforeContent.length,
-            text: '',
           },
     );
   }
@@ -388,7 +385,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {string} value
    * @param {any} event
    */
-  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, newSelection?: Selection) {
+  setText(
+    value: string = '',
+    event?: React.ChangeEvent<HTMLTextAreaElement>,
+    newSelection?: { start: number; end: number },
+  ) {
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
       return;
@@ -545,7 +546,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
           queue.push(Promise.resolve(placeholder.placeholder));
           placeholder.uploaded.then(str => {
             const text = this.getMdValue().replace(placeholder.placeholder, str);
-            this.setText(text);
+            const offset = str.length - placeholder.placeholder.length;
+            // 计算出替换后的光标位置
+            const selection = this.getSelection();
+            this.setText(text, undefined, {
+              start: selection.start + offset,
+              end: selection.start + offset,
+            });
           });
         }
       } else if (it.kind === 'string' && it.type === 'text/plain') {
@@ -554,7 +561,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
     });
     Promise.all(queue).then(res => {
       const text = res.join('');
-      this.insertText(text, true);
+      const selection = this.getSelection();
+      this.insertText(text, true, {
+        start: selection.start === selection.end ? text.length : 0,
+        end: text.length,
+      });
     });
   }
 
@@ -579,7 +590,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
                 title={isShowMenu ? 'hidden menu' : 'show menu'}
                 onClick={this.handleToggleMenu}
               >
-                <Icon type={`icon-chevron-${isShowMenu ? 'up' : 'down'}`} />
+                <Icon type={`expand-${isShowMenu ? 'less' : 'more'}`} />
               </span>
             </ToolBar>
           )}
