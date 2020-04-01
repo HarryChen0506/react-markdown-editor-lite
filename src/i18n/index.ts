@@ -8,7 +8,16 @@ type Langs = { [x: string]: LangItem };
 class I18n {
   private langs: Langs = { enUS, zhCN };
   private current: string = 'enUS';
+
   constructor() {
+    this.setUp();
+  }
+
+  setUp() {
+    if (typeof window === 'undefined') {
+      // 不在浏览器环境中，取消检测
+      return;
+    }
     let locale = 'enUS';
     // 检测语言
     if (navigator.language) {
@@ -28,8 +37,9 @@ class I18n {
       }
     }
 
-    if (this.isAvaliable(locale)) {
+    if (this.current !== locale && this.isAvaliable(locale)) {
       this.current = locale;
+      emitter.emit(emitter.EVENT_LANG_CHANGE, this, locale, this.langs[locale]);
     }
   }
 

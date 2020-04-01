@@ -110,6 +110,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
   componentDidMount() {
     this.renderHTML(this.props.value || '');
     emitter.on(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
+    // 初始化多语言选项
+    i18n.setUp();
   }
 
   componentWillUnmount() {
