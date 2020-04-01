@@ -266,7 +266,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
       return;
     }
     const event = e.nativeEvent as DragEvent;
-    const items = event.dataTransfer?.items;
+    if (!event.dataTransfer) {
+      return;
+    }
+    const items = event.dataTransfer.items;
     if (items) {
       e.preventDefault();
       this.uploadWithDataTransfer(items);

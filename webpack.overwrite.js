@@ -50,6 +50,11 @@ module.exports = config => {
       }
     }
   }
+  // 生成模块化
+  if (config.output) {
+    config.output.libraryTarget = 'umd';
+    config.output.library = 'ReactMarkdownEditorLite';
+  }
   // 聚合d.ts文件
   if (config.mode === 'production' && config.plugins) {
     config.plugins.push({
