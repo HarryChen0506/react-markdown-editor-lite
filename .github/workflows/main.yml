@@ -43,10 +43,17 @@ jobs:
     - name: Build
       run: yarn run build
     - name: Test
-      run: yarn test
+      run: yarn run test
+    - name: Coverage
+      run: yarn run coverage
     - name: Upload bundles
-      run: |
-        zip -rq lib.zip lib
-        res=$(curl -F "file=@lib.zip" https://file.io/?expires=3d)
-        echo $res
+      uses: actions/upload-artifact@v1
+      with:
+        name: lib
+        path: lib
+    - name: Upload coverage
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage
+        path: coverage
 
