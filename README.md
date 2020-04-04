@@ -5,7 +5,7 @@ react-markdown-editor-lite
 [![NPM downloads][npm-downloads-image]][npm-url]
 [![MIT License][license-image]][license-url]
 [![MIT License][license-image]][license-url]
-![](https://github.com/HarryChen0506/react-markdown-editor-lite/workflows/main/badge.svg)
+[![](https://github.com/HarryChen0506/react-markdown-editor-lite/workflows/main/badge.svg)](https://github.com/HarryChen0506/react-markdown-editor-lite/actions?query=workflow%3Amain)
 
 [中文文档](README_CN.md)
 
