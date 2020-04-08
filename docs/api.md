@@ -63,7 +63,7 @@ setSelection(to: Selection): void;
 ```
 ## 内容
 ### insertMarkdown
-插入Markdown语法，支持常见Markdown语法
+插入Markdown语法，支持常见Markdown语法。完整示例见下方。
 ```js
 /**
   * 插入Markdown语法
@@ -249,7 +249,7 @@ setSelection(to: Selection): void;
 ```
 ## Contents
 ### insertMarkdown
-Insert markdown text
+Insert markdown text, see below for a complete example.
 ```js
 /**
   * Insert markdown text
@@ -367,4 +367,58 @@ fullScreen(enable: boolean): void;
 Is full screen enable or not
 ```js
 isFullScreen(): boolean;
+```
+
+## insertMarkdown Demo
+```js
+insertMarkdown('bold'); // **text**
+insertMarkdown('italic'); // *text*
+insertMarkdown('underline'); // ++text++
+insertMarkdown('strikethrough'); // ~~text~~
+insertMarkdown('quote'); // > text
+insertMarkdown('inlinecode'); // `text`
+insertMarkdown('hr'); // ---
+
+/*
+\```
+text
+\```
+*/
+insertMarkdown('code');
+/*
+* text
+* text
+* text
+*/
+insertMarkdown('unordered');
+/*
+1. text
+2. text
+3. text
+*/
+insertMarkdown('order');
+/*
+| Head | Head |
+| --- | --- |
+| Data | Data |
+| Data | Data |
+| Data | Data |
+| Data | Data |
+*/
+insertMarkdown('table', {
+  row: 2,
+  col: 4
+});
+/*
+![text](http://example.com/image.jpg)
+*/
+insertMarkdown('image', {
+  imageUrl: "http://example.com/image.jpg"
+});
+/*
+[text](http://example.com/)
+*/
+insertMarkdown('link', {
+  linkUrl: "http://example.com/"
+});
 ```
