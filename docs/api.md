@@ -24,6 +24,21 @@ static addLocale: (langName: string, lang: {
 static useLocale: (langName: string) => void;
 static getLocale: () => string;
 ```
+例如，添加繁体中文并使用：
+```js
+Editor.addLocale('zh-TW', {
+  btnHeader: '標頭',
+  btnClear: '清除',
+  btnBold: '粗體',
+});
+Editor.useLocale('zh-TW');
+
+const MyEditor = () => {
+  return (
+    <Editor renderHtml={/* ... */} />
+  )
+}
+```
 ## 操作选中区域
 ### 数据结构
 ```js
@@ -209,6 +224,21 @@ static addLocale: (langName: string, lang: {
 }) => void;
 static useLocale: (langName: string) => void;
 static getLocale: () => string;
+```
+For example, add traditional Chinese, and use it:
+```js
+Editor.addLocale('zh-TW', {
+  btnHeader: '標頭',
+  btnClear: '清除',
+  btnBold: '粗體',
+});
+Editor.useLocale('zh-TW');
+
+const MyEditor = () => {
+  return (
+    <Editor renderHtml={/* ... */} />
+  )
+}
 ```
 ## Selected
 ### Data struct
