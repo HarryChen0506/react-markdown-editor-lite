@@ -88,6 +88,8 @@ Editor.use(Counter, {
   start: 10
 });
 ```
+## 是否可以不渲染任何UI？
+可以，`render`函数返回一个空元素即可，例如返回`<span></span>`
 
 # Plugins
 ## What can plugins do?
@@ -179,3 +181,5 @@ Editor.use(Counter, {
   start: 10
 });
 ```
+## Is it possible not to render any UI ?
+Yes, just return a empty element (such as `<span></span>`, etc) in `render` method.

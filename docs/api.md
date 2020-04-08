@@ -130,6 +130,7 @@ getHtmlValue(): string;
 * change：编辑器内容变化
 * fullscreen：全屏状态改变
 * viewchange：视图区域改变（例如预览区域、菜单栏被隐藏/显示）
+* keydown：按下键盘按键
 ```js
 on(event: EditorEvent, cb: any): void;
 off(event: EditorEvent, cb: any): void;
@@ -313,6 +314,7 @@ Listen or unlisten events, events:
 * change: Editor's content has changed
 * fullscreen: Full screen status changed
 * viewchange: View status changed, such as show / hide preview area, or menu bars
+* keydown: Press the keyboard key
 ```js
 on(event: EditorEvent, cb: any): void;
 off(event: EditorEvent, cb: any): void;
