@@ -57,12 +57,9 @@ module.exports = config => {
   }
   // Build的情况下，把React给External掉
   if (config.output && typeof config.devServer === 'undefined') {
-    if (typeof config.externals === 'undefined') {
-      config.externals = [];
-    }
-    config.externals.unshift({
+    config.externals = {
       react: 'React'
-    });
+    };
   }
   // 聚合d.ts文件
   if (config.mode === 'production' && config.plugins) {
