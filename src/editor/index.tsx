@@ -64,9 +64,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
   /**
    * 设置所使用的语言文案
    */
-  static addLocale = i18n.add;
-  static useLocale = i18n.setCurrent;
-  static getLocale = i18n.getCurrent;
+  static addLocale = i18n.add.bind(i18n);
+  static useLocale = i18n.setCurrent.bind(i18n);
+  static getLocale = i18n.getCurrent.bind(i18n);
 
   private config: EditorConfig;
 
