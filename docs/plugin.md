@@ -128,7 +128,7 @@ const Counter = (props: PluginProps) => {
     <span
       className="button button-type-counter"
       title="Counter"
-      onClick={this.handleClick}
+      onClick={handleClick}
     >
       {num}
     </span>
@@ -280,7 +280,7 @@ const Counter = (props: PluginProps) => {
     <span
       className="button button-type-counter"
       title="Counter"
-      onClick={this.handleClick}
+      onClick={handleClick}
     >
       {num}
     </span>
