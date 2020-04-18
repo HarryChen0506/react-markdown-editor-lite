@@ -294,7 +294,7 @@ Counter.align = 'left';
 Counter.pluginName = 'counter';
 
 
-// 使用：
+// Usage:
 Editor.use(Counter, {
   start: 10
 });
