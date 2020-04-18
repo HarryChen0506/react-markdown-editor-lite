@@ -19,6 +19,7 @@ interface EditorProps extends EditorConfig {
   value?: string;
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
+  editorWrapStyle: 'soft' | 'hard' | 'off';
   config?: any;
   plugins?: string[];
   // Configs
@@ -48,8 +49,9 @@ interface EditorState {
 }
 
 class Editor extends React.Component<EditorProps, EditorState> {
-  static defaultProps = {
+  static defaultProps: Partial<EditorProps> = {
     value: '',
+    editorWrapStyle: 'hard',
   };
 
   private static plugins: Plugin[] = [];
@@ -606,7 +608,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               name={this.props.name || 'textarea'}
               value={this.state.text}
               className={`section-container input ${this.config.markdownClass || ''}`}
-              wrap="hard"
+              wrap={this.props.editorWrapStyle}
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'input')}
