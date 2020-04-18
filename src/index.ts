@@ -8,6 +8,7 @@ import Link from './plugins/link';
 import Logger from './plugins/logger';
 import ModeToggle from './plugins/modeToggle';
 import Table from './plugins/table';
+import AutoResize from './plugins/autoResize';
 
 // 注册默认插件
 Editor.use(Header);
@@ -26,6 +27,19 @@ export { PluginComponent, PluginProps } from './plugins/Plugin';
 export { default as getDecorated } from './utils/decorate';
 // 导出工具组件
 export { default as DropList } from './components/DropList/index';
+// 到处内置插件
+export const Plugins = {
+  Header,
+  Fonts,
+  Table,
+  Image,
+  Link,
+  Clear,
+  Logger,
+  ModeToggle,
+  FullScreen,
+  AutoResize,
+};
 
 // 导出编辑器
 export default Editor;

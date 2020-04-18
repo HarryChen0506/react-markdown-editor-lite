@@ -4,6 +4,7 @@
 ## 使用插件
 参见[API文档](./api.md)
 ## 内置插件
+### 插件列表
 内置以下插件：
 * header：标题
 * fonts：字体相关，如加粗、斜体等
@@ -14,8 +15,18 @@
 * logger：历史记录（撤销、重做）
 * mode-toggle：显示模式切换
 * full-screen：全屏模式切换
+* auto-resize：编辑器自动调整尺寸插件（默认不启用）
 ```js
 ['header', 'fonts', 'table', 'image', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']
+```
+### 使用自动调整尺寸插件
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.use(Plugins, {
+  min: 200, // 最小高度
+  max: 600, // 最大高度
+});
 ```
 ## Demo
 ```js
@@ -29,6 +40,7 @@ const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'log
 <Editor plugins={plugins} />
 ```
 ## 编写插件
+### 普通方式
 插件本身是一个React Component，需要继承自PluginComponent。
 
 在PluginComponent中，可以：
@@ -49,6 +61,10 @@ class Counter extends PluginComponent<CounterState> {
   static pluginName = 'counter';
   // 定义按钮被防止在哪个位置，默认为左侧，还可以放置在右侧（right）
   static align = 'left';
+  // 如果需要的话，可以在这里定义默认选项
+  static defaultConfig = {
+    start: 0
+  }
   
   constructor(props: any) {
     super(props);
@@ -65,7 +81,7 @@ class Counter extends PluginComponent<CounterState> {
     this.editor.insertText(this.state.num);
     // 更新一下自身的state
     this.setState({
-      num: this.state.num++
+      num: this.state.num + 1
     });
   }
 
@@ -88,6 +104,49 @@ Editor.use(Counter, {
   start: 10
 });
 ```
+### 函数组件
+同样可以使用函数组件来编写插件
+```js
+import * as React from 'react';
+import { PluginProps } from 'react-markdown-editor-lite';
+
+interface CounterState {
+  num: number;
+}
+
+const Counter = (props: PluginProps) => {
+  const [num, setNum] = React.useState(props.config.start);
+  
+  const handleClick = () => {
+    // 调用API，往编辑器中插入一个数字
+    props.editor.insertText(num);
+    // 更新一下自身的state
+    setNum(num + 1);
+  }
+
+  return (
+    <span
+      className="button button-type-counter"
+      title="Counter"
+      onClick={this.handleClick}
+    >
+      {num}
+    </span>
+  );
+}
+// 如果需要的话，可以在这里定义默认选项
+Counter.defaultConfig = {
+  start: 0
+}
+Counter.align = 'left';
+Counter.pluginName = 'counter';
+
+// 使用：
+Editor.use(Counter, {
+  start: 10
+});
+```
+
 ## 是否可以不渲染任何UI？
 可以，`render`函数返回一个空元素即可，例如返回`<span></span>`
 
@@ -97,6 +156,7 @@ Plugins can insert buttons into menu bar, and control editor's content.
 ## Use a plugin
 See [API documention](./api.md)
 ## Built-in plugins
+### Plugins list
 Those plugins are built-in plugin:
 * header: title
 * fonts: about fonts, such as bold, italic
@@ -107,8 +167,18 @@ Those plugins are built-in plugin:
 * logger: history(undo/redo)
 * mode-toggle: toggle view mode
 * full-screen: toggle full screen
+* auto-resize：auto-resize plugin (Disabled by default)
 ```js
 ['header', 'fonts', 'table', 'image', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']
+```
+### Use auto-resize plugin
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.use(Plugins, {
+  min: 200, // min height
+  max: 600, // max height
+});
 ```
 ## Demo
 ```js
@@ -142,6 +212,10 @@ class Counter extends PluginComponent<CounterState> {
   static pluginName = 'counter';
   // Define which place to be render, default is left, you can aslo use 'right'
   static align = 'left';
+  // Define default config if required
+  static defaultConfig = {
+    start: 0
+  }
   
   constructor(props: any) {
     super(props);
@@ -177,6 +251,50 @@ class Counter extends PluginComponent<CounterState> {
 
 
 // Usage:
+Editor.use(Counter, {
+  start: 10
+});
+```
+
+### Function component
+You can aslo use function component to write a plugin
+```js
+import * as React from 'react';
+import { PluginProps } from 'react-markdown-editor-lite';
+
+interface CounterState {
+  num: number;
+}
+
+const Counter = (props: PluginProps) => {
+  const [num, setNum] = React.useState(props.config.start);
+  
+  const handleClick = () => {
+    // Call API, insert number to editor
+    props.editor.insertText(num);
+    // Update itself's state
+    setNum(num + 1);
+  }
+
+  return (
+    <span
+      className="button button-type-counter"
+      title="Counter"
+      onClick={this.handleClick}
+    >
+      {num}
+    </span>
+  );
+}
+// Define default config if required
+Counter.defaultConfig = {
+  start: 0
+}
+Counter.align = 'left';
+Counter.pluginName = 'counter';
+
+
+// 使用：
 Editor.use(Counter, {
   start: 10
 });

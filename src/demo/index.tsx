@@ -2,7 +2,7 @@ import * as MarkdownIt from 'markdown-it';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactMarkdown from 'react-markdown';
-import MdEditor from '../index';
+import MdEditor, { Plugins } from '../index';
 import content from './content';
 import './index.less';
 
@@ -10,6 +10,11 @@ const MOCK_DATA = content;
 
 const PLUGINS = undefined;
 // const PLUGINS = ['header', 'image', 'full-screen'];
+
+// MdEditor.use(Plugins.AutoResize, {
+//   min: 200,
+//   max: 800
+// });
 
 class Demo extends React.Component {
   mdEditor?: MdEditor = undefined;

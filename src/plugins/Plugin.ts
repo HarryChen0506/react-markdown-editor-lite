@@ -5,12 +5,13 @@ import { EditorConfig } from 'src/share/var';
 export interface PluginProps {
   editor: Editor;
   editorConfig: EditorConfig;
-  config?: any;
+  config: any;
 }
 
 export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProps> extends React.Component<P, S> {
   static pluginName: string = '';
   static align: string = 'left';
+  static defaultConfig = {};
 
   protected get editor(): Editor {
     return this.props.editor;
@@ -25,7 +26,7 @@ export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProp
   }
 
   protected getConfig(key: string, defaultValue?: any) {
-    return this.props.config && typeof this.props.config[key] !== 'undefined' && this.props.config[key] !== null
+    return typeof this.props.config[key] !== 'undefined' && this.props.config[key] !== null
       ? this.props.config[key]
       : defaultValue;
   }

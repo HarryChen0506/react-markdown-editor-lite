@@ -14,6 +14,11 @@ export abstract class Preview<T extends HTMLElement> extends React.Component<Pre
     this.el = React.createRef();
   }
   abstract getHtml(): string;
+
+  getElement(): T | null {
+    return this.el.current;
+  }
+
   getHeight() {
     return this.el.current ? this.el.current.offsetHeight : 0;
   }

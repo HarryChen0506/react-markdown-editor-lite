@@ -199,6 +199,18 @@ fullScreen(enable: boolean): void;
 ```js
 isFullScreen(): boolean;
 ```
+## 元素
+可以通过以下API获取编辑器实际元素。请注意：你必须明白自己在做什么，否则不要轻易操作编辑器实际元素。
+### getMdElement
+获取编辑区域元素
+```js
+getMdElement(): HTMLTextAreaElement | null;
+```
+### getHtmlElement
+获取预览区域元素
+```js
+getHtmlElement(): HTMLDivElement | null;
+```
 
 # API
 ## Plugins
@@ -397,6 +409,18 @@ fullScreen(enable: boolean): void;
 Is full screen enable or not
 ```js
 isFullScreen(): boolean;
+```
+## Element
+The actual elements of the editor can be reached by the following APIs. Please note: you MUST understand what you are doing, otherwise do not manipulate the actual elements of the editor.
+### getMdElement
+Get edit area elements
+```js
+getMdElement(): HTMLTextAreaElement | null;
+```
+### getHtmlElement
+Get preview area element
+```js
+getHtmlElement(): HTMLDivElement | null;
 ```
 
 ## insertMarkdown Demo

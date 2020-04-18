@@ -10,7 +10,7 @@ interface State {
 }
 
 interface Props extends PluginProps {
-  config?: {
+  config: {
     maxRow?: number;
     maxCol?: number;
   };
@@ -18,6 +18,10 @@ interface Props extends PluginProps {
 
 export default class Table extends PluginComponent<State, Props> {
   static pluginName = 'table';
+  static defaultConfig = {
+    maxRow: 6,
+    maxCol: 6,
+  };
 
   constructor(props: any) {
     super(props);
@@ -42,10 +46,7 @@ export default class Table extends PluginComponent<State, Props> {
   }
 
   render() {
-    const config = this.editorConfig.table || {
-      maxRow: 6,
-      maxCol: 6,
-    };
+    const config = this.editorConfig.table || this.props.config;
     return (
       <span
         className="button button-type-table"

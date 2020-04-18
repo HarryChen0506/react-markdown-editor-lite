@@ -70,9 +70,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private config: EditorConfig;
 
-  private nodeMdText: React.RefObject<HTMLTextAreaElement>;
-  private nodeMdPreview?: HtmlRender;
-  private nodeMdPreviewWraper: React.RefObject<HTMLDivElement>;
+  private nodeMdText = React.createRef<HTMLTextAreaElement>();
+  private nodeMdPreview = React.createRef<HtmlRender>();
+  private nodeMdPreviewWraper = React.createRef<HTMLDivElement>();
 
   private hasContentChanged = true;
 
@@ -160,7 +160,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
         React.createElement(it.comp, {
           editor: this,
           editorConfig: this.config,
-          config: it.config,
+          config: {
+            ...(it.comp.defaultConfig || {}),
+            ...(it.config || {}),
+          },
           key: it.comp.pluginName,
         }),
       );
@@ -182,9 +185,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!syncScrollMode.includes(type === 'input' ? 'rightFollowLeft' : 'leftFollowRight')) {
       return;
     }
-    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreview) {
+    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreview.current) {
       // 计算出左右的比例
-      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreview.getHeight();
+      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreview.current.getHeight();
       this.hasContentChanged = false;
     }
     if (!this.isSyncingScroll) {
@@ -281,6 +284,16 @@ class Editor extends React.Component<EditorProps, EditorState> {
   // 语言变化事件
   private handleLocaleUpdate() {
     this.forceUpdate();
+  }
+
+  /**
+   * 获取元素相关API
+   */
+  getMdElement() {
+    return this.nodeMdText.current;
+  }
+  getHtmlElement() {
+    return this.nodeMdPreviewWraper.current;
   }
 
   /**
@@ -433,8 +446,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (typeof this.state.html === 'string') {
       return this.state.html;
     } else {
-      if (this.nodeMdPreview) {
-        return this.nodeMdPreview.getHtml();
+      if (this.nodeMdPreview.current) {
+        return this.nodeMdPreview.current.getHtml();
       } else {
         return '';
       }
@@ -620,11 +633,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onMouseOver={() => (this.shouldSyncScroll = 'preview')}
               onScroll={this.handlePreviewScroll}
             >
-              <HtmlRender
-                html={this.state.html}
-                className={this.config.htmlClass}
-                ref={(instance: HtmlRender) => (this.nodeMdPreview = instance)}
-              />
+              <HtmlRender html={this.state.html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
             </div>
           </section>
         </div>
