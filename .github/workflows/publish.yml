@@ -34,6 +34,12 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+    # Update version
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+    - name: Update version
+      run: npm version ${{ steps.get_version.outputs.VERSION }}
     # Install dependencies
     - name: Install dependencies
       run: yarn install --frozen-lockfile
