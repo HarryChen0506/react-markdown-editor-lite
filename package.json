@@ -69,7 +69,6 @@
     "mochawesome": "^4.1.0",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
-    "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-markdown": "^4.3.1",
     "source-map-support": "^0.5.16",
@@ -82,9 +81,8 @@
     "url-loader": "^2.1.0",
     "uuid": "^3.4.0"
   },
-  "dependencies": {},
-  "peerDependencies": {
-    "react": "^16"
+  "dependencies": {
+    "react": "^16.9.0"
   },
   "lint-staged": {
     "./src/**/*.{ts,tsx}": [
