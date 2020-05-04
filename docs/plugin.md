@@ -23,7 +23,7 @@
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 
-Editor.use(Plugins, {
+Editor.use(Plugins.AutoResize, {
   min: 200, // 最小高度
   max: 600, // 最大高度
 });
@@ -175,7 +175,7 @@ Those plugins are built-in plugin:
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 
-Editor.use(Plugins, {
+Editor.use(Plugins.AutoResize, {
   min: 200, // min height
   max: 600, // max height
 });
