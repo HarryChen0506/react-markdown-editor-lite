@@ -110,6 +110,14 @@ export default function() {
 
 注意：ReactMarkdownEditorLite(RMEL) 依赖 react，请确保其在RMEL之前引入。
 
+例如，使用webpack时，你可以在页面中通过`script`引入ReactMarkdownEditorLite的JS文件，并在webpack配置中写：
+```js
+externals: {
+  react: 'React,
+  'react-markdown-editor-lite': 'ReactMarkdownEditorLite'
+}
+```
+
 ## 更多
 
 * 配置项目：点击[这里](./docs/configure.md)查看
