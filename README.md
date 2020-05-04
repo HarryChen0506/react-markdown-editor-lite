@@ -115,7 +115,7 @@ Note: you should import react before `ReactMarkdownEditorLite`.
 For example, in webpack, you import ReactMarkdownEditorLite by `script` tag in your page, and write webpack config like this:
 ```js
 externals: {
-  react: 'React,
+  react: 'React',
   'react-markdown-editor-lite': 'ReactMarkdownEditorLite'
 }
 ```

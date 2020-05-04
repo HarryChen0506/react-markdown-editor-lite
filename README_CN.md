@@ -113,7 +113,7 @@ export default function() {
 例如，使用webpack时，你可以在页面中通过`script`引入ReactMarkdownEditorLite的JS文件，并在webpack配置中写：
 ```js
 externals: {
-  react: 'React,
+  react: 'React',
   'react-markdown-editor-lite': 'ReactMarkdownEditorLite'
 }
 ```
