@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Build
-      run: yarn run build
+      run: yarn run prod
     - name: Test
       run: yarn run test
     - run: npm publish
