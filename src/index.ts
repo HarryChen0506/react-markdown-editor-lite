@@ -27,7 +27,7 @@ export { PluginComponent, PluginProps } from './plugins/Plugin';
 export { default as getDecorated } from './utils/decorate';
 // 导出工具组件
 export { default as DropList } from './components/DropList/index';
-// 到处内置插件
+// 导出内置插件
 export const Plugins = {
   Header,
   Fonts,
