@@ -58,7 +58,12 @@ module.exports = config => {
   // Build的情况下，把React给External掉
   if (config.output && typeof config.devServer === 'undefined') {
     config.externals = {
-      react: 'React'
+      react: {
+        root: 'React',
+        commonjs2: 'react',
+        commonjs: 'react',
+        amd: 'react'
+      }
     };
   }
   // 聚合d.ts文件
