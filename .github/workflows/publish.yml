@@ -39,7 +39,7 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
     - name: Update version
-      run: npm version ${{ steps.get_version.outputs.VERSION }}
+      run: npm version --no-git-tag-version ${{ steps.get_version.outputs.VERSION }}
     # Install dependencies
     - name: Install dependencies
       run: yarn install --frozen-lockfile
