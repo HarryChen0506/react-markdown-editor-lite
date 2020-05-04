@@ -16,7 +16,7 @@ const PLUGINS = undefined;
 //   max: 800
 // });
 
-class Demo extends React.Component {
+class Demo extends React.Component<any, any> {
   mdEditor?: MdEditor = undefined;
 
   mdParser: MarkdownIt;
@@ -40,10 +40,17 @@ class Demo extends React.Component {
         */
       },
     });
+
+    this.state = {
+      value: MOCK_DATA,
+    };
   }
 
   handleEditorChange = (it: { text: string; html: string }, event: any) => {
     // console.log('handleEditorChange', it.text, it.html, event);
+    this.setState({
+      value: it.text,
+    });
   };
 
   handleImageUpload = (file: File): Promise<string> => {
@@ -86,6 +93,13 @@ class Demo extends React.Component {
     }
   };
 
+  handleSetValue = () => {
+    const text = window.prompt('Content');
+    this.setState({
+      value: text,
+    });
+  };
+
   renderHTML(text: string) {
     // return this.mdParser.render(text);
     // Using react-markdown
@@ -101,11 +115,12 @@ class Demo extends React.Component {
         <nav className="nav">
           <button onClick={this.handleGetMdValue}>getMdValue</button>
           <button onClick={this.handleGetHtmlValue}>getHtmlValue</button>
+          <button onClick={this.handleSetValue}>setValue</button>
         </nav>
         <div className="editor-wrap" style={{ marginTop: '30px' }}>
           <MdEditor
             ref={node => (this.mdEditor = node || undefined)}
-            value={MOCK_DATA}
+            value={this.state.value}
             style={{ height: '500px', width: '100%' }}
             renderHTML={this.renderHTML}
             plugins={PLUGINS}
