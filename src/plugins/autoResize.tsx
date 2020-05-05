@@ -5,7 +5,7 @@ const autoResize = (props: PluginProps) => {
   React.useEffect(() => {
     let timer: number | null = null;
 
-    const useTimer = typeof requestAnimationFrame === 'undefined';
+    const useTimer = props.config.useTimer || typeof requestAnimationFrame === 'undefined';
 
     const resizeElement = (el: HTMLElement) => {
       el.style.height = 'auto';
