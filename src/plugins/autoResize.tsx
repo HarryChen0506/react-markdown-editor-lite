@@ -7,19 +7,30 @@ const autoResize = (props: PluginProps) => {
 
     const useTimer = typeof requestAnimationFrame === 'undefined';
 
+    const resizeElement = (el: HTMLElement) => {
+      el.style.height = 'auto';
+      const height = Math.min(Math.max(props.config.min, el.scrollHeight), props.config.max);
+      el.style.height = height + 'px';
+      return height;
+    };
+
     const resize = () => {
+      timer = null;
+      // 如果渲染了编辑器，就以编辑器为准
+      const view = props.editor.getView();
       const el = props.editor.getMdElement();
-      if (el) {
-        el.style.height = 'auto';
-        const height = Math.min(Math.max(props.config.min, el.scrollHeight), props.config.max);
-        console.log(props.config, height);
-        el.style.height = height + 'px';
-        const previewer = props.editor.getHtmlElement();
+      const previewer = props.editor.getHtmlElement();
+      if (el && view.md) {
+        const height = resizeElement(el);
         if (previewer) {
           previewer.style.height = height + 'px';
         }
+        return;
       }
-      timer = null;
+      // 否则，以预览区域为准
+      if (previewer && view.html) {
+        resizeElement(previewer);
+      }
     };
 
     const handleChange = () => {
@@ -36,9 +47,12 @@ const autoResize = (props: PluginProps) => {
     };
 
     props.editor.on('change', handleChange);
+    props.editor.on('viewchange', handleChange);
     handleChange();
 
     return () => {
+      props.editor.off('change', handleChange);
+      props.editor.off('viewchange', handleChange);
       if (timer !== null && useTimer) {
         window.clearTimeout(timer);
         timer = null;
