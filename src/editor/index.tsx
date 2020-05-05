@@ -20,6 +20,7 @@ interface EditorProps extends EditorConfig {
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
   placeholder?: string;
+  readOnly?: boolean;
   config?: any;
   plugins?: string[];
   // Configs
@@ -619,6 +620,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               ref={this.nodeMdText}
               name={this.props.name || 'textarea'}
               placeholder={this.props.placeholder}
+              readOnly={this.props.readOnly}
               value={this.state.text}
               className={`section-container input ${this.config.markdownClass || ''}`}
               wrap="hard"
