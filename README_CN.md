@@ -106,7 +106,7 @@ export default function() {
 ## 浏览器引入
 自1.1.0起，你可以在浏览器中使用`script`和`link`标签直接引入文件，并使用全局变量`ReactMarkdownEditorLite`。
 
-你可以通过 [![](https://data.jsdelivr.com/v1/package/npm/react-markdown-editor-lite/badge)](https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib) 或 [UNPKG](https://unpkg.com/browse/react-markdown-editor-lite/lib/) 进行下载。
+你可以通过 [![](https://data.jsdelivr.com/v1/package/npm/react-markdown-editor-lite/badge?style=rounded)](https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib) 或 [UNPKG](https://unpkg.com/browse/react-markdown-editor-lite/lib/) 进行下载。
 
 注意：ReactMarkdownEditorLite(RMEL) 依赖 react，请确保其在RMEL之前引入。
 

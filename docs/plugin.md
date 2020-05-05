@@ -40,13 +40,15 @@ const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'log
 <Editor plugins={plugins} />
 ```
 ## 编写插件
+### Demo
+[在线查看](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
 ### 普通方式
 插件本身是一个React Component，需要继承自PluginComponent。
 
 在PluginComponent中，可以：
 * 通过`this.editor`获取编辑器实例，调用所有编辑器API。
 * 通过`this.editorConfig`获取编辑器的设置。
-* 通过`this.config`获取use时传入的数据。
+* 通过`this.getConfig`或`this.props.config`获取use时传入的数据。
 
 下面，我们编写一个计数器，每次点击均往编辑器中插入一个递增的数字。起始数字从use时传入的选项读取。
 ```js
@@ -72,7 +74,7 @@ class Counter extends PluginComponent<CounterState> {
     this.handleClick = this.handleClick.bind(this);
 
     this.state = {
-      num: this.config.start
+      num: this.getConfig('start')
     };
   }
 
@@ -192,12 +194,15 @@ const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'log
 <Editor plugins={plugins} />
 ```
 ## Written a plugin
+### Demo
+[View online](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+### Normal
 Plugin is a React Component, and must extend PluginComponent.
 
 In PluginComponent, you can:
 * Get editor instance by `this.editor`, and call all editor's APIs.
 * Get editor's config by `this.editorConfig`.
-* Get the options passed in use by `this.config`.
+* Get the options passed in use by `this.getConfig` or `this.props.config`.
 
 In following, we written a counter, insert an increasing number into the editor with each click. The starting number is read from the options passed in use.
 ```js
@@ -223,7 +228,7 @@ class Counter extends PluginComponent<CounterState> {
     this.handleClick = this.handleClick.bind(this);
 
     this.state = {
-      num: this.config.start
+      num: this.getConfig('start')
     };
   }
 

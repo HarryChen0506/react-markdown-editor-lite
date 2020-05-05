@@ -107,7 +107,7 @@ export default function() {
 ## Import in Browser
 Since 1.1.0, You can add `script` and `link` tags in your browser and use the global variable `ReactMarkdownEditorLite`. 
 
-You can download these files directly from [![](https://data.jsdelivr.com/v1/package/npm/react-markdown-editor-lite/badge)](https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib) or [UNPKG](https://unpkg.com/browse/react-markdown-editor-lite/lib/).
+You can download these files directly from [![](https://data.jsdelivr.com/v1/package/npm/react-markdown-editor-lite/badge?style=rounded)](https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib) or [UNPKG](https://unpkg.com/browse/react-markdown-editor-lite/lib/).
 
 Note: you should import react before `ReactMarkdownEditorLite`.
 
