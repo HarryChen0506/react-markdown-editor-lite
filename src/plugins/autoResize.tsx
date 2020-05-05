@@ -66,6 +66,7 @@ const autoResize = (props: PluginProps) => {
 autoResize.defaultConfig = {
   min: 200,
   max: Infinity,
+  useTimer: false,
 };
 autoResize.align = 'left';
 autoResize.pluginName = 'auto-resize';
