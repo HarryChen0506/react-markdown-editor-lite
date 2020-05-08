@@ -1,9 +1,10 @@
 react-markdown-editor-lite
 ========
 
-[![NPM package][npm]][npm-url]
+[![NPM package][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
 [![MIT License][license-image]][license-url]
+[![Workflow][workflow-image]][workflow-url]
 
 [English Docs](README.md)
 
@@ -133,9 +134,11 @@ externals: {
 ## License
 [MIT](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/LICENSE)
 
-[npm]: https://img.shields.io/npm/v/react-markdown-editor-lite.svg
-[npm-url]: https://www.npmjs.com/package/react-markdown-editor-lite
+[npm-version-image]: https://img.shields.io/npm/v/react-markdown-editor-lite.svg
 [npm-downloads-image]: http://img.shields.io/npm/dm/react-markdown-editor-lite.svg?style=flat
+[npm-url]: https://www.npmjs.com/package/react-markdown-editor-lite
+[workflow-image]: https://img.shields.io/github/workflow/status/HarryChen0506/react-markdown-editor-lite/main
+[workflow-url]: https://github.com/HarryChen0506/react-markdown-editor-lite/actions?query=workflow%3Amain
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
 [jsdelivr-image]: https://img.shields.io/jsdelivr/npm/hm/react-markdown-editor-lite
