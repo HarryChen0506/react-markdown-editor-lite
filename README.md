@@ -107,7 +107,7 @@ export default function() {
 ## Import in Browser
 Since 1.1.0, You can add `script` and `link` tags in your browser and use the global variable `ReactMarkdownEditorLite`. 
 
-You can download these files directly from [![](https://data.jsdelivr.com/v1/package/npm/react-markdown-editor-lite/badge?style=rounded)](https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib) or [UNPKG](https://unpkg.com/browse/react-markdown-editor-lite/lib/).
+You can download these files directly from [![cdnjs][cdnjs-image]][cdnjs-url] [![jsdelivr][jsdelivr-image]][jsdelivr-url] [![unpkg][unpkg-image]][unpkg-url]
 
 Note: you should import react before `ReactMarkdownEditorLite`.
 
@@ -138,3 +138,9 @@ externals: {
 [npm-downloads-image]: http://img.shields.io/npm/dm/react-markdown-editor-lite.svg?style=flat
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
+[jsdelivr-image]: https://img.shields.io/jsdelivr/npm/hm/react-markdown-editor-lite
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/react-markdown-editor-lite?path=lib
+[cdnjs-image]: https://img.shields.io/cdnjs/v/react-markdown-editor-lite?style=flat
+[cdnjs-url]: https://cdnjs.com/libraries/react-markdown-editor-lite
+[unpkg-image]: https://img.shields.io/npm/v/react-markdown-editor-lite?label=unpkg&style=flat
+[unpkg-url]: https://unpkg.com/browse/react-markdown-editor-lite/lib/
