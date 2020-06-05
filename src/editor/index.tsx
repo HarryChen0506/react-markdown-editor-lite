@@ -56,15 +56,15 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private static plugins: Plugin[] = [];
   /**
-   * 注册插件
-   * @param comp 插件
-   * @param config 其他配置
+   * Register plugin
+   * @param {any} comp Plugin component
+   * @param {any} config Other configs
    */
   static use(comp: any, config: any = {}) {
     Editor.plugins.push({ comp, config });
   }
   /**
-   * 设置所使用的语言文案
+   * Locales
    */
   static addLocale = i18n.add.bind(i18n);
   static useLocale = i18n.setCurrent.bind(i18n);
