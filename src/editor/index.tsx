@@ -112,7 +112,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   componentDidMount() {
     this.renderHTML(this.props.value || '');
     emitter.on(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
-    // 初始化多语言选项
+    // init i18n
     i18n.setUp();
   }
 
@@ -173,12 +173,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
     return result;
   }
 
-  // 左右同步滚动
+  // sync left and right section's scroll
   private scrollScale = 1;
   private isSyncingScroll = false;
   private shouldSyncScroll: 'input' | 'preview' = 'input';
   private handleSyncScroll(type: 'input' | 'preview') {
-    // 防止死循环
+    // prevent loop
     if (type !== this.shouldSyncScroll) {
       return;
     }
@@ -238,7 +238,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 文本区域变化事件
+   * Text area change event
    * @param {React.ChangeEvent} e
    */
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -252,7 +252,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 监听粘贴事件，实现自动上传图片
+   * Listen paste event to support paste images
    */
   private handlePaste(e: React.SyntheticEvent) {
     if (!this.config.allowPasteImage || !this.config.onImageUpload) {
@@ -267,7 +267,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
-  // 拖放上传
+  // Drag images to upload
   private handleDrop(e: React.SyntheticEvent) {
     if (!this.config.onImageUpload) {
       return;
@@ -283,13 +283,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
-  // 语言变化事件
+  // Handle language change
   private handleLocaleUpdate() {
     this.forceUpdate();
   }
 
   /**
-   * 获取元素相关API
+   * Get elements
    */
   getMdElement() {
     return this.nodeMdText.current;
@@ -299,7 +299,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 清除已选择区域
+   * Clear selected
    */
   clearSelection() {
     if (this.nodeMdText.current) {
@@ -307,7 +307,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
   /**
-   * 获取已选择区域
+   * Get selected
    * @return {Selection}
    */
   getSelection(): Selection {
@@ -326,7 +326,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 设置已选择区域
+   * Set selected
    * @param {Selection} to
    */
   setSelection(to: { start: number; end: number }) {
@@ -337,7 +337,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 插入Markdown语法
+   * Insert markdown text
    * @param type
    * @param option
    */
@@ -361,7 +361,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.insertText(decorate.text, true, decorate.selection);
   }
   /**
-   * 插入占位符，并在Promise结束后自动覆盖
+   * Insert a placeholder, and replace it when the Promise resolved
    * @param placeholder
    * @param wait
    */
@@ -373,10 +373,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     });
   }
   /**
-   * 插入文本
-   * @param {string} value 要插入的文本
-   * @param {boolean} replaceSelected 是否替换掉当前选择的文本
-   * @param {Selection} newSelection 新的选择区域
+   * Insert text
+   * @param {string} value The text will be insert
+   * @param {boolean} replaceSelected Replace selected text
+   * @param {Selection} newSelection New selection
    */
   insertText(value: string = '', replaceSelected: boolean = false, newSelection?: { start: number; end: number }) {
     const { text = '' } = this.state;
@@ -400,8 +400,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 设置文本，同时触发onChange
-   * 注意避免在onChange里面调用此方法，以免造成死循环
+   * Set text, and trigger onChange event
    * @param {string} value
    * @param {any} event
    */
@@ -433,7 +432,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 获取文本值
+   * Get text value
    * @return {string}
    */
   getMdValue(): string {
@@ -441,7 +440,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 获取渲染后的HTML
+   * Get rendered html
    * @returns {string}
    */
   getHtmlValue(): string {
@@ -457,14 +456,22 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 监听键盘事件
+   * Listen keyboard events
    */
   private keyboardListeners: KeyboardEventListener[] = [];
+  /**
+   * Listen keyboard events
+   * @param {KeyboardEventListener} data
+   */
   onKeyboard(data: KeyboardEventListener) {
     if (!this.keyboardListeners.includes(data)) {
       this.keyboardListeners.push(data);
     }
   }
+  /**
+   * Unlisten keyboard events
+   * @param {KeyboardEventListener} data
+   */
   offKeyboard(data: KeyboardEventListener) {
     const index = this.keyboardListeners.indexOf(data);
     if (index >= 0) {
@@ -484,9 +491,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
     emitter.emit(emitter.EVENT_KEY_DOWN, e);
   }
 
-  /**
-   * 其他事件监听
-   */
   private getEventType(event: EditorEvent) {
     switch (event) {
       case 'change':
@@ -499,12 +503,22 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return emitter.EVENT_KEY_DOWN;
     }
   }
+  /**
+   * Listen events
+   * @param {EditorEvent} event Event type
+   * @param {any} cb Callback
+   */
   on(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
       emitter.on(eventType, cb);
     }
   }
+  /**
+   * Unlisten events
+   * @param {EditorEvent} event Event type
+   * @param {any} cb Callback
+   */
   off(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
@@ -513,9 +527,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * 设置视图属性
-   * 可显示或隐藏：编辑器，预览区域，菜单栏
-   * @param enable
+   * Set view property
+   * Can show or hide: editor, preview, menu
+   * @param {object} to
    */
   setView(to: { md?: boolean; menu?: boolean; html?: boolean }) {
     const newView = { ...this.state.view, ...to };
@@ -528,13 +542,17 @@ class Editor extends React.Component<EditorProps, EditorState> {
       },
     );
   }
+  /**
+   * Get view property
+   * @return {object}
+   */
   getView() {
     return { ...this.state.view };
   }
 
   /**
-   * 进入或退出全屏模式
-   * @param {boolean} enable 是否开启全屏模式
+   * Enter or exit full screen
+   * @param {boolean} enable
    */
   fullScreen(enable: boolean) {
     if (this.state.fullScreen !== enable) {
@@ -548,7 +566,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
       );
     }
   }
-  isFullScreen() {
+  /**
+   * Is full screen
+   * @return {boolean}
+   */
+  isFullScreen(): boolean {
     return this.state.fullScreen;
   }
 
