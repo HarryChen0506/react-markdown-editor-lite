@@ -1,74 +1,82 @@
 import * as React from 'react';
-import { PluginProps } from './Plugin';
+import { PluginComponent } from './Plugin';
 
-const autoResize = (props: PluginProps) => {
-  React.useEffect(() => {
-    let timer: number | null = null;
+export default class AutoResize extends PluginComponent {
+  static pluginName = 'auto-resize';
+  static align = 'left';
+  static defaultConfig = {
+    min: 200,
+    max: Infinity,
+    useTimer: false,
+  };
 
-    const useTimer = props.config.useTimer || typeof requestAnimationFrame === 'undefined';
+  private timer: number | null = null;
+  private useTimer: boolean;
 
-    const resizeElement = (el: HTMLElement) => {
-      el.style.height = 'auto';
-      const height = Math.min(Math.max(props.config.min, el.scrollHeight), props.config.max);
-      el.style.height = height + 'px';
+  constructor(props: any) {
+    super(props);
+
+    this.useTimer = this.getConfig('useTimer') || typeof requestAnimationFrame === 'undefined';
+
+    this.handleChange = this.handleChange.bind(this);
+    this.doResize = this.doResize.bind(this);
+  }
+
+  doResize() {
+    const resizeElement = (e: HTMLElement) => {
+      e.style.height = 'auto';
+      const height = Math.min(Math.max(this.getConfig('min'), e.scrollHeight), this.getConfig('max'));
+      e.style.height = height + 'px';
       return height;
     };
 
-    const resize = () => {
-      timer = null;
-      // 如果渲染了编辑器，就以编辑器为准
-      const view = props.editor.getView();
-      const el = props.editor.getMdElement();
-      const previewer = props.editor.getHtmlElement();
-      if (el && view.md) {
-        const height = resizeElement(el);
-        if (previewer) {
-          previewer.style.height = height + 'px';
-        }
-        return;
+    this.timer = null;
+    // 如果渲染了编辑器，就以编辑器为准
+    const view = this.editor.getView();
+    const el = this.editor.getMdElement();
+    const previewer = this.editor.getHtmlElement();
+    if (el && view.md) {
+      const height = resizeElement(el);
+      if (previewer) {
+        previewer.style.height = height + 'px';
       }
-      // 否则，以预览区域为准
-      if (previewer && view.html) {
-        resizeElement(previewer);
-      }
-    };
+      return;
+    }
+    // 否则，以预览区域为准
+    if (previewer && view.html) {
+      resizeElement(previewer);
+    }
+  }
 
-    const handleChange = () => {
-      if (timer !== null) {
-        return;
-      }
+  handleChange() {
+    if (this.timer !== null) {
+      return;
+    }
 
-      if (useTimer) {
-        timer = window.setTimeout(resize);
-        return;
-      }
+    if (this.useTimer) {
+      this.timer = window.setTimeout(this.doResize);
+      return;
+    }
 
-      timer = requestAnimationFrame(resize);
-    };
+    this.timer = requestAnimationFrame(this.doResize);
+  }
 
-    props.editor.on('change', handleChange);
-    props.editor.on('viewchange', handleChange);
-    handleChange();
+  componentDidMount() {
+    this.editor.on('change', this.handleChange);
+    this.editor.on('viewchange', this.handleChange);
+    this.handleChange();
+  }
 
-    return () => {
-      props.editor.off('change', handleChange);
-      props.editor.off('viewchange', handleChange);
-      if (timer !== null && useTimer) {
-        window.clearTimeout(timer);
-        timer = null;
-      }
-    };
-  }, []);
+  componentWillUnmount() {
+    this.editor.off('change', this.handleChange);
+    this.editor.off('viewchange', this.handleChange);
+    if (this.timer !== null && this.useTimer) {
+      window.clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
 
-  return <span />;
-};
-
-autoResize.defaultConfig = {
-  min: 200,
-  max: Infinity,
-  useTimer: false,
-};
-autoResize.align = 'left';
-autoResize.pluginName = 'auto-resize';
-
-export default autoResize;
+  render() {
+    return <span />;
+  }
+}
