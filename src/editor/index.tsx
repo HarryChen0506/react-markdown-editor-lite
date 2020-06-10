@@ -16,6 +16,7 @@ import { HtmlRender, HtmlType } from './preview';
 type Plugin = { comp: any; config: any };
 
 interface EditorProps extends EditorConfig {
+  id?: string;
   value?: string;
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
@@ -594,8 +595,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
     const { view, fullScreen } = this.state;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
+    const { id } = this.props;
+    const editorId = id ? `${id}_md` : undefined;
+    const previewerId = id ? `${id}_html` : undefined;
     return (
       <div
+        id={id}
         className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
         style={this.props.style}
         onKeyDown={this.handleKeyDown}
@@ -616,7 +621,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           )}
           <section className={`section sec-md ${view.md ? 'visible' : 'in-visible'}`}>
             <textarea
-              id="textarea"
+              id={editorId}
               ref={this.nodeMdText}
               name={this.props.name || 'textarea'}
               placeholder={this.props.placeholder}
@@ -632,6 +637,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           </section>
           <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
             <div
+              id={previewerId}
               className="section-container html-wrap"
               ref={this.nodeMdPreviewWraper}
               onMouseOver={() => (this.shouldSyncScroll = 'preview')}

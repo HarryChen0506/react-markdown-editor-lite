@@ -3,6 +3,7 @@
 ## Props列表
 | 名称 | 描述 | 类型 | 默认 | 备注 |
 | --- | --- | --- | --- | --- |
+| id | 元素ID | String | `undefined` | 若不为空，则编辑器、文本区域、预览区域ID分别是`{id}`、`{id}_md`、`{id}_html` |
 | value | 内容 | String | `''` |  |
 | name | textarea的名称 | String | 'textarea' |  |
 | renderHTML | 将Markdown渲染为HTML或ReactElement | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **必填** |
@@ -81,6 +82,7 @@ export default (props) => {
 
 | Property | Description | Type | default | Notes |
 | --- | --- | --- | --- | --- |
+| id | Element ID | String | `undefined` | If not empty, the id attributes of editor, text area and preview area are `{id}`, `{id}_md`, `{id}_html` |
 | value | Markdown content | String | `''` |  |
 | name | the name prop of textarea | String | 'textarea' |  |
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **required** |
