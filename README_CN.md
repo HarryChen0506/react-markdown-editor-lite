@@ -83,10 +83,16 @@ export default (props) => {
 }
 ```
 
-## 在Next.js中使用
+## 在SSR（服务端渲染）中使用
+
+如果你在使用一个服务端渲染框架，例如Next.js、Gatsby等，请对编辑器使用客户端渲染。
+
+例如，Next.js有[next/dynamic](https://nextjs.org/docs/advanced-features/dynamic-import)，Gatsby有[loadable-components](https://www.gatsbyjs.org/docs/using-client-side-only-packages/#workaround-3-load-client-side-dependent-components-with-loadable-components)
+
+下面是Next.js的使用范例：
 
 ```js
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
 
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {

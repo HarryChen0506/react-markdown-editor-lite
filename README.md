@@ -83,10 +83,16 @@ export default (props) => {
 }
 ```
 
-## Usage in Next.js
+## Usage in server-side render
+
+If you are using a server-side render framework, like Next.js, Gatsby, please use client-side render for this editor.
+
+For example, Next.js has [next/dynamic](https://nextjs.org/docs/advanced-features/dynamic-import), Gatsby has [loadable-components](https://www.gatsbyjs.org/docs/using-client-side-only-packages/#workaround-3-load-client-side-dependent-components-with-loadable-components)
+
+Following is a example for Next.js:
 
 ```js
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
 
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
