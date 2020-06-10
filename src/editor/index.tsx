@@ -15,13 +15,12 @@ import { HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
 
-interface EditorProps extends EditorConfig {
-  value?: string;
+type EditorProps = Pick<
+  JSX.IntrinsicElements['textarea'],
+  'id' | 'name' | 'readOnly' | 'style' | 'placeholder' | 'required'
+> & {
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
-  style?: React.CSSProperties;
-  placeholder?: string;
-  readOnly?: boolean;
-  config?: any;
+  config?: EditorConfig;
   plugins?: string[];
   // Configs
   onChange?: (
@@ -31,7 +30,8 @@ interface EditorProps extends EditorConfig {
     },
     event?: React.ChangeEvent<HTMLTextAreaElement>,
   ) => void;
-}
+  value?: string;
+};
 
 interface EditorState {
   text: string;
@@ -638,7 +638,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           )}
           <section className={`section sec-md ${view.md ? 'visible' : 'in-visible'}`}>
             <textarea
-              id="textarea"
+              id={this.props.id || 'textarea'}
               ref={this.nodeMdText}
               name={this.props.name || 'textarea'}
               placeholder={this.props.placeholder}
@@ -646,6 +646,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               value={this.state.text}
               className={`section-container input ${this.config.markdownClass || ''}`}
               wrap="hard"
+              required={this.props.required}
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'input')}
