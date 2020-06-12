@@ -127,9 +127,9 @@ externals: {
 
 ## 更多
 
-* 配置项目：点击[这里](./docs/configure.md)查看
-* API：点击[这里](./docs/api.md)查看
-* 插件开发：点击[这里](./docs/plugin.md)查看
+* 配置项目：点击[这里](./docs/configure.zh-CN.md)查看
+* API：点击[这里](./docs/api.zh-CN.md)查看
+* 插件开发：点击[这里](./docs/plugin.zh-CN.md)查看
 * 完整Demo见[src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
 
 

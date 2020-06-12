@@ -6,7 +6,7 @@ react-markdown-editor-lite
 [![MIT License][license-image]][license-url]
 [![Workflow][workflow-image]][workflow-url]
 
-[中文文档](README_CN.md)
+[中文说明](README_CN.md)
 
 * A light-weight(20KB zipped) Markdown editor of React component
 * Supports TypeScript
