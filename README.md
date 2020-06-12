@@ -83,6 +83,11 @@ export default (props) => {
 }
 ```
 
+* Props and configurations see [here](./docs/configure.md)
+* APIs see [here](./docs/api.md)
+* Plugins developer see [here](./docs/plugin.md)
+* Full demo see [src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
+
 ## Usage in server-side render
 
 If you are using a server-side render framework, like Next.js, Gatsby, please use client-side render for this editor.
@@ -124,13 +129,6 @@ externals: {
   'react-markdown-editor-lite': 'ReactMarkdownEditorLite'
 }
 ```
-
-## More
-
-* Configuration items see [here](./docs/configure.md)
-* APIs see [here](./docs/api.md)
-* Plugins developer see [here](./docs/plugin.md)
-* Full demo see [src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
 
 ## Authors
 - ShuangYa [github/sylingd](https://github.com/sylingd)

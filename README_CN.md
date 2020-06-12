@@ -83,6 +83,11 @@ export default (props) => {
 }
 ```
 
+* 更多参数和配置：点击[这里](./docs/configure.zh-CN.md)查看
+* API：点击[这里](./docs/api.zh-CN.md)查看
+* 插件开发：点击[这里](./docs/plugin.zh-CN.md)查看
+* 完整Demo见[src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
+
 ## 在SSR（服务端渲染）中使用
 
 如果你在使用一个服务端渲染框架，例如Next.js、Gatsby等，请对编辑器使用客户端渲染。
@@ -124,14 +129,6 @@ externals: {
   'react-markdown-editor-lite': 'ReactMarkdownEditorLite'
 }
 ```
-
-## 更多
-
-* 配置项目：点击[这里](./docs/configure.zh-CN.md)查看
-* API：点击[这里](./docs/api.zh-CN.md)查看
-* 插件开发：点击[这里](./docs/plugin.zh-CN.md)查看
-* 完整Demo见[src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
-
 
 ## 主要作者
 - ShuangYa [github/sylingd](https://github.com/sylingd)
