@@ -45,6 +45,7 @@
   "homepage": "https://github.com/HarryChen0506/react-markdown-editor-lite#readme",
   "devDependencies": {
     "@nowa/solution-react-component": "^0.2.1",
+    "@testing-library/react": "^10.2.1",
     "@types/chai": "^4.2.7",
     "@types/markdown-it": "^0.0.8",
     "@types/mocha": "^5.2.7",
@@ -63,6 +64,9 @@
     "eventemitter3": "^4.0.0",
     "glob": "^7.1.4",
     "husky": "^3.1.0",
+    "ignore-styles": "^5.0.1",
+    "jsdom": "^16.2.2",
+    "jsdom-global": "^3.0.2",
     "lint-staged": "^10.0.2",
     "markdown-it": "^8.4.2",
     "mocha": "^5.2.0",

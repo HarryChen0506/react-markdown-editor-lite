@@ -1,5 +1,7 @@
 --require ts-node/register
 --require source-map-support/register
+--require jsdom-global/register
+--require ignore-styles
 --reporter mochawesome
 --recursive
 --full-trace
