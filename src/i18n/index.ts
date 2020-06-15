@@ -29,7 +29,9 @@ class I18n {
     }
 
     // IE10及更低版本使用browserLanguage
+    // @ts-ignore
     if (navigator.browserLanguage) {
+      // @ts-ignore
       const it = navigator.browserLanguage.split('-');
       locale = it[0];
       if (it[1]) {

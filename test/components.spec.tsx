@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { expect } from 'chai';
-import { createElement } from 'react';
+import * as React from 'react';
 import DropList from '../src/components/DropList';
 import Icon from '../src/components/Icon';
 
@@ -8,9 +8,7 @@ describe('Test Components', function() {
   // render
   it('DropList render', function() {
     let isClosed = false;
-    render(createElement(DropList, {
-      onClose: () => isClosed = true
-    }, 'dropdown-item'));
+    render(<DropList show={true} onClose={() => isClosed = true}>dropdown-item</DropList>);
 
     const item = screen.queryByText('dropdown-item');
 
@@ -26,9 +24,7 @@ describe('Test Components', function() {
 
 
   it('Icon render', function() {
-    const { container } = render(createElement(Icon, {
-      type: 'test'
-    }));
+    const { container } = render(<Icon type="test" />);
 
     expect(container.querySelector('.rmel-iconfont')).not.to.be.null;
     expect(container.querySelector('.rmel-icon-test')).not.to.be.null;

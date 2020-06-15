@@ -260,6 +260,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       return;
     }
     const event = e.nativeEvent as ClipboardEvent;
+    // @ts-ignore
     const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
 
     if (items) {
