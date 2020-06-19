@@ -143,15 +143,34 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private getPlugins() {
     let plugins: Plugin[] = [];
     if (this.props.plugins) {
-      const findPlugin = (name: string) => {
+      // If plugins option is configured, use only specified plugins
+      const addToPlugins = (name: string) => {
         for (const it of Editor.plugins) {
           if (it.comp.pluginName === name) {
-            return it;
+            plugins.push(it);
+            return;
           }
         }
       };
-      plugins = this.props.plugins.map(name => findPlugin(name)).filter(it => !!it) as Plugin[];
+      for (const name of this.props.plugins) {
+        // Special handling of fonts to ensure backward compatibility
+        if (name === 'fonts') {
+          addToPlugins('font-bold');
+          addToPlugins('font-italic');
+          addToPlugins('font-underline');
+          addToPlugins('font-strikethrough');
+          addToPlugins('list-unordered');
+          addToPlugins('list-ordered');
+          addToPlugins('block-quote');
+          addToPlugins('block-wrap');
+          addToPlugins('block-code-inline');
+          addToPlugins('block-code-block');
+        } else {
+          addToPlugins(name);
+        }
+      }
     } else {
+      // Use all registered plugins
       plugins = [...Editor.plugins];
     }
     const result: { [x: string]: React.ReactElement[] } = {};
