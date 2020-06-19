@@ -11,7 +11,7 @@ export default class ListOrdered extends PluginComponent {
       <span
         className="button button-type-ordered"
         title={i18n.get('btnOrdered')}
-        onClick={() => this.editor.insertMarkdown('ordered')}
+        onClick={() => this.editor.insertMarkdown('order')}
       >
         <Icon type="list-ordered" />
       </span>
