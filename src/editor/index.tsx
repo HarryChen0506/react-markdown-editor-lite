@@ -17,6 +17,7 @@ type Plugin = { comp: any; config: any };
 
 interface EditorProps extends EditorConfig {
   id?: string;
+  defaultValue?: string;
   value?: string;
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
@@ -88,7 +89,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
-      text: (this.props.value || '').replace(/↵/g, '\n'),
+      text: (this.props.value || this.props.defaultValue || '').replace(/↵/g, '\n'),
       html: '',
       view: this.config.view || defaultConfig.view!,
       fullScreen: false,
@@ -122,7 +123,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   componentDidUpdate(prevProps: EditorProps) {
-    if (prevProps.value !== this.props.value && this.props.value !== this.state.text) {
+    if (typeof this.props.value !== 'undefined' && this.props.value !== this.state.text) {
       let value = this.props.value;
       if (typeof value !== 'string') {
         value = String(value).toString();
