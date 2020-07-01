@@ -63,6 +63,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {any} config Other configs
    */
   static use(comp: any, config: any = {}) {
+    // Check for duplicate plugins
+    for (let i = 0; i < Editor.plugins.length; i++) {
+      if (Editor.plugins[i].comp === comp) {
+        Editor.plugins.splice(i, 1, { comp, config });
+        return;
+      }
+    }
     Editor.plugins.push({ comp, config });
   }
   /**
