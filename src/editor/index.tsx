@@ -208,10 +208,15 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!syncScrollMode.includes(type === 'input' ? 'rightFollowLeft' : 'leftFollowRight')) {
       return;
     }
-    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreview.current) {
+    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
       // 计算出左右的比例
-      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreview.current.getHeight();
+      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreviewWraper.current.scrollHeight;
       this.hasContentChanged = false;
+      console.log(
+        this.nodeMdText.current.scrollHeight,
+        this.nodeMdPreviewWraper.current.scrollHeight,
+        this.scrollScale,
+      );
     }
     if (!this.isSyncingScroll) {
       this.isSyncingScroll = true;
@@ -265,9 +270,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     e.persist();
     const value = e.target.value;
-    if (!this.hasContentChanged) {
-      this.hasContentChanged = true;
-    }
     // 触发内部事件
     this.setText(value, e);
   }
@@ -446,6 +448,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
         }
       },
     );
+    if (!this.hasContentChanged) {
+      this.hasContentChanged = true;
+    }
     this.renderHTML(text).then(() => {
       if (this.props.onChange) {
         this.props.onChange({ text, html: this.getHtmlValue() }, event);
