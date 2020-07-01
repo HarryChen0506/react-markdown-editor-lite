@@ -219,11 +219,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       // 计算出左右的比例
       this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreviewWraper.current.scrollHeight;
       this.hasContentChanged = false;
-      console.log(
-        this.nodeMdText.current.scrollHeight,
-        this.nodeMdPreviewWraper.current.scrollHeight,
-        this.scrollScale,
-      );
     }
     if (!this.isSyncingScroll) {
       this.isSyncingScroll = true;
