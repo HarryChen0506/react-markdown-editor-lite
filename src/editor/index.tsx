@@ -73,6 +73,18 @@ class Editor extends React.Component<EditorProps, EditorState> {
     Editor.plugins.push({ comp, config });
   }
   /**
+   * Unregister plugin
+   * @param {any} comp Plugin component
+   */
+  static unuse(comp: any) {
+    for (let i = 0; i < Editor.plugins.length; i++) {
+      if (Editor.plugins[i].comp === comp) {
+        Editor.plugins.splice(i, 1);
+        return;
+      }
+    }
+  }
+  /**
    * Locales
    */
   static addLocale = i18n.add.bind(i18n);
