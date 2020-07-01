@@ -85,6 +85,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
   /**
+   * Unregister all plugins
+   * @param {any} comp Plugin component
+   */
+  static unuseAll() {
+    Editor.plugins = [];
+  }
+  /**
    * Locales
    */
   static addLocale = i18n.add.bind(i18n);
