@@ -485,17 +485,16 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.state.text === value) {
       return;
     }
-    this.setState(
-      {
-        text: value,
-      },
-      () => {
-        emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
-        if (newSelection) {
-          setTimeout(() => this.setSelection(newSelection));
-        }
-      },
-    );
+    this.setState({
+      text: value,
+    });
+    if (this.props.onChange) {
+      this.props.onChange({ text, html: this.getHtmlValue() }, event);
+    }
+    emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
+    if (newSelection) {
+      setTimeout(() => this.setSelection(newSelection));
+    }
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
     }
@@ -576,6 +575,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return emitter.EVENT_VIEW_CHANGE;
       case 'keydown':
         return emitter.EVENT_KEY_DOWN;
+      case 'blur':
+        return emitter.EVENT_BLUR;
+      case 'focus':
+        return emitter.EVENT_FOCUS;
+      case 'scroll':
+        return emitter.EVENT_SCROLL;
     }
   }
   /**
