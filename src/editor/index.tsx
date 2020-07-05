@@ -33,6 +33,9 @@ interface EditorProps extends EditorConfig {
     },
     event?: React.ChangeEvent<HTMLTextAreaElement>,
   ) => void;
+  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
 }
 
 interface EditorState {
@@ -106,8 +109,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private hasContentChanged = true;
 
-  private handleInputScroll: () => void;
-  private handlePreviewScroll: () => void;
+  private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
+  private handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 
   constructor(props: any) {
     super(props);
@@ -133,8 +136,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
-    this.handleInputScroll = this.handleSyncScroll.bind(this, 'input');
-    this.handlePreviewScroll = this.handleSyncScroll.bind(this, 'preview');
+    this.handleFocus = this.handleFocus.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
+
+    this.handleInputScroll = this.handleSyncScroll.bind(this, 'md');
+    this.handlePreviewScroll = this.handleSyncScroll.bind(this, 'html');
   }
 
   componentDidMount() {
@@ -223,15 +229,20 @@ class Editor extends React.Component<EditorProps, EditorState> {
   // sync left and right section's scroll
   private scrollScale = 1;
   private isSyncingScroll = false;
-  private shouldSyncScroll: 'input' | 'preview' = 'input';
-  private handleSyncScroll(type: 'input' | 'preview') {
+  private shouldSyncScroll: 'md' | 'html' = 'md';
+  private handleSyncScroll(type: 'md' | 'html', e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) {
     // prevent loop
     if (type !== this.shouldSyncScroll) {
       return;
     }
+    // trigger events
+    if (this.props.onScroll) {
+      this.props.onScroll(e, type);
+    }
+    emitter.emit(emitter.EVENT_SCROLL, e, type);
+    // should sync scroll?
     const { syncScrollMode = [] } = this.config;
-    // 根据配置，看看是否需要同步滚动
-    if (!syncScrollMode.includes(type === 'input' ? 'rightFollowLeft' : 'leftFollowRight')) {
+    if (!syncScrollMode.includes(type === 'md' ? 'rightFollowLeft' : 'leftFollowRight')) {
       return;
     }
     if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
@@ -243,7 +254,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.isSyncingScroll = true;
       requestAnimationFrame(() => {
         if (this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
-          if (type === 'input') {
+          if (type === 'md') {
             // left to right
             this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scrollScale;
           } else {
@@ -282,6 +293,22 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.setView({
       menu: !this.state.view.menu,
     });
+  }
+
+  private handleFocus(e: React.FocusEvent<HTMLTextAreaElement>) {
+    const { onFocus } = this.props;
+    if (onFocus) {
+      onFocus(e);
+    }
+    emitter.emit(emitter.EVENT_FOCUS, e);
+  }
+
+  private handleBlur(e: React.FocusEvent<HTMLTextAreaElement>) {
+    const { onBlur } = this.props;
+    if (onBlur) {
+      onBlur(e);
+    }
+    emitter.emit(emitter.EVENT_BLUR, e);
   }
 
   /**
@@ -700,8 +727,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
               wrap="hard"
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
-              onMouseOver={() => (this.shouldSyncScroll = 'input')}
+              onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onPaste={this.handlePaste}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
             />
           </section>
           <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
@@ -709,7 +738,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               id={previewerId}
               className="section-container html-wrap"
               ref={this.nodeMdPreviewWraper}
-              onMouseOver={() => (this.shouldSyncScroll = 'preview')}
+              onMouseOver={() => (this.shouldSyncScroll = 'html')}
               onScroll={this.handlePreviewScroll}
             >
               <HtmlRender html={this.state.html} className={this.config.htmlClass} ref={this.nodeMdPreview} />

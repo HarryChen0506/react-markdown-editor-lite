@@ -141,6 +141,8 @@ class Demo extends React.Component<any, any> {
             }}
             onChange={this.handleEditorChange}
             onImageUpload={this.handleImageUpload}
+            onFocus={e => console.log('focus', e)}
+            onBlur={e => console.log('blur', e)}
             // onCustomImageUpload={this.onCustomImageUpload}
           />
         </div>
