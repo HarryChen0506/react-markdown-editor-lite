@@ -24,15 +24,15 @@ for (let i = 1; i <= 6; i++) {
 }
 
 function decorateTableText(option: any) {
-  const { row = 2, col = 2 } = option;
+  const { row = 2, col = 2, isShowDefaultText = true } = option;
   const rowHeader = ['|'];
   const rowData = ['|'];
   const rowDivision = ['|'];
   let colStr = '';
   for (let i = 1; i <= col; i++) {
-    rowHeader.push(' Head |');
+    rowHeader.push(isShowDefaultText ? ' Head |' : '      |');
     rowDivision.push(' --- |');
-    rowData.push(' Data |');
+    rowData.push(isShowDefaultText ? ' Data |' : '      |');
   }
   for (let j = 1; j <= row; j++) {
     colStr += '\n' + rowData.join('');
