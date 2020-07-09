@@ -23,6 +23,7 @@ const defaultConfig: EditorConfig = {
   table: {
     maxRow: 4,
     maxCol: 6,
+    isShowDefaultText: true,
   },
   allowPasteImage: true,
   onImageUpload: undefined,

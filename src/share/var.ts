@@ -27,6 +27,7 @@ export interface EditorConfig {
   table?: {
     maxRow: number;
     maxCol: number;
+    isShowDefaultText: boolean;
   };
   syncScrollMode?: string[];
   allowPasteImage?: boolean;

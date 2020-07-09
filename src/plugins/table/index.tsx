@@ -13,6 +13,7 @@ interface Props extends PluginProps {
   config: {
     maxRow?: number;
     maxCol?: number;
+    isShowDefaultText?: boolean;
   };
 }
 
@@ -21,6 +22,7 @@ export default class Table extends PluginComponent<State, Props> {
   static defaultConfig = {
     maxRow: 6,
     maxCol: 6,
+    isShowDefaultText: true,
   };
 
   constructor(props: any) {
@@ -60,6 +62,7 @@ export default class Table extends PluginComponent<State, Props> {
             visiblity={this.state.show}
             maxRow={config.maxRow}
             maxCol={config.maxCol}
+            isShowDefaultText={config.isShowDefaultText}
             onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}
           />
         </DropList>

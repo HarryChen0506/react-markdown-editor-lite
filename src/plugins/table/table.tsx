@@ -4,8 +4,9 @@ import './table.less';
 interface TableListProps {
   maxRow?: number;
   maxCol?: number;
+  isShowDefaultText?: boolean;
   visiblity: boolean;
-  onSetTable?: (table: { row: number; col: number }) => void;
+  onSetTable?: (table: { row: number; col: number; isShowDefaultText: boolean }) => void;
 }
 
 interface TableListState {
@@ -75,11 +76,12 @@ class TableList extends React.Component<TableListProps, TableListState> {
   }
 
   handleSetTable(i: number, j: number) {
-    const { onSetTable } = this.props;
+    const { isShowDefaultText = true, onSetTable } = this.props;
     if (typeof onSetTable === 'function') {
       onSetTable({
         row: i + 1,
         col: j + 1,
+        isShowDefaultText,
       });
     }
   }
