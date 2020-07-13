@@ -1,5 +1,5 @@
 {
-  "name": "react-markdown-editor-lite",
+  "name": "@yangtopia/react-markdown-editor-lite",
   "version": "1.1.0-beta.1",
   "description": "a light-weight Markdown editor based on React",
   "main": "./lib/index.js",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HarryChen0506/react-markdown-editor-lite.git"
+    "url": "git+https://github.com/sodacrush/react-markdown-editor-lite.git"
   },
   "keywords": [
     "markdown",
@@ -40,9 +40,9 @@
   "author": "HarryChen && ShuangYa",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HarryChen0506/react-markdown-editor-lite/issues"
+    "url": "https://github.com/sodacrush/react-markdown-editor-lite/issues"
   },
-  "homepage": "https://github.com/HarryChen0506/react-markdown-editor-lite#readme",
+  "homepage": "https://github.com/sodacrush/react-markdown-editor-lite#readme",
   "devDependencies": {
     "@nowa/solution-react-component": "^0.2.1",
     "@testing-library/react": "^10.2.1",
