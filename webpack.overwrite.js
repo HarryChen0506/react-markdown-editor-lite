@@ -83,7 +83,7 @@ module.exports = config => {
             });
 
             dts.bundle({
-              name: "react-markdown-editor-lite",
+              name: "@yangtopia/react-markdown-editor-lite",
               main: "lib/index.d.ts",
               baseDir: "lib",
               out: "temp_dts.tmp",
