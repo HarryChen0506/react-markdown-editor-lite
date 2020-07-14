@@ -22,6 +22,11 @@
     "test": "mocha",
     "coverage": "nyc mocha"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sodacrush/react-markdown-editor-lite.git"
