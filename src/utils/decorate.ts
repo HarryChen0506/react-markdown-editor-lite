@@ -107,6 +107,10 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
           end: target.length + 1,
         },
       };
+    case 'toc':
+      return {
+        text: '${toc}',
+      };
   }
   return {
     text: target,

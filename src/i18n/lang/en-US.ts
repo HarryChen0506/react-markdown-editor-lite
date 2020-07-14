@@ -22,4 +22,5 @@ export default {
   btnModeEditor: 'Only display editor',
   btnModePreview: 'Only display preview',
   btnModeAll: 'Display both editor and preview',
+  btnToc: 'Table of Contents',
 };
