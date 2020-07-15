@@ -2,13 +2,22 @@
 [English documention see here](./plugin.md)
 ## 插件可以干什么？
 插件可以往工具栏添加按钮，并操作编辑器的内容。
-## 使用插件
+## 使用和卸载插件
 参见[API文档](./api.zh-CN.md)
 ## 内置插件
 ### 插件列表
 内置以下插件：
 * header：标题
-* fonts：字体相关，如加粗、斜体等
+* font-bold：加粗
+* font-italic：斜体
+* font-underline：下划线
+* font-strikethrough：删除线
+* list-unordered：无序列表
+* list-ordered：有序列表
+* block-quote：引用
+* block-wrap：换行
+* block-code-inline：行内代码
+* block-code-block：块状代码
 * table：表格
 * image：图片上传
 * link：超链接
@@ -18,7 +27,33 @@
 * full-screen：全屏模式切换
 * auto-resize：编辑器自动调整尺寸插件（默认不启用）
 ```js
-['header', 'fonts', 'table', 'image', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']
+[
+  'header',
+  'font-bold',
+  'font-italic',
+  'font-underline',
+  'font-strikethrough',
+  'list-unordered',
+  'list-ordered',
+  'block-quote',
+  'block-wrap',
+  'block-code-inline',
+  'block-code-block',
+  'table',
+  'image',
+  'link',
+  'clear',
+  'logger',
+  'mode-toggle',
+  'full-screen'
+]
+```
+### 卸载内置插件
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.unuse(Plugins.Header); // header
+Editor.unuse(Plugins.FontBold); // font-bold
 ```
 ### 使用自动调整尺寸插件
 ```js
@@ -31,13 +66,16 @@ Editor.use(Plugins.AutoResize, {
 ```
 ## Demo
 ```js
-import Editor from 'react-markdown-editor-lite';
+import Editor, { Plugins } from 'react-markdown-editor-lite';
 import MyPlugin from './MyPlugin';
 
 Editor.use(MyPlugin);
 
-// 这里去掉了内置的image插件
-const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
+// 卸载掉所有编辑器的Header插件
+Editor.unuse(Plugins.Header);
+
+// 这里去掉了内置的image插件，仅单个编辑器生效
+const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
 <Editor plugins={plugins} />
 ```
 ## 编写插件

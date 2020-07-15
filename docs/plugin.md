@@ -2,23 +2,58 @@
 [中文文档见此](./plugin.zh-CN.md)
 ## What can plugins do?
 Plugins can insert buttons into menu bar, and control editor's content.
-## Use a plugin
+## Use or unuse a plugin
 See [API documention](./api.md)
 ## Built-in plugins
 ### Plugins list
 Those plugins are built-in plugin:
 * header: title
-* fonts: about fonts, such as bold, italic
+* font-bold: bold
+* font-italic: italic
+* font-underline: underline
+* font-strikethrough: strikethrough
+* list-unordered: unordered
+* list-ordered: ordered
+* block-quote: quote
+* block-wrap: wrap new line
+* block-code-inline: inline code
+* block-code-block: block code
 * table: table
 * image: image upload
 * link: hyperlinks
 * clear: clear texts
-* logger: history(undo/redo)
+* logger: history (undo/redo)
 * mode-toggle: toggle view mode
 * full-screen: toggle full screen
-* auto-resize：auto-resize plugin (Disabled by default)
+* auto-resize: auto-resize plugin (disabled by default)
 ```js
-['header', 'fonts', 'table', 'image', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen']
+[
+  'header',
+  'font-bold',
+  'font-italic',
+  'font-underline',
+  'font-strikethrough',
+  'list-unordered',
+  'list-ordered',
+  'block-quote',
+  'block-wrap',
+  'block-code-inline',
+  'block-code-block',
+  'table',
+  'image',
+  'link',
+  'clear',
+  'logger',
+  'mode-toggle',
+  'full-screen'
+]
+```
+### Unuse a built-in plugin
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.unuse(Plugins.Header); // header
+Editor.unuse(Plugins.FontBold); // font-bold
 ```
 ### Use auto-resize plugin
 ```js
@@ -31,13 +66,16 @@ Editor.use(Plugins.AutoResize, {
 ```
 ## Demo
 ```js
-import Editor from 'react-markdown-editor-lite';
+import Editor, { Plugins }  from 'react-markdown-editor-lite';
 import MyPlugin from './MyPlugin';
 
 Editor.use(MyPlugin);
 
-// Remove built-in image plugin here
-const plugins = ['header', 'fonts', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
+// Remove built-in header plugin here, in all editors
+Editor.unuse(Plugins.Header);
+
+// Remove built-in image plugin here, only this editor
+const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
 <Editor plugins={plugins} />
 ```
 ## Written a plugin
