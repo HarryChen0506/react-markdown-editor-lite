@@ -29,6 +29,7 @@
 
 ## renderHTML
 renderHTML support both HTML or ReactElement, for example, markdown-it returns HTML and react-markdown returns ReactElement.
+Please note: what the onChange callback gets is the properties of the current state. If renderHTML is performed asynchronously, text and html may not correspond exactly.
 
 ```js
 import * as React from 'react';

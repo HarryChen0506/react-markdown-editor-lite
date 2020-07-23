@@ -26,6 +26,7 @@
 
 ## renderHTML
 renderHTML支持返回HTML文本或ReactElement，例如，markdown-it返回的是HTML文本，而react-markdown返回的是ReactElement。
+请注意：onChange回调获取到的是当前状态的属性。如果renderHTML是异步进行，则text和html不一定完全对应。
 
 ```js
 import * as React from 'react';

@@ -55,10 +55,6 @@ interface EditorState {
 }
 
 class Editor extends React.Component<EditorProps, EditorState> {
-  static defaultProps = {
-    value: '',
-  };
-
   private static plugins: Plugin[] = [];
   /**
    * Register plugin
@@ -485,9 +481,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.state.text === value) {
       return;
     }
-    this.setState({
-      text: value,
-    });
+    this.setState({ text });
     if (this.props.onChange) {
       this.props.onChange({ text, html: this.getHtmlValue() }, event);
     }
@@ -500,7 +494,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     this.renderHTML(text).then(() => {
       if (this.props.onChange) {
-        this.props.onChange({ text, html: this.getHtmlValue() }, event);
+        this.props.onChange(
+          {
+            text: this.state.text,
+            html: this.getHtmlValue(),
+          },
+          event,
+        );
       }
     });
   }
