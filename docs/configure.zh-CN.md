@@ -11,6 +11,7 @@
 | readOnly | 是否只读状态 | Boolean | false | |
 | plugins | 插件列表 | string[] | undefined |  |
 | config | 其他配置项 | Object |  |  |
+| config.shortcuts | 启用markdown快捷键 | boolean | false |  |
 | config.view | 配置哪些项目默认被显示，包括：menu（菜单栏），md（编辑器)，html（预览区） | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | 配置哪些项目可以被显示，包括：menu（菜单栏），md（编辑器)，html（预览区），fullScreen（全屏），hideMenu（隐藏菜单按钮） | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
 | config.htmlClass | 预览区域的className。如果需要默认样式，请保留`custom-html-style`。例如`your-style custom-html-style` | String | `'custom-html-style'` |  |

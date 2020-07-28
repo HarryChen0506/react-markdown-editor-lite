@@ -32,6 +32,7 @@ export interface EditorConfig {
   allowPasteImage?: boolean;
   onImageUpload?: UploadFunc;
   onCustomImageUpload?: (event: any) => Promise<{ url: string; text?: string }>;
+  shortcuts?: boolean;
 }
 
 export interface Selection {

@@ -27,6 +27,7 @@ const defaultConfig: EditorConfig = {
   allowPasteImage: true,
   onImageUpload: undefined,
   onCustomImageUpload: undefined,
+  shortcuts: true,
 };
 
 export default defaultConfig;

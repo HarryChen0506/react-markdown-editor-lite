@@ -14,6 +14,7 @@
 | readOnly | Is readonly | Boolean | false | |
 | plugins | Plugin list | string[] | undefined |  |
 | config | Configuration object | Object |  |  |
+| config.shortcuts | Enable markdown shortcuts | boolean | false |  |
 | config.view | Controls which items will be displayd by default, includes: menu(Menu bar), md(Editor), html(Preview) | Object | `{ menu: true, md: true, html: true }` |  |
 | config.canView | Controls which items can be displayd, includes: menu(Menu bar), md(Editor), html(Preview), fullScreen(Full screen)，hideMenu(Hide button to toggle menu bar) | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
 | config.htmlClass | className of preview pane. If you require default html, please do not remove `custom-html-style`, like `your-style custom-html-style` | String | `'custom-html-style'` |  |
