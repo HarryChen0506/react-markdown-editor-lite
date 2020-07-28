@@ -23,7 +23,7 @@ describe('Test Editor', function() {
     }
   });
 
-  // render
+  // render with label
   it('render with label', function() {
     const { queryByLabelText } = render(<div>
       <label htmlFor="myeditor_md">My Editor</label>

@@ -447,7 +447,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {Selection} newSelection New selection
    */
   insertText(value: string = '', replaceSelected: boolean = false, newSelection?: { start: number; end: number }) {
-    const { text = '' } = this.state;
+    const { text } = this.state;
     const selection = this.getSelection();
     const beforeContent = text.slice(0, selection.start);
     const afterContent = text.slice(replaceSelected ? selection.end : selection.start, text.length);
@@ -461,8 +461,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
             end: newSelection.end + beforeContent.length,
           }
         : {
-            start: beforeContent.length,
-            end: beforeContent.length,
+            start: selection.start,
+            end: selection.start,
           },
     );
   }

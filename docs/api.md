@@ -239,12 +239,10 @@ insertMarkdown('unordered');
 */
 insertMarkdown('order');
 /*
-| Head | Head |
-| --- | --- |
-| Data | Data |
-| Data | Data |
-| Data | Data |
-| Data | Data |
+| Head | Head | Head | Head |
+| --- | --- | --- | --- |
+| Data | Data | Data | Data |
+| Data | Data | Data | Data |
 */
 insertMarkdown('table', {
   row: 2,
