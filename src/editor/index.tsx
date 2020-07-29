@@ -157,10 +157,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
         value = String(value).toString();
       }
       value = value.replace(/↵/g, '\n');
-      this.setState({
-        text: value,
-      });
-      this.renderHTML(value);
+      if (this.state.text !== value) {
+        this.setState({
+          text: value,
+        });
+        this.renderHTML(value);
+      }
     }
     if (prevProps.plugins !== this.props.plugins) {
       this.setState({
