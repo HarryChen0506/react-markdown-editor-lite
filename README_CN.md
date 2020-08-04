@@ -74,7 +74,6 @@ function handleEditorChange({html, text}) {
 export default (props) => {
   return (
     <MdEditor
-      value=""
       style={{ height: "500px" }}
       renderHTML={(text) => mdParser.render(text)}
       onChange={handleEditorChange}
@@ -107,7 +106,6 @@ const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
 export default function() {
   return (      
     <MdEditor
-      value=""
       style={{ height: "500px" }}
       renderHTML={/* Render function */}
     />

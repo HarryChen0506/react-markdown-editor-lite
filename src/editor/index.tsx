@@ -151,7 +151,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   componentDidUpdate(prevProps: EditorProps) {
-    if (typeof this.props.value !== 'undefined' && this.props.value !== prevProps.value) {
+    if (typeof this.props.value !== 'undefined' && this.props.value !== this.state.text) {
       let value = this.props.value;
       if (typeof value !== 'string') {
         value = String(value).toString();
@@ -483,25 +483,27 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.state.text === value) {
       return;
     }
-    this.setState({ text }, () => {
-      emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
-      if (newSelection) {
-        setTimeout(() => this.setSelection(newSelection));
+    this.setState({ text });
+    if (this.props.onChange) {
+      this.props.onChange({ text, html: this.getHtmlValue() }, event);
+    }
+    emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
+    if (newSelection) {
+      setTimeout(() => this.setSelection(newSelection));
+    }
+    if (!this.hasContentChanged) {
+      this.hasContentChanged = true;
+    }
+    this.renderHTML(text).then(() => {
+      if (this.props.onChange) {
+        this.props.onChange(
+          {
+            text,
+            html: this.getHtmlValue(),
+          },
+          event,
+        );
       }
-      if (!this.hasContentChanged) {
-        this.hasContentChanged = true;
-      }
-      this.renderHTML(text).then(() => {
-        if (typeof this.props.onChange === 'function') {
-          this.props.onChange(
-            {
-              text: this.state.text,
-              html: this.getHtmlValue(),
-            },
-            event,
-          );
-        }
-      });
     });
   }
 
