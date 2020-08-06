@@ -132,6 +132,7 @@ externals: {
 * [基本使用](https://codesandbox.io/s/rmel-demo-ref-in-function-component-u04gb)
 * [在unform中使用](https://codesandbox.io/s/rmel-demo-with-unform-qx34y)
 * [编写插件](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+* [替换默认图标](https://codesandbox.io/s/rmel-demo-replace-icon-pl1n3)
 
 ## 主要作者
 - ShuangYa [github/sylingd](https://github.com/sylingd)

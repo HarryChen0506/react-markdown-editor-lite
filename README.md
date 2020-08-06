@@ -132,6 +132,7 @@ externals: {
 * [Basic usage](https://codesandbox.io/s/rmel-demo-ref-in-function-component-u04gb)
 * [With unform](https://codesandbox.io/s/rmel-demo-with-unform-qx34y)
 * [Write a plugin](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+* [Replace default icons](https://codesandbox.io/s/rmel-demo-replace-icon-pl1n3)
 
 ## Authors
 - ShuangYa [github/sylingd](https://github.com/sylingd)
