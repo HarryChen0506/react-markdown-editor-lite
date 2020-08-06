@@ -122,6 +122,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
       plugins: this.getPlugins(),
     };
 
+    if (this.config.canView && !this.config.canView.menu) {
+      this.state.view.menu = false;
+    }
+
     this.nodeMdText = React.createRef();
     this.nodeMdPreviewWraper = React.createRef();
 
@@ -694,7 +698,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
-    const showHideMenu = this.config.canView && this.config.canView.hideMenu === true;
+    const showHideMenu = this.config.canView && (this.config.canView.hideMenu || !this.config.canView.menu);
     const { view, fullScreen } = this.state;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
