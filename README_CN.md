@@ -130,6 +130,11 @@ externals: {
 }
 ```
 
+## 更多示例
+* [基本使用](https://codesandbox.io/s/rmel-demo-ref-in-function-component-u04gb)
+* [在unform中使用](https://codesandbox.io/s/rmel-demo-with-unform-qx34y)
+* [编写插件](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+
 ## 主要作者
 - ShuangYa [github/sylingd](https://github.com/sylingd)
 - HarryChen0506 [github/HarryChen0506](https://github.com/HarryChen0506)
