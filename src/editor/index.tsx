@@ -498,7 +498,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       if (this.props.onChange) {
         this.props.onChange(
           {
-            text: this.state.text,
+            text,
             html: this.getHtmlValue(),
           },
           event,
