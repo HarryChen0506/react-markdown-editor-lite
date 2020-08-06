@@ -698,7 +698,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
-    const showHideMenu = this.config.canView && (this.config.canView.hideMenu || !this.config.canView.menu);
+    const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
     const { view, fullScreen } = this.state;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
