@@ -11,6 +11,7 @@ const defaultConfig: EditorConfig = {
     menu: true,
     md: true,
     html: true,
+    both: true,
     fullScreen: true,
     hideMenu: true,
   },

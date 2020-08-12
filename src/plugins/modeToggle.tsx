@@ -21,8 +21,10 @@ export default class ModeToggle extends PluginComponent<ModeToggleState> {
   static align = 'right';
 
   private get isDisplay() {
-    if (this.editorConfig.canView) {
-      return this.editorConfig.canView.html && this.editorConfig.canView.md;
+    const { canView } = this.editorConfig;
+    if (canView) {
+      // 至少有两种情况可以显示的时候，才会显示切换按钮
+      return [canView.html, canView.md, canView.both].filter(it => it).length >= 2;
     }
     return false;
   }
@@ -32,16 +34,40 @@ export default class ModeToggle extends PluginComponent<ModeToggleState> {
    * 两个都显示的时候，点击显示MD，隐藏HTML
    * 只显示HTML的时候，点击全部显示
    * 只显示MD的时候，点击显示HTML，隐藏MD
+   * 如果当前标准因canView不可用，则顺延至下一个
+   * 如果都不可用，则返回当前状态
    */
   private get next(): NEXT_ACTION {
+    const { canView } = this.editorConfig;
     const { view } = this.state;
-    if (view.html && view.md) {
-      return NEXT_ACTION.SHOW_MD;
-    } else if (!this.state.view.html) {
-      return NEXT_ACTION.SHOW_HTML;
-    } else {
-      return NEXT_ACTION.SHOW_ALL;
+
+    const actions = [NEXT_ACTION.SHOW_ALL, NEXT_ACTION.SHOW_MD, NEXT_ACTION.SHOW_HTML];
+
+    if (canView) {
+      if (!canView.both) {
+        actions.splice(actions.indexOf(NEXT_ACTION.SHOW_ALL), 1);
+      }
+      if (!canView.md) {
+        actions.splice(actions.indexOf(NEXT_ACTION.SHOW_MD), 1);
+      }
+      if (!canView.html) {
+        actions.splice(actions.indexOf(NEXT_ACTION.SHOW_HTML), 1);
+      }
     }
+
+    let current = NEXT_ACTION.SHOW_MD;
+    if (view.html) {
+      current = NEXT_ACTION.SHOW_HTML;
+    }
+    if (view.html && view.md) {
+      current = NEXT_ACTION.SHOW_ALL;
+    }
+
+    if (actions.length === 0) return current;
+    if (actions.length === 1) return actions[0];
+
+    const index = actions.indexOf(current);
+    return index < actions.length - 1 ? actions[index + 1] : actions[0];
   }
 
   constructor(props: any) {
