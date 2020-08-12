@@ -15,6 +15,7 @@ export default class Link extends PluginComponent {
     this.handleKeyboard = {
       key: 'k',
       keyCode: 75,
+      aliasCommand: true,
       withKey: ['ctrlKey'],
       callback: () => this.editor.insertMarkdown('link'),
     };

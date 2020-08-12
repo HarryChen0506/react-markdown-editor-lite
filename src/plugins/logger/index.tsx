@@ -25,8 +25,7 @@ export default class Logger extends PluginComponent {
     this.handleKeyboards = [
       { key: 'y', keyCode: 89, withKey: ['ctrlKey'], callback: this.handleRedo },
       { key: 'z', keyCode: 90, withKey: ['metaKey', 'shiftKey'], callback: this.handleRedo },
-      { key: 'z', keyCode: 90, withKey: ['ctrlKey'], callback: this.handleUndo },
-      { key: 'z', keyCode: 90, withKey: ['metaKey'], callback: this.handleUndo },
+      { key: 'z', keyCode: 90, aliasCommand: true, withKey: ['ctrlKey'], callback: this.handleUndo },
     ];
 
     this.logger = new LoggerPlugin();

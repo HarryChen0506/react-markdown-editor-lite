@@ -16,6 +16,7 @@ export interface EditorConfig {
     menu: boolean;
     md: boolean;
     html: boolean;
+    both: boolean;
     fullScreen: boolean;
     hideMenu: boolean;
   };
@@ -48,9 +49,12 @@ export const initialSelection: Selection = {
 };
 
 export type KeyboardEventCallback = (e: React.KeyboardEvent<HTMLDivElement>) => void;
-export interface KeyboardEventListener {
+export interface KeyboardEventCondition {
   key?: string;
   keyCode: number;
+  aliasCommand?: boolean;
   withKey?: ('ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey')[];
+}
+export interface KeyboardEventListener extends KeyboardEventCondition {
   callback: KeyboardEventCallback;
 }

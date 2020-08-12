@@ -15,6 +15,7 @@ export default class FontItalic extends PluginComponent {
     this.handleKeyboard = {
       key: 'i',
       keyCode: 73,
+      aliasCommand: true,
       withKey: ['ctrlKey'],
       callback: () => this.editor.insertMarkdown('italic'),
     };

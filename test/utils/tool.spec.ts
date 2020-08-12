@@ -1,5 +1,5 @@
-import * as Tools from '../../src/utils/tool';
 import { expect } from 'chai';
+import * as Tools from '../../src/utils/tool';
 
 function createKeyboardEvent(data: any): React.KeyboardEvent<HTMLDivElement> {
   return {
@@ -47,11 +47,37 @@ describe('Test tools', function() {
   });
   // KeyMatch
   it('Test isKeyMatch (Match)', function() {
-    expect(Tools.isKeyMatch(zWithCommand, 90, 'z', ['metaKey'])).to.be.true;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90,
+      withKey: ['metaKey']
+    })).to.be.true;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90,
+      aliasCommand: true,
+      withKey: ['ctrlKey']
+    })).to.be.true;
   });
   it('Test isKeyMatch (Not match)', function() {
-    expect(Tools.isKeyMatch(zWithCommand, 90, 'z', ['metaKey', 'altKey'])).to.be.false;
-    expect(Tools.isKeyMatch(zWithCommand, 90, 'z', ['altKey'])).to.be.false;
-    expect(Tools.isKeyMatch(zWithCommand, 90, 'z')).to.be.false;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90,
+      withKey: ['ctrlKey']
+    })).to.be.false;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90,
+      withKey: ['metaKey', 'altKey']
+    })).to.be.false;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90,
+      withKey: ['altKey']
+    })).to.be.false;
+    expect(Tools.isKeyMatch(zWithCommand, {
+      key: 'z',
+      keyCode: 90
+    })).to.be.false;
   });
 });

@@ -15,6 +15,7 @@ export default class FontStrikethrough extends PluginComponent {
     this.handleKeyboard = {
       key: 'd',
       keyCode: 68,
+      aliasCommand: true,
       withKey: ['ctrlKey'],
       callback: () => this.editor.insertMarkdown('strikethrough'),
     };

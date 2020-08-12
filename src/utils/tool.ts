@@ -1,3 +1,5 @@
+import { KeyboardEventCondition } from '../share/var';
+
 export function deepClone(obj: any) {
   if (!obj || typeof obj !== 'object') {
     return obj;
@@ -40,7 +42,11 @@ export function repeat(str: string, num: number) {
   return result;
 }
 
-export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, keyCode: number, key?: string, withKey?: any) {
+export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, cond: KeyboardEventCondition) {
+  const { withKey, keyCode, key, aliasCommand } = cond;
+  if (aliasCommand) {
+    event.metaKey = event.metaKey || event.ctrlKey;
+  }
   if (withKey && withKey.length > 0) {
     for (const it of withKey) {
       // @ts-ignore

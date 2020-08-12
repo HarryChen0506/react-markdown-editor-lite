@@ -15,6 +15,7 @@ export default class FontBold extends PluginComponent {
     this.handleKeyboard = {
       key: 'b',
       keyCode: 66,
+      aliasCommand: true,
       withKey: ['ctrlKey'],
       callback: () => this.editor.insertMarkdown('bold'),
     };

@@ -16,6 +16,7 @@ export default class ListUnordered extends PluginComponent {
       key: '8',
       keyCode: 56,
       withKey: ['ctrlKey', 'shiftKey'],
+      aliasCommand: true,
       callback: () => this.editor.insertMarkdown('unordered'),
     };
   }

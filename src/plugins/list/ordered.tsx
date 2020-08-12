@@ -16,6 +16,7 @@ export default class ListOrdered extends PluginComponent {
       key: '7',
       keyCode: 55,
       withKey: ['ctrlKey', 'shiftKey'],
+      aliasCommand: true,
       callback: () => this.editor.insertMarkdown('order'),
     };
   }

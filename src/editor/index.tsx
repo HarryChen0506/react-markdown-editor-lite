@@ -543,7 +543,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * Listen keyboard events
    * @param {KeyboardEventListener} data
    */
-  onKeyboard(data: KeyboardEventListener) {
+  onKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
+    if (Array.isArray(data)) {
+      data.forEach(it => this.onKeyboard(it));
+      return;
+    }
     if (!this.keyboardListeners.includes(data)) {
       this.keyboardListeners.push(data);
     }
@@ -552,7 +556,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * Unlisten keyboard events
    * @param {KeyboardEventListener} data
    */
-  offKeyboard(data: KeyboardEventListener) {
+  offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
+    if (Array.isArray(data)) {
+      data.forEach(it => this.offKeyboard(it));
+      return;
+    }
     const index = this.keyboardListeners.indexOf(data);
     if (index >= 0) {
       this.keyboardListeners.splice(index, 1);
@@ -561,7 +569,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     // 遍历监听数组，找找有没有被监听
     for (const it of this.keyboardListeners) {
-      if (isKeyMatch(e, it.keyCode, it.key, it.withKey)) {
+      if (isKeyMatch(e, it)) {
         e.preventDefault();
         it.callback(e);
         return;
