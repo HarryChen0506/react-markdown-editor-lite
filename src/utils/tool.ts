@@ -44,23 +44,31 @@ export function repeat(str: string, num: number) {
 
 export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, cond: KeyboardEventCondition) {
   const { withKey, keyCode, key, aliasCommand } = cond;
+  const e = {
+    ctrlKey: event.ctrlKey,
+    metaKey: event.metaKey,
+    altKey: event.altKey,
+    shiftKey: event.shiftKey,
+    keyCode: event.keyCode,
+    key: event.key,
+  };
   if (aliasCommand) {
-    event.ctrlKey = event.ctrlKey || event.metaKey;
+    e.ctrlKey = e.ctrlKey || e.metaKey;
   }
   if (withKey && withKey.length > 0) {
     for (const it of withKey) {
-      if (typeof event[it] !== 'undefined' && !event[it]) {
+      if (typeof e[it] !== 'undefined' && !e[it]) {
         return false;
       }
     }
   } else {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
       return false;
     }
   }
-  if (event.key) {
-    return event.key === key;
+  if (e.key) {
+    return e.key === key;
   } else {
-    return event.keyCode === keyCode;
+    return e.keyCode === keyCode;
   }
 }
