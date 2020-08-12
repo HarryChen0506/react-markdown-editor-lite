@@ -45,11 +45,10 @@ export function repeat(str: string, num: number) {
 export function isKeyMatch(event: React.KeyboardEvent<HTMLDivElement>, cond: KeyboardEventCondition) {
   const { withKey, keyCode, key, aliasCommand } = cond;
   if (aliasCommand) {
-    event.metaKey = event.metaKey || event.ctrlKey;
+    event.ctrlKey = event.ctrlKey || event.metaKey;
   }
   if (withKey && withKey.length > 0) {
     for (const it of withKey) {
-      // @ts-ignore
       if (typeof event[it] !== 'undefined' && !event[it]) {
         return false;
       }
