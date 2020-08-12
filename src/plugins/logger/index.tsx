@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Icon from 'src/components/Icon';
-import i18n from 'src/i18n';
-import { PluginComponent } from 'src/plugins/Plugin';
-import { KeyboardEventListener } from 'src/share/var';
+import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import { PluginComponent } from '../../plugins/Plugin';
+import { KeyboardEventListener } from '../../share/var';
 import LoggerPlugin from './logger';
 
 const LOGGER_INTERVAL = 600;

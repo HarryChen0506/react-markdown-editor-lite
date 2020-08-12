@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Icon from 'src/components/Icon';
-import i18n from 'src/i18n';
-import { PluginComponent } from 'src/plugins/Plugin';
-import { isPromise } from 'src/utils/tool';
-import getUploadPlaceholder from 'src/utils/uploadPlaceholder';
+import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import { PluginComponent } from '../../plugins/Plugin';
+import { isPromise } from '../../utils/tool';
+import getUploadPlaceholder from '../../utils/uploadPlaceholder';
 import InputFile from './inputFile';
 
 interface State {

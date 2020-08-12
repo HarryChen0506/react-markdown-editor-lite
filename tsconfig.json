@@ -20,11 +20,6 @@
     "target": "es5",
     "declaration": true
   },
-  "paths": {
-    "src/*":[
-      "./src/*"
-    ]
-  },
   "exclude": ["./lib", "./image"],
   "include": ["./src"]
 }

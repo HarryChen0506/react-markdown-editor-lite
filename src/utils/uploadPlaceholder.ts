@@ -1,4 +1,4 @@
-import { UploadFunc } from 'src/share/var';
+import { UploadFunc } from '../share/var';
 import * as uuid from 'uuid/v4';
 import getDecorated from './decorate';
 import { isPromise } from './tool';

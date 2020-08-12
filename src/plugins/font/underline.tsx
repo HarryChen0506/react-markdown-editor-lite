@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Icon from 'src/components/Icon';
-import i18n from 'src/i18n';
-import { KeyboardEventListener } from 'src/share/var';
+import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import { KeyboardEventListener } from '../../share/var';
 import { PluginComponent } from '../Plugin';
 
 export default class FontUnderline extends PluginComponent {

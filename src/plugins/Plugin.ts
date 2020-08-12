@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Editor from 'src/editor';
-import { EditorConfig } from 'src/share/var';
+import Editor from '../editor';
+import { EditorConfig } from '../share/var';
 
 export interface PluginProps {
   editor: Editor;

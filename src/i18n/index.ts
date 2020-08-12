@@ -1,4 +1,4 @@
-import emitter from 'src/share/emitter';
+import emitter from '../share/emitter';
 import enUS from './lang/en-US';
 import zhCN from './lang/zh-CN';
 

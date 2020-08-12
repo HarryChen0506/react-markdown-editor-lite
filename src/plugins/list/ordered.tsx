@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Icon from 'src/components/Icon';
-import i18n from 'src/i18n';
+import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import { KeyboardEventListener } from '../../share/var';
 import { PluginComponent } from '../Plugin';
-import { KeyboardEventListener } from 'src/share/var';
 
 export default class ListOrdered extends PluginComponent {
   static pluginName = 'list-ordered';

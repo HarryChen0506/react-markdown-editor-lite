@@ -1,8 +1,8 @@
 import * as React from 'react';
-import DropList from 'src/components/DropList';
-import Icon from 'src/components/Icon';
-import i18n from 'src/i18n';
-import { PluginComponent, PluginProps } from 'src/plugins/Plugin';
+import DropList from '../../components/DropList';
+import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import { PluginComponent, PluginProps } from '../../plugins/Plugin';
 import TableList from './table';
 
 interface State {
