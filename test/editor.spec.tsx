@@ -37,5 +37,15 @@ describe('Test Editor', function() {
     }
   });
 
+  // render with default value produces a preview
+  it('render with default value', function() {
+    const text = "Hello World!";
+    const { getByText } = render(<Editor id="myeditor" renderHTML={text => text} defaultValue={text} />);
+    
+    // Attempt to fetch the preview pane by using the CSS selector
+    const element = getByText(text, { selector: ".custom-html-style"});
+    expect(element.innerHTML).to.equals(text);
+  });
+
   afterEach(cleanup);
 });

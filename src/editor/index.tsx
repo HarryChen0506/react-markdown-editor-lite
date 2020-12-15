@@ -144,7 +144,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   componentDidMount() {
-    this.renderHTML(this.props.value || '');
+    this.renderHTML(this.props.value || this.props.defaultValue || '');
     emitter.on(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
     // init i18n
     i18n.setUp();
