@@ -17,9 +17,6 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
 
   constructor(props: any) {
     super(props);
-    this.state = {
-      tabMapValue: this.getConfig('tabMapValue'),
-    };
     this.handleKeyboard = {
       key: 'Tab',
       keyCode: 9,
