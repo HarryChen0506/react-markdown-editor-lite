@@ -37,9 +37,9 @@ Editor.use(Image);
 Editor.use(Link);
 Editor.use(Clear);
 Editor.use(Logger);
+Editor.use(TabInsert);
 Editor.use(ModeToggle);
 Editor.use(FullScreen);
-Editor.use(TabInsert);
 
 // 导出声明
 // 导出工具组件
@@ -66,9 +66,9 @@ export const Plugins = {
   Clear,
   Logger,
   ModeToggle,
+  TabInsert,
   FullScreen,
   AutoResize,
-  TabInsert,
 };
 
 // 导出编辑器
