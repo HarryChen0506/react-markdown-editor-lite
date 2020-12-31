@@ -17,6 +17,7 @@ const SIMPLE_DECORATOR: { [x: string]: [string, string] } = {
   quote: ['\n> ', '\n'],
   inlinecode: ['`', '`'],
   code: ['\n```\n', '\n```\n'],
+  tab: ['\t', ''],
 };
 // 插入H1-H6
 for (let i = 1; i <= 6; i++) {
