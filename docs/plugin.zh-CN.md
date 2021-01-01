@@ -100,7 +100,7 @@ interface CounterState {
 class Counter extends PluginComponent<CounterState> {
   // 这里定义插件名称，注意不能重复
   static pluginName = 'counter';
-  // 定义按钮被防止在哪个位置，默认为左侧，还可以放置在右侧（right）
+  // 定义按钮被放置在哪个位置，默认为左侧，还可以放置在右侧（right）
   static align = 'left';
   // 如果需要的话，可以在这里定义默认选项
   static defaultConfig = {
