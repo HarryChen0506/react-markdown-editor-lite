@@ -45,7 +45,8 @@
   'clear',
   'logger',
   'mode-toggle',
-  'full-screen'
+  'full-screen',
+  'tab-insert'
 ]
 ```
 ### 卸载内置插件
@@ -62,6 +63,20 @@ import Editor, { Plugins } from 'react-markdown-editor-lite';
 Editor.use(Plugins.AutoResize, {
   min: 200, // 最小高度
   max: 600, // 最大高度
+});
+```
+### 使用 tab 输入插件
+在默认情况下，用户在 Markdown 编辑区按下 Tab 键时会失去输入焦点，可以使用内置的 tab 输入插件来解决这个问题。
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.use(Plugins.TabInsert, {
+  /**
+   * 用户按下 Tab 键时输入的空格的数目
+   * 特别地，1 代表输入一个'\t'，而不是一个空格
+   * 默认值是 1
+   */
+  tabMapValue: 1,
 });
 ```
 ## Demo

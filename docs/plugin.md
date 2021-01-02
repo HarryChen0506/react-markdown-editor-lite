@@ -45,7 +45,8 @@ Those plugins are built-in plugin:
   'clear',
   'logger',
   'mode-toggle',
-  'full-screen'
+  'full-screen',
+  'tab-insert'
 ]
 ```
 ### Unuse a built-in plugin
@@ -62,6 +63,20 @@ import Editor, { Plugins } from 'react-markdown-editor-lite';
 Editor.use(Plugins.AutoResize, {
   min: 200, // min height
   max: 600, // max height
+});
+```
+### Use tab-insert plugin
+By default, Markdown Editor will lose input focus when user tpye a Tab key. You can use the built-in tab-insert plugin to solve this problem.
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+Editor.use(Plugins.TabInsert, {
+  /**
+   * Number of spaces will be inputted when user type a Tab key. 
+   * Especially, note that 1 means a '\t' instead of ' '.
+   * Default value is 1.
+   */
+  tabMapValue: 1,
 });
 ```
 ## Demo

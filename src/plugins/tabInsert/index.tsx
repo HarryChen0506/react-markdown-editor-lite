@@ -1,9 +1,6 @@
 /**
  * Since the Markdown Editor will lose input focus when user tpye a Tab key,
  * this is a built-in plugin to enable user to input Tab character.
- * Developer can assign its `defaultConfig` to determine
- * the actually input when user type a Tab key and
- * whether to display a switch in the toolbar,
  * see src/demo/index.tsx.
  */
 
@@ -81,8 +78,8 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
     return (
       <span
         className="button button-type-header"
-        title={i18n.get('btnHeader')}
-        onMouseEnter={this.show}
+        title={i18n.get('selectTabMap')}
+        onClick={this.show}
         onMouseLeave={this.hide}
       >
         <span>
