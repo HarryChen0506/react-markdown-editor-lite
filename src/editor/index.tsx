@@ -416,7 +416,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param option
    */
   insertMarkdown(type: string, option: any = {}) {
-    const selection = this.getSelection();
+    let selection = this.getSelection();
     let decorateOption = option ? { ...option } : {};
     if (type === 'image') {
       decorateOption = {
@@ -430,6 +430,17 @@ class Editor extends React.Component<EditorProps, EditorState> {
         ...decorateOption,
         linkUrl: this.config.linkUrl,
       };
+    }
+    if (type === 'tab' && selection.start !== selection.end) {
+      const curLineStart =
+        this.getMdValue()
+          .slice(0, selection.start)
+          .lastIndexOf('\n') + 1;
+      this.setSelection({
+        start: curLineStart,
+        end: selection.end,
+      });
+      selection = this.getSelection();
     }
     const decorate = getDecorated(selection.text, type, decorateOption);
     this.insertText(decorate.text, true, decorate.selection);
