@@ -16,6 +16,11 @@ const PLUGINS = undefined;
 //   max: 800
 // });
 
+Plugins.TabInsert.defaultConfig = {
+  tabMapValue: 1, // note that 1 means a '\t' instead of ' '.
+  visible: true,
+};
+
 class Demo extends React.Component<any, any> {
   mdEditor?: MdEditor = undefined;
 
