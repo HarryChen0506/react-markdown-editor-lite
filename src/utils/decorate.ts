@@ -76,11 +76,14 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
   }
   switch (type) {
     case 'tab':
+      const inputValue = option.tabMapValue === 1 ? '\t' : ' '.repeat(option.tabMapValue);
+      const newSelectedText = inputValue + target.replace(/\n/g, `\n${inputValue}`);
+      const lineBreakCount = target.includes('\n') ? target.match(/\n/g)!.length : 0;
       return {
-        text: option.tabMapValue === 1 ? `\t${target}` : `${' '.repeat(option.tabMapValue)}${target}`,
+        text: newSelectedText,
         selection: {
           start: option.tabMapValue,
-          end: option.tabMapValue + target.length,
+          end: option.tabMapValue * (lineBreakCount + 1) + target.length,
         },
       };
     case 'unordered':
