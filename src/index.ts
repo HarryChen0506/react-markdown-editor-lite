@@ -37,7 +37,6 @@ Editor.use(Image);
 Editor.use(Link);
 Editor.use(Clear);
 Editor.use(Logger);
-Editor.use(TabInsert);
 Editor.use(ModeToggle);
 Editor.use(FullScreen);
 
@@ -66,9 +65,9 @@ export const Plugins = {
   Clear,
   Logger,
   ModeToggle,
-  TabInsert,
   FullScreen,
   AutoResize,
+  TabInsert,
 };
 
 // 导出编辑器
