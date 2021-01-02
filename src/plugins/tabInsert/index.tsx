@@ -6,34 +6,41 @@
  * whether to display a switch in the toolbar,
  * see src/demo/index.tsx.
  */
+
 import * as React from 'react';
-import { KeyboardEventListener } from '../share/var';
-import { PluginComponent } from './Plugin';
-import i18n from '../i18n';
+import { KeyboardEventListener } from '../../share/var';
+import { PluginComponent } from '../Plugin';
+import DropList from '../../components/DropList';
+import i18n from '../../i18n';
+import TabMapList from './TabMapList';
 
 /**
  * @field tabMapValue:  Number of spaces will be inputted. Especially, note that 1 means a '\t' instead of ' '.
- * @field visible:      Whether to display a tab-map-value switch(a <select> tag) in the toolbar.
+ * @field show:         Whether to show TabMapList.
  */
 interface TabInsertState {
   tabMapValue: number;
-  visible: boolean;
+  show: boolean;
 }
+
 export default class TabInsert extends PluginComponent<TabInsertState> {
   static pluginName = 'tab-insert';
-  static align = 'right';
   static defaultConfig = {
     tabMapValue: 1,
-    visible: false,
   };
 
   private handleKeyboard: KeyboardEventListener;
 
   constructor(props: any) {
     super(props);
+
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
+    this.handleChangeMapValue = this.handleChangeMapValue.bind(this);
+
     this.state = {
       tabMapValue: this.getConfig('tabMapValue'),
-      visible: this.getConfig('visible'),
+      show: false,
     };
     this.handleKeyboard = {
       key: 'Tab',
@@ -42,11 +49,22 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
       withKey: [],
       callback: () => this.editor.insertMarkdown('tab', { tabMapValue: this.state.tabMapValue }),
     };
-    this.handleSelectChange = this.handleSelectChange.bind(this);
   }
 
-  private handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    this.setState({ tabMapValue: parseInt(e.target.value) });
+  private show() {
+    this.setState({
+      show: true,
+    });
+  }
+  private hide() {
+    this.setState({
+      show: false,
+    });
+  }
+  private handleChangeMapValue(mapValue: number) {
+    this.setState({
+      tabMapValue: mapValue,
+    });
   }
 
   componentDidMount() {
@@ -60,17 +78,21 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
   }
 
   render() {
-    return this.state.visible ? (
-      <span title={i18n.get('selectTabMap')}>
-        <select onChange={this.handleSelectChange} defaultValue={this.getConfig('tabMapValue')}>
-          <option value="1">1 Tab</option>
-          <option value="2">2 Spaces</option>
-          <option value="4">4 Spaces</option>
-          <option value="8">8 Spaces</option>
-        </select>
+    return (
+      <span
+        className="button button-type-header"
+        title={i18n.get('btnHeader')}
+        onMouseEnter={this.show}
+        onMouseLeave={this.hide}
+      >
+        <span>
+          {'\u2B7E'}
+          {this.state.tabMapValue}
+        </span>
+        <DropList show={this.state.show} onClose={this.hide}>
+          <TabMapList onSelectMapValue={this.handleChangeMapValue} />
+        </DropList>
       </span>
-    ) : (
-      <span />
     );
   }
 }

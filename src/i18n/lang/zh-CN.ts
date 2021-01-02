@@ -22,5 +22,5 @@ export default {
   btnModeEditor: '仅显示编辑器',
   btnModePreview: '仅显示预览',
   btnModeAll: '显示编辑器与预览',
-  selectTabMap: '按下Tab键时实际的输入',
+  selectTabMap: '按下 Tab 键时实际的输入',
 };
