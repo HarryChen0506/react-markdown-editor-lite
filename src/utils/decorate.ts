@@ -75,6 +75,14 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
     };
   }
   switch (type) {
+    case 'tab':
+      return {
+        text: option.tabMapValue === 1 ? `\t${target}` : `${' '.repeat(option.tabMapValue)}${target}`,
+        selection: {
+          start: option.tabMapValue,
+          end: option.tabMapValue + target.length,
+        },
+      };
     case 'unordered':
       return {
         text: decorateList('unordered', target),

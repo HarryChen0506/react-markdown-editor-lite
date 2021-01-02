@@ -18,6 +18,7 @@ import ListUnordered from './plugins/list/unordered';
 import Logger from './plugins/logger';
 import ModeToggle from './plugins/modeToggle';
 import Table from './plugins/table';
+import TabInsert from './plugins/tabInsert';
 
 // 注册默认插件
 Editor.use(Header);
@@ -66,6 +67,7 @@ export const Plugins = {
   ModeToggle,
   FullScreen,
   AutoResize,
+  TabInsert,
 };
 
 // 导出编辑器
