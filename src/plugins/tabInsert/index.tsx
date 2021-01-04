@@ -10,6 +10,7 @@ import { PluginComponent } from '../Plugin';
 import DropList from '../../components/DropList';
 import i18n from '../../i18n';
 import TabMapList from './TabMapList';
+import Icon from '../../components/Icon';
 
 /**
  * @field tabMapValue:  Number of spaces will be inputted. Especially, note that 1 means a '\t' instead of ' '.
@@ -53,11 +54,13 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
       show: true,
     });
   }
+
   private hide() {
     this.setState({
       show: false,
     });
   }
+
   private handleChangeMapValue(mapValue: number) {
     this.setState({
       tabMapValue: mapValue,
@@ -82,12 +85,9 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
         onClick={this.show}
         onMouseLeave={this.hide}
       >
-        <span>
-          {'\u2B7E'}
-          {this.state.tabMapValue}
-        </span>
+        <Icon type="tab" />
         <DropList show={this.state.show} onClose={this.hide}>
-          <TabMapList onSelectMapValue={this.handleChangeMapValue} />
+          <TabMapList value={this.state.tabMapValue} onSelectMapValue={this.handleChangeMapValue} />
         </DropList>
       </span>
     );

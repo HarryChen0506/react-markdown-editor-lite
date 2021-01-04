@@ -1,6 +1,6 @@
 @font-face {font-family: "rmel-iconfont";
-  src: url('iconfont.eot?t=1582613725792'); /* IE9 */
-  src: url('iconfont.ttf?t=1582613725792') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  src: url('iconfont.eot?t=1609742889962'); /* IE9 */
+  src: url('iconfont.ttf?t=1609742889962') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
 }
 
 .rmel-iconfont {
@@ -9,6 +9,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.rmel-icon-tab:before {
+  content: "\e76d";
 }
 
 .rmel-icon-keyboard:before {

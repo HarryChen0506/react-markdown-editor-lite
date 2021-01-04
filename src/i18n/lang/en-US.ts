@@ -23,4 +23,6 @@ export default {
   btnModePreview: 'Only display preview',
   btnModeAll: 'Display both editor and preview',
   selectTabMap: 'Actually input when typing a Tab key',
+  tab: 'Tab',
+  spaces: 'Spaces',
 };

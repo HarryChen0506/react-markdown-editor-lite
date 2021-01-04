@@ -47,6 +47,7 @@
     "@nowa/solution-react-component": "^0.2.1",
     "@testing-library/react": "^10.2.1",
     "@types/chai": "^4.2.7",
+    "@types/classnames": "^2.2.11",
     "@types/markdown-it": "^0.0.8",
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.5.1",
@@ -108,5 +109,8 @@
       "html"
     ],
     "all": true
+  },
+  "dependencies": {
+    "classnames": "^2.2.6"
   }
 }

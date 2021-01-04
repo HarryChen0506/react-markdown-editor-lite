@@ -28,6 +28,7 @@ export default class Header extends PluginComponent<State> {
       show: true,
     });
   }
+
   private hide() {
     this.setState({
       show: false,

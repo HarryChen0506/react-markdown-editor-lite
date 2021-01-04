@@ -26,6 +26,7 @@
 * mode-toggle：显示模式切换
 * full-screen：全屏模式切换
 * auto-resize：编辑器自动调整尺寸插件（默认不启用）
+* tab-insert：插入制表符或空格（默认不启用）
 ```js
 [
   'header',
@@ -66,7 +67,7 @@ Editor.use(Plugins.AutoResize, {
 });
 ```
 ### 使用 tab 输入插件
-在默认情况下，用户在 Markdown 编辑区按下 Tab 键时会失去输入焦点，可以使用内置的 tab 输入插件来解决这个问题。
+在默认情况下，用户在 Markdown 编辑区按下 Tab 键时会失去输入焦点，可以使用内置的 Tab 输入插件来解决这个问题。
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 

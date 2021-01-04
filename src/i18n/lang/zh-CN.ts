@@ -23,4 +23,6 @@ export default {
   btnModePreview: '仅显示预览',
   btnModeAll: '显示编辑器与预览',
   selectTabMap: '按下 Tab 键时实际的输入',
+  tab: '制表符',
+  spaces: '空格',
 };

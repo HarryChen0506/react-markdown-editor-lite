@@ -26,6 +26,7 @@ Those plugins are built-in plugin:
 * mode-toggle: toggle view mode
 * full-screen: toggle full screen
 * auto-resize: auto-resize plugin (disabled by default)
+* tab-insert: insert tab or spaces (disabled by default)
 ```js
 [
   'header',
@@ -66,7 +67,7 @@ Editor.use(Plugins.AutoResize, {
 });
 ```
 ### Use tab-insert plugin
-By default, Markdown Editor will lose input focus when user tpye a Tab key. You can use the built-in tab-insert plugin to solve this problem.
+By default, Markdown Editor will lose input focus when user type a Tab key. You can use the built-in tab-insert plugin to solve this problem.
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 
