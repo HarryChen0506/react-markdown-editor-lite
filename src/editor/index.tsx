@@ -63,14 +63,14 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   static use(comp: any, config: any = {}) {
     // Check for duplicate plugins
-    Editor.plugins.filter((plugin) => plugin.comp === comp).push({ comp, config });
+    Editor.plugins.filter(plugin => plugin.comp === comp).push({comp,config})
   }
   /**
    * Unregister plugin
    * @param {any} comp Plugin component
    */
   static unuse(comp: any) {
-    Editor.plugins.filter((plugin) => plugin.comp === comp);
+    Editor.plugins.filter(plugin => plugin.comp === comp)
   }
   /**
    * Unregister all plugins
@@ -198,7 +198,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       plugins = [...Editor.plugins];
     }
     const result: { [x: string]: React.ReactElement[] } = {};
-    plugins.forEach((it) => {
+    plugins.forEach(it => {
       if (typeof result[it.comp.align] === 'undefined') {
         result[it.comp.align] = [];
       }
@@ -275,7 +275,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   private setHtml(html: HtmlType): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.setState({ html }, resolve);
     });
   }
@@ -421,7 +421,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
     }
     if (type === 'tab' && selection.start !== selection.end) {
-      const curLineStart = this.getMdValue().slice(0, selection.start).lastIndexOf('\n') + 1;
+      const curLineStart =
+        this.getMdValue()
+          .slice(0, selection.start)
+          .lastIndexOf('\n') + 1;
       this.setSelection({
         start: curLineStart,
         end: selection.end,
@@ -438,7 +441,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   insertPlaceholder(placeholder: string, wait: Promise<string>) {
     this.insertText(placeholder, true);
-    wait.then((str) => {
+    wait.then(str => {
       const text = this.getMdValue().replace(placeholder, str);
       this.setText(text);
     });
@@ -542,7 +545,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   onKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach((it) => this.onKeyboard(it));
+      data.forEach(it => this.onKeyboard(it));
       return;
     }
     if (!this.keyboardListeners.includes(data)) {
@@ -555,7 +558,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach((it) => this.offKeyboard(it));
+      data.forEach(it => this.offKeyboard(it));
       return;
     }
     const index = this.keyboardListeners.indexOf(data);
@@ -665,7 +668,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
     return this.state.fullScreen;
   }
 
-  private up    const { onImageUpload } = this.config;
+  private uploadWithDataTransfer(items: DataTransferItemList) {
+    const { onImageUpload } = this.config;
     if (!onImageUpload) {
       return;
     }
@@ -676,7 +680,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         if (file) {
           const placeholder = getUploadPlaceholder(file, onImageUpload);
           queue.push(Promise.resolve(placeholder.placeholder));
-          placeholder.uploaded.then((str) => {
+          placeholder.uploaded.then(str => {
             const text = this.getMdValue().replace(placeholder.placeholder, str);
             const offset = str.length - placeholder.placeholder.length;
             // 计算出替换后的光标位置
@@ -688,10 +692,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
           });
         }
       } else if (it.kind === 'string' && it.type === 'text/plain') {
-        queue.push(new Promise((resolve) => it.getAsString(resolve)));
+        queue.push(new Promise(resolve => it.getAsString(resolve)));
       }
     });
-    Promise.all(queue).then((res) => {
+    Promise.all(queue).then(res => {
       const text = res.join('');
       const selection = this.getSelection();
       this.insertText(text, true, {
