@@ -101,7 +101,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private nodeMdText = React.createRef<HTMLTextAreaElement>();
   private nodeMdPreview = React.createRef<HtmlRender>();
-  private nodeMdPreviewWraper = React.createRef<HTMLDivElement>();
+  private nodeMdPreviewWrapper = React.createRef<HTMLDivElement>();
 
   private hasContentChanged = true;
 
@@ -127,7 +127,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
 
     this.nodeMdText = React.createRef();
-    this.nodeMdPreviewWraper = React.createRef();
+    this.nodeMdPreviewWrapper = React.createRef();
 
     this.handleChange = this.handleChange.bind(this);
     this.handlePaste = this.handlePaste.bind(this);
@@ -247,21 +247,21 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!syncScrollMode.includes(type === 'md' ? 'rightFollowLeft' : 'leftFollowRight')) {
       return;
     }
-    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
+    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreviewWrapper.current) {
       // 计算出左右的比例
-      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreviewWraper.current.scrollHeight;
+      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreviewWrapper.current.scrollHeight;
       this.hasContentChanged = false;
     }
     if (!this.isSyncingScroll) {
       this.isSyncingScroll = true;
       requestAnimationFrame(() => {
-        if (this.nodeMdText.current && this.nodeMdPreviewWraper.current) {
+        if (this.nodeMdText.current && this.nodeMdPreviewWrapper.current) {
           if (type === 'md') {
             // left to right
-            this.nodeMdPreviewWraper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scrollScale;
+            this.nodeMdPreviewWrapper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scrollScale;
           } else {
             // right to left
-            this.nodeMdText.current.scrollTop = this.nodeMdPreviewWraper.current.scrollTop * this.scrollScale;
+            this.nodeMdText.current.scrollTop = this.nodeMdPreviewWrapper.current.scrollTop * this.scrollScale;
           }
         }
         this.isSyncingScroll = false;
@@ -369,7 +369,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     return this.nodeMdText.current;
   }
   getHtmlElement() {
-    return this.nodeMdPreviewWraper.current;
+    return this.nodeMdPreviewWrapper.current;
   }
 
   /**
@@ -767,7 +767,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             <div
               id={previewerId}
               className="section-container html-wrap"
-              ref={this.nodeMdPreviewWraper}
+              ref={this.nodeMdPreviewWrapper}
               onMouseOver={() => (this.shouldSyncScroll = 'html')}
               onScroll={this.handlePreviewScroll}
             >
