@@ -89,7 +89,7 @@
     "uuid": "^3.4.0"
   },
   "peerDependencies": {
-    "react": "^16.9.0"
+    "react": "^16.9.0 || ^17.0.0"
   },
   "lint-staged": {
     "./src/**/*.{ts,tsx}": [
