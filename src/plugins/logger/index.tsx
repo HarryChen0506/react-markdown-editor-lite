@@ -87,6 +87,9 @@ export default class Logger extends PluginComponent {
   }
 
   componentWillUnmount() {
+    if (this.timerId) {
+      window.clearTimeout(this.timerId);
+    }
     this.editor.off('change', this.handleChange);
     this.handleKeyboards.forEach(it => this.editor.offKeyboard(it));
   }
