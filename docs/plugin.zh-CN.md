@@ -80,6 +80,17 @@ Editor.use(Plugins.TabInsert, {
   tabMapValue: 1,
 });
 ```
+### 插入分隔线
+
+`divider` 是一个特殊的插件，你不能卸载它，但你也不需要手动添加它。如果你想在工具栏上插入一个分隔符，将 `divider` 添加到 `plugins` 数组中即可。
+
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+const plugins = ['header', 'table', 'divider', 'link', 'clear', 'divider', 'font-bold'];
+
+<Editor plugins={plugins} />
+```
 ## Demo
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';

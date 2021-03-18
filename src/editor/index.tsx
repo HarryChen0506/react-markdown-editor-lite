@@ -10,8 +10,9 @@ import mergeConfig from '../utils/mergeConfig';
 import { isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
-import './index.less';
 import { HtmlRender, HtmlType } from './preview';
+import DividerPlugin from '../plugins/divider';
+import './index.less';
 
 type Plugin = { comp: any; config: any };
 
@@ -181,6 +182,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.props.plugins) {
       // If plugins option is configured, use only specified plugins
       const addToPlugins = (name: string) => {
+        if (name === DividerPlugin.pluginName) {
+          plugins.push({
+            comp: DividerPlugin,
+            config: {},
+          });
+          return;
+        }
         for (const it of Editor.plugins) {
           if (it.comp.pluginName === name) {
             plugins.push(it);
