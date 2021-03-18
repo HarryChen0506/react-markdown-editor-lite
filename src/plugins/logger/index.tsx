@@ -96,7 +96,7 @@ export default class Logger extends PluginComponent {
 
   pause() {
     if (this.timerId) {
-      clearInterval(this.timerId);
+      window.clearTimeout(this.timerId);
       this.timerId = undefined;
     }
   }
