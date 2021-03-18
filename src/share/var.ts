@@ -32,6 +32,7 @@ export interface EditorConfig {
   syncScrollMode?: string[];
   allowPasteImage?: boolean;
   onImageUpload?: UploadFunc;
+  onChangeTrigger?: 'both' | 'beforeRender' | 'afterRender';
   onCustomImageUpload?: (event: any) => Promise<{ url: string; text?: string }>;
   shortcuts?: boolean;
 }

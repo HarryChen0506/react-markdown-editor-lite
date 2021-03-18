@@ -495,12 +495,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     event?: React.ChangeEvent<HTMLTextAreaElement>,
     newSelection?: { start: number; end: number },
   ) {
+    const { onChangeTrigger = 'both' } = this.config;
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
       return;
     }
     this.setState({ text });
-    if (this.props.onChange) {
+    if (this.props.onChange && (onChangeTrigger === 'both' || onChangeTrigger === 'beforeRender')) {
       this.props.onChange({ text, html: this.getHtmlValue() }, event);
     }
     emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
@@ -510,17 +511,20 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
     }
-    this.renderHTML(text).then(() => {
-      if (this.props.onChange) {
-        this.props.onChange(
-          {
-            text: this.state.text,
-            html: this.getHtmlValue(),
-          },
-          event,
-        );
-      }
-    });
+    const rendering = this.renderHTML(text);
+    if (onChangeTrigger === 'both' || onChangeTrigger === 'afterRender') {
+      rendering.then(() => {
+        if (this.props.onChange) {
+          this.props.onChange(
+            {
+              text: this.state.text,
+              html: this.getHtmlValue(),
+            },
+            event,
+          );
+        }
+      });
+    }
   }
 
   /**
