@@ -113,6 +113,8 @@ export default function() {
 }
 ```
 
+完整示例[见此](https://codesandbox.io/s/next-js-80bne)
+
 ## 浏览器引入
 自1.1.0起，你可以在浏览器中使用`script`和`link`标签直接引入文件，并使用全局变量`ReactMarkdownEditorLite`。
 
@@ -133,6 +135,7 @@ externals: {
 * [在unform中使用](https://codesandbox.io/s/rmel-demo-with-unform-qx34y)
 * [编写插件](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
 * [替换默认图标](https://codesandbox.io/s/rmel-demo-replace-icon-pl1n3)
+* [在Next.js中使用](https://codesandbox.io/s/next-js-80bne)
 
 ## 主要作者
 - ShuangYa [github/sylingd](https://github.com/sylingd)
