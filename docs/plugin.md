@@ -94,6 +94,30 @@ Editor.unuse(Plugins.Header);
 const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
 <Editor plugins={plugins} />
 ```
+## Demo for NextJS with custom plugin
+```js
+import dynamic from "next/dynamic";
+import ReactMarkdown from "react-markdown";
+import "react-markdown-editor-lite/lib/index.css";
+
+const MdEditor = dynamic(
+  () => {
+    return new Promise((resolve) => {
+      Promise.all([
+        import("react-markdown-editor-lite"),
+        import("./plugin")
+      ]).then((res) => {
+        res[0].default.use(res[1].default);
+        resolve(res[0].default);
+      });
+    });
+  },
+  {
+    ssr: false
+  }
+);
+```
+
 ## Written a plugin
 ### Demo
 [View online](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
