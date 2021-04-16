@@ -119,8 +119,9 @@ const MdEditor = dynamic(
 ```
 
 ## Written a plugin
-### Demo
-[View online](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+### Demos
+* [Demo](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+* [SSR Demo](https://codesandbox.io/s/next-js-80bne)
 ### Normal
 Plugin is a React Component, and must extend PluginComponent.
 
