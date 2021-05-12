@@ -80,6 +80,18 @@ Editor.use(Plugins.TabInsert, {
   tabMapValue: 1,
 });
 ```
+### Insert dividers
+
+`divider` is a special plugin, you can not unuse it, and you also shouldn't use it. If you want to insert a divider into toolbar, just put `divider` into the `plugins` array.
+
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+const plugins = ['header', 'table', 'divider', 'link', 'clear', 'divider', 'font-bold'];
+
+<Editor plugins={plugins} />
+```
+
 ## Demo
 ```js
 import Editor, { Plugins }  from 'react-markdown-editor-lite';

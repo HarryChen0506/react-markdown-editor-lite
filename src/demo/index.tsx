@@ -8,8 +8,8 @@ import './index.less';
 
 const MOCK_DATA = content;
 
-const PLUGINS = undefined;
-// const PLUGINS = ['header', 'image', 'full-screen'];
+// const PLUGINS = undefined;
+const PLUGINS = ['header', 'divider', 'image', 'divider', 'font-bold', 'full-screen'];
 
 // MdEditor.use(Plugins.AutoResize, {
 //   min: 200,

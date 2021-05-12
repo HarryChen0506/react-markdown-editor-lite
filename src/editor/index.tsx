@@ -10,8 +10,9 @@ import mergeConfig from '../utils/mergeConfig';
 import { isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
-import './index.less';
 import { HtmlRender, HtmlType } from './preview';
+import DividerPlugin from '../plugins/divider';
+import './index.less';
 
 type Plugin = { comp: any; config: any };
 
@@ -181,6 +182,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.props.plugins) {
       // If plugins option is configured, use only specified plugins
       const addToPlugins = (name: string) => {
+        if (name === DividerPlugin.pluginName) {
+          plugins.push({
+            comp: DividerPlugin,
+            config: {},
+          });
+          return;
+        }
         for (const it of Editor.plugins) {
           if (it.comp.pluginName === name) {
             plugins.push(it);
@@ -495,12 +503,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
     event?: React.ChangeEvent<HTMLTextAreaElement>,
     newSelection?: { start: number; end: number },
   ) {
+    const { onChangeTrigger = 'both' } = this.config;
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
       return;
     }
     this.setState({ text });
-    if (this.props.onChange) {
+    if (this.props.onChange && (onChangeTrigger === 'both' || onChangeTrigger === 'beforeRender')) {
       this.props.onChange({ text, html: this.getHtmlValue() }, event);
     }
     emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
@@ -510,17 +519,20 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!this.hasContentChanged) {
       this.hasContentChanged = true;
     }
-    this.renderHTML(text).then(() => {
-      if (this.props.onChange) {
-        this.props.onChange(
-          {
-            text: this.state.text,
-            html: this.getHtmlValue(),
-          },
-          event,
-        );
-      }
-    });
+    const rendering = this.renderHTML(text);
+    if (onChangeTrigger === 'both' || onChangeTrigger === 'afterRender') {
+      rendering.then(() => {
+        if (this.props.onChange) {
+          this.props.onChange(
+            {
+              text: this.state.text,
+              html: this.getHtmlValue(),
+            },
+            event,
+          );
+        }
+      });
+    }
   }
 
   /**
