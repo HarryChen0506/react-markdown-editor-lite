@@ -1,15 +1,18 @@
-import * as MarkdownIt from 'markdown-it';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as ReactMarkdown from 'react-markdown';
-import MdEditor, { Plugins } from '../index';
-import content from './content';
-import './index.less';
+---
+title: Simple Usage
+order: 1
+---
 
-const MOCK_DATA = content;
+本 Demo 演示基本用法。
 
-// const PLUGINS = undefined;
-const PLUGINS = ['header', 'divider', 'image', 'divider', 'font-bold', 'full-screen'];
+```jsx
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import ReactMarkdown from 'react-markdown';
+import MdEditor, { Plugins } from 'react-markdown-editor-lite';
+
+const PLUGINS = undefined;
+// const PLUGINS = ['header', 'divider', 'image', 'divider', 'font-bold', 'full-screen'];
 
 // MdEditor.use(Plugins.AutoResize, {
 //   min: 200,
@@ -20,58 +23,38 @@ MdEditor.use(Plugins.TabInsert, {
   tabMapValue: 1, // note that 1 means a '\t' instead of ' '.
 });
 
-class Demo extends React.Component<any, any> {
-  mdEditor?: MdEditor = undefined;
+class Demo extends React.Component {
+  mdEditor = undefined;
 
-  mdParser: MarkdownIt;
-
-  constructor(props: any) {
+  constructor(props) {
     super(props);
     this.renderHTML = this.renderHTML.bind(this);
-    // initial a parser
-    this.mdParser = new MarkdownIt({
-      html: true,
-      linkify: true,
-      typographer: true,
-      highlight(str, lang) {
-        /*
-        if (lang && hljs.getLanguage(lang)) {
-          try {
-            return hljs.highlight(lang, str).value
-          } catch (__) {}
-        }
-        return '' // use external default escaping
-        */
-      },
-    });
-
     this.state = {
-      value: MOCK_DATA,
+      value: "# Hello",
     };
   }
 
-  handleEditorChange = (it: { text: string; html: string }, event: any) => {
+  handleEditorChange = (it, event) => {
     // console.log('handleEditorChange', it.text, it.html, event);
     this.setState({
       value: it.text,
     });
   };
 
-  handleImageUpload = (file: File): Promise<string> => {
+  handleImageUpload = (file) => {
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = data => {
-        // @ts-ignore
         resolve(data.target.result);
       };
       reader.readAsDataURL(file);
     });
   };
 
-  onCustomImageUpload = (event: any): Promise<any> => {
+  onCustomImageUpload = (event) => {
     console.log('onCustomImageUpload', event);
     return new Promise((resolve, reject) => {
-      const result = window.prompt('Please enter image url here...') as string;
+      const result = window.prompt('Please enter image url here...');
       resolve({ url: result });
       // custom confirm message pseudo code
       // YourCustomDialog.open(() => {
@@ -104,9 +87,7 @@ class Demo extends React.Component<any, any> {
     });
   };
 
-  renderHTML(text: string) {
-    // return this.mdParser.render(text);
-    // Using react-markdown
+  renderHTML(text) {
     return React.createElement(ReactMarkdown, {
       source: text,
     });
@@ -149,6 +130,10 @@ class Demo extends React.Component<any, any> {
             onBlur={e => console.log('blur', e)}
             // onCustomImageUpload={this.onCustomImageUpload}
           />
+          <MdEditor
+            style={{ height: '500px', width: '100%' }}
+            renderHTML={this.renderHTML}
+          />
         </div>
         {/* <div style={{marginTop: '30px'}}>
           <MdEditor
@@ -170,4 +155,7 @@ class Demo extends React.Component<any, any> {
   }
 }
 
-ReactDOM.render(<Demo />, document.getElementById('app'));
+ReactDOM.render((
+  <Demo />
+), mountNode);
+```

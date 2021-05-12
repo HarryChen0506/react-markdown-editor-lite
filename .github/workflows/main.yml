@@ -50,7 +50,11 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: lib
-        path: lib
+        path: |
+          es
+          es5
+          lib
+          preview
     - name: Upload coverage
       uses: actions/upload-artifact@v1
       with:

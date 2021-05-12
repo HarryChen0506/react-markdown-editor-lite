@@ -19,10 +19,11 @@ node_modules/
 .npm
 
 # dist
-lib/
-lib/*
-dist/
-dist/*
+es
+es5
+lib
+dist
+preview
 
 # Logs and databases #
 ######################
