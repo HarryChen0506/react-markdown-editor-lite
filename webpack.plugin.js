@@ -31,12 +31,17 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
   onHook('after.build.compile', () => {
     if (fs.existsSync(path.join(__dirname, 'lib'))) {
       fs.renameSync(path.join(__dirname, 'lib'), path.join(__dirname, 'es5'));
+      console.log("Rename lib to es5");
     }
     if (fs.existsSync(path.join(__dirname, 'dist'))) {
       fs.renameSync(path.join(__dirname, 'dist'), path.join(__dirname, 'lib'));
+      console.log("Rename dist to lib");
     }
     if (fs.existsSync(path.join(__dirname, 'build'))) {
       fs.renameSync(path.join(__dirname, 'build'), path.join(__dirname, 'preview'));
+      console.log("Rename build to preview");
     }
+    const dirs = fs.readdirSync(__dirname);
+    console.log("Current files: ", dirs.join(" "));
   });
 };
