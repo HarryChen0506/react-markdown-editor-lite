@@ -1,5 +1,5 @@
 # 插件
-[English documention see here](./plugin.md)
+[English documentation see here](./plugin.md)
 ## 插件可以干什么？
 插件可以往工具栏添加按钮，并操作编辑器的内容。
 ## 使用和卸载插件

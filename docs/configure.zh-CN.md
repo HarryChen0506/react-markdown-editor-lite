@@ -1,5 +1,5 @@
 # Props
-[English documention see here](./configure.md)
+[English documentation see here](./configure.md)
 ## Props列表
 | 名称 | 描述 | 类型 | 默认 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -73,7 +73,3 @@ export default (props) => {
   return (<MdEditor onImageUpload={onImageUpload} />)
 }
 ```
-
-## 其他
-
-完整演示请参见[src/demo/index.tsx](https://github.com/HarryChen0506/react-markdown-editor-lite/blob/master/src/demo/index.tsx)
