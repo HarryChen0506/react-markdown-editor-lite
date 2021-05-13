@@ -1,4 +1,5 @@
 const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
 
 module.exports = ({ onGetWebpackConfig, onHook }) => {
@@ -26,6 +27,15 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
         config.entryPoints.delete(it);
       }
     }
+  });
+
+  onHook('before.build.run', () => {
+    fse.rmdirSync(path.join(__dirname, 'es'), { recursive: true });
+    fse.rmdirSync(path.join(__dirname, 'lib'), { recursive: true });
+    fse.rmdirSync(path.join(__dirname, 'es5'), { recursive: true });
+    fse.rmdirSync(path.join(__dirname, 'dist'), { recursive: true });
+    fse.rmdirSync(path.join(__dirname, 'preview'), { recursive: true });
+    fse.rmdirSync(path.join(__dirname, 'build'), { recursive: true });
   });
 
   onHook('after.build.compile', () => {
