@@ -1,6 +1,6 @@
 {
   "name": "react-markdown-editor-lite",
-  "version": "1.2.3",
+  "version": "1.2.5-1",
   "description": "a light-weight Markdown editor based on React",
   "main": "./es5/index.js",
   "module": "./es/index.js",
@@ -111,6 +111,7 @@
     "all": true
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "classnames": "^2.2.6"
   }
 }
