@@ -1,4 +1,4 @@
-import emitter from '../share/emitter';
+import Emitter, { globalEmitter } from '../share/emitter';
 import enUS from './lang/en-US';
 import zhCN from './lang/zh-CN';
 
@@ -39,13 +39,13 @@ class I18n {
       }
     }
 
-    if (this.current !== locale && this.isAvaliable(locale)) {
+    if (this.current !== locale && this.isAvailable(locale)) {
       this.current = locale;
-      emitter.emit(emitter.EVENT_LANG_CHANGE, this, locale, this.langs[locale]);
+      globalEmitter.emit(globalEmitter.EVENT_LANG_CHANGE, this, locale, this.langs[locale]);
     }
   }
 
-  isAvaliable(langName: string) {
+  isAvailable(langName: string) {
     return typeof this.langs[langName] !== 'undefined';
   }
 
@@ -54,12 +54,12 @@ class I18n {
   }
 
   setCurrent(langName: string) {
-    if (!this.isAvaliable(langName)) {
+    if (!this.isAvailable(langName)) {
       throw new Error(`Language ${langName} is not exists`);
     }
     if (this.current !== langName) {
       this.current = langName;
-      emitter.emit(emitter.EVENT_LANG_CHANGE, this, langName, this.langs[langName]);
+      globalEmitter.emit(globalEmitter.EVENT_LANG_CHANGE, this, langName, this.langs[langName]);
     }
   }
 

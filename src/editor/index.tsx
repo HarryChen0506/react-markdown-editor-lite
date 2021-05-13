@@ -3,16 +3,16 @@ import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
 import i18n from '../i18n';
-import emitter from '../share/emitter';
+import DividerPlugin from '../plugins/divider';
+import Emitter, { globalEmitter } from '../share/emitter';
 import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from '../share/var';
 import getDecorated from '../utils/decorate';
 import mergeConfig from '../utils/mergeConfig';
 import { isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
-import { HtmlRender, HtmlType } from './preview';
-import DividerPlugin from '../plugins/divider';
 import './index.less';
+import { HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
 
@@ -99,6 +99,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   static getLocale = i18n.getCurrent.bind(i18n);
 
   private config: EditorConfig;
+  private emitter: Emitter;
 
   private nodeMdText = React.createRef<HTMLTextAreaElement>();
   private nodeMdPreview = React.createRef<HtmlRender>();
@@ -112,6 +113,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   constructor(props: any) {
     super(props);
 
+    this.emitter = new Emitter();
     this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
@@ -147,13 +149,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
   componentDidMount() {
     const { text } = this.state;
     this.renderHTML(text);
-    emitter.on(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
+    globalEmitter.on(globalEmitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
     // init i18n
     i18n.setUp();
   }
 
   componentWillUnmount() {
-    emitter.off(emitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
+    globalEmitter.off(globalEmitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
   }
 
   componentDidUpdate(prevProps: EditorProps) {
@@ -250,7 +252,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.props.onScroll) {
       this.props.onScroll(e, type);
     }
-    emitter.emit(emitter.EVENT_SCROLL, e, type);
+    this.emitter.emit(this.emitter.EVENT_SCROLL, e, type);
     // should sync scroll?
     const { syncScrollMode = [] } = this.config;
     if (!syncScrollMode.includes(type === 'md' ? 'rightFollowLeft' : 'leftFollowRight')) {
@@ -311,7 +313,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (onFocus) {
       onFocus(e);
     }
-    emitter.emit(emitter.EVENT_FOCUS, e);
+    this.emitter.emit(this.emitter.EVENT_FOCUS, e);
   }
 
   private handleBlur(e: React.FocusEvent<HTMLTextAreaElement>) {
@@ -319,7 +321,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (onBlur) {
       onBlur(e);
     }
-    emitter.emit(emitter.EVENT_BLUR, e);
+    this.emitter.emit(this.emitter.EVENT_BLUR, e);
   }
 
   /**
@@ -512,7 +514,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (this.props.onChange && (onChangeTrigger === 'both' || onChangeTrigger === 'beforeRender')) {
       this.props.onChange({ text, html: this.getHtmlValue() }, event);
     }
-    emitter.emit(emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
+    this.emitter.emit(this.emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
     if (newSelection) {
       setTimeout(() => this.setSelection(newSelection));
     }
@@ -600,25 +602,25 @@ class Editor extends React.Component<EditorProps, EditorState> {
       }
     }
     // 如果没有，触发默认事件
-    emitter.emit(emitter.EVENT_KEY_DOWN, e);
+    this.emitter.emit(this.emitter.EVENT_KEY_DOWN, e);
   }
 
   private getEventType(event: EditorEvent) {
     switch (event) {
       case 'change':
-        return emitter.EVENT_CHANGE;
+        return this.emitter.EVENT_CHANGE;
       case 'fullscreen':
-        return emitter.EVENT_FULL_SCREEN;
+        return this.emitter.EVENT_FULL_SCREEN;
       case 'viewchange':
-        return emitter.EVENT_VIEW_CHANGE;
+        return this.emitter.EVENT_VIEW_CHANGE;
       case 'keydown':
-        return emitter.EVENT_KEY_DOWN;
+        return this.emitter.EVENT_KEY_DOWN;
       case 'blur':
-        return emitter.EVENT_BLUR;
+        return this.emitter.EVENT_BLUR;
       case 'focus':
-        return emitter.EVENT_FOCUS;
+        return this.emitter.EVENT_FOCUS;
       case 'scroll':
-        return emitter.EVENT_SCROLL;
+        return this.emitter.EVENT_SCROLL;
     }
   }
   /**
@@ -629,7 +631,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   on(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
-      emitter.on(eventType, cb);
+      this.emitter.on(eventType, cb);
     }
   }
   /**
@@ -640,7 +642,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   off(event: EditorEvent, cb: any) {
     const eventType = this.getEventType(event);
     if (eventType) {
-      emitter.off(eventType, cb);
+      this.emitter.off(eventType, cb);
     }
   }
 
@@ -656,7 +658,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         view: newView,
       },
       () => {
-        emitter.emit(emitter.EVENT_VIEW_CHANGE, newView);
+        this.emitter.emit(this.emitter.EVENT_VIEW_CHANGE, newView);
       },
     );
   }
@@ -679,7 +681,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           fullScreen: enable,
         },
         () => {
-          emitter.emit(emitter.EVENT_FULL_SCREEN, enable);
+          this.emitter.emit(this.emitter.EVENT_FULL_SCREEN, enable);
         },
       );
     }
