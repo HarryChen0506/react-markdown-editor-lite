@@ -1,6 +1,6 @@
 @font-face {font-family: "rmel-iconfont";
-  src: url('iconfont.eot?t=1609742889962'); /* IE9 */
-  src: url('iconfont.ttf?t=1609742889962') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  src: url('./iconfont.eot?t=1609742889962'); /* IE9 */
+  src: url('./iconfont.ttf?t=1609742889962') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
 }
 
 .rmel-iconfont {

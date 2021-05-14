@@ -19,6 +19,8 @@ import Logger from './plugins/logger';
 import ModeToggle from './plugins/modeToggle';
 import Table from './plugins/table';
 import TabInsert from './plugins/tabInsert';
+import { PluginComponent, PluginProps } from './plugins/Plugin';
+import DropList from './components/DropList/index';
 
 // 注册默认插件
 Editor.use(Header);
@@ -42,8 +44,8 @@ Editor.use(FullScreen);
 
 // 导出声明
 // 导出工具组件
-export { default as DropList } from './components/DropList/index';
-export { PluginComponent, PluginProps } from './plugins/Plugin';
+export { DropList };
+export { PluginComponent, PluginProps };
 // 导出实用工具
 export { default as getDecorated } from './utils/decorate';
 // 导出内置插件

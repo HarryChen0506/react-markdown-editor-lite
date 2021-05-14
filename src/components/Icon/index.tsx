@@ -1,6 +1,6 @@
 // Icon
 import * as React from 'react';
-import './font.less';
+import './fonts/iconfont.css';
 
 interface IconProps {
   type: string;

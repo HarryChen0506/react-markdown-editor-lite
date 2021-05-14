@@ -1,6 +1,6 @@
 {
   "name": "react-markdown-editor-lite",
-  "version": "1.2.5-1",
+  "version": "1.2.5-4",
   "description": "a light-weight Markdown editor based on React",
   "main": "./es5/index.js",
   "module": "./es/index.js",
@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/HarryChen0506/react-markdown-editor-lite/issues"
   },
-  "homepage": "https://unpkg.com/react-markdown-editor-lite@1.2.3/build/index.html",
+  "homepage": "https://unpkg.com/react-markdown-editor-lite@1.2.5-3/build/index.html",
   "devDependencies": {
     "@alib/build-scripts": "^0.1.3",
     "@iceworks/spec": "^1.0.0",
@@ -61,7 +61,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-standard": "^4.0.1",
-    "eventemitter3": "^4.0.0",
     "fs-extra": "^10.0.0",
     "husky": "^3.1.0",
     "ignore-styles": "^5.0.1",
@@ -85,8 +84,7 @@
     "tslint-plugin-prettier": "^2.1.0",
     "tslint-react": "^4.2.0",
     "typescript": "^3.5.2",
-    "url-loader": "^2.1.0",
-    "uuid": "^3.4.0"
+    "url-loader": "^2.1.0"
   },
   "peerDependencies": {
     "react": "^16.9.0 || ^17.0.0"
@@ -112,6 +110,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "classnames": "^2.2.6"
+    "classnames": "^2.2.6",
+    "eventemitter3": "^4.0.0",
+    "uuid": "^3.4.0"
   }
 }
