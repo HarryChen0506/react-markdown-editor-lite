@@ -46,15 +46,23 @@ function decorateList(type: 'order' | 'unordered', target: string) {
     text = '\n' + text;
   }
   if (type === 'unordered') {
-    return text.replace(/\n/g, '\n* ') + '\n';
+    return text.replace(/\n/g, '\n* ');
   } else {
     let count = 1;
-    return (
-      text.replace(/\n/g, () => {
-        return `\n${count++}. `;
-      }) + '\n'
-    );
+    return text.replace(/\n/g, () => {
+      return `\n${count++}. `;
+    });
   }
+}
+
+function createTextDecorated(text: string): Decorated {
+  return {
+    text,
+    selection: {
+      start: text.length,
+      end: text.length,
+    },
+  };
 }
 
 /**
@@ -87,17 +95,11 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
         },
       };
     case 'unordered':
-      return {
-        text: decorateList('unordered', target),
-      };
+      return createTextDecorated(decorateList('unordered', target));
     case 'order':
-      return {
-        text: decorateList('order', target),
-      };
+      return createTextDecorated(decorateList('order', target));
     case 'hr':
-      return {
-        text: '\n---\n',
-      };
+      return createTextDecorated('\n---\n');
     case 'table':
       return {
         text: decorateTableText(option),
