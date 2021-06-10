@@ -136,6 +136,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handlePaste = this.handlePaste.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
@@ -365,6 +366,53 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (items) {
       e.preventDefault();
       this.uploadWithDataTransfer(items);
+    }
+  }
+
+  // Handle key up
+  private handleKeyUp(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    const { keyCode, key, currentTarget } = e;
+    if (keyCode === 13 || key === 'Enter') {
+      const curPos = currentTarget.selectionStart;
+      const beforeText = currentTarget.value.substr(0, curPos).split('\n');
+      if (beforeText.length < 2) return;
+
+      const removeLastLine = () => {
+        const newValue =
+          currentTarget.value.substr(0, curPos - lastLine.length - 1) + currentTarget.value.substr(curPos);
+        this.setText(newValue, undefined, {
+          start: curPos - lastLine.length - 1,
+          end: curPos - lastLine.length - 1,
+        });
+      };
+
+      const lastLine = beforeText[beforeText.length - 2];
+      // Enter key, check previous line
+      const isSymbol = lastLine.match(/^(\s?)([\-\*]) /);
+      if (isSymbol) {
+        if (/^(\s?)([\-\*]) $/.test(lastLine)) {
+          removeLastLine();
+          return;
+        }
+        this.insertText(isSymbol[0], false, {
+          start: isSymbol[0].length,
+          end: isSymbol[0].length,
+        });
+        return;
+      }
+      const isOrderList = lastLine.match(/^(\s?)(\d+)\. /);
+      if (isOrderList) {
+        const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2]) + 1}. `;
+        if (/^(\s?)(\d+)\. $/.test(lastLine)) {
+          removeLastLine();
+          return;
+        }
+        this.insertText(toInsert, false, {
+          start: toInsert.length,
+          end: toInsert.length,
+        });
+        return;
+      }
     }
   }
 
@@ -773,6 +821,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
+              onKeyUp={this.handleKeyUp}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
