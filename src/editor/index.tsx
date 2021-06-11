@@ -8,7 +8,7 @@ import Emitter, { globalEmitter } from '../share/emitter';
 import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from '../share/var';
 import getDecorated from '../utils/decorate';
 import mergeConfig from '../utils/mergeConfig';
-import { isKeyMatch, isPromise } from '../utils/tool';
+import { getLineAndCol, isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import './index.less';
@@ -373,24 +373,25 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleKeyUp(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
     if (keyCode === 13 || key === 'Enter') {
+      const text = e.currentTarget.value;
       const curPos = currentTarget.selectionStart;
-      const beforeText = currentTarget.value.substr(0, curPos).split('\n');
-      if (beforeText.length < 2) return;
+      const lineInfo = getLineAndCol(text, curPos);
+      if (!lineInfo.prevLine) return;
 
       const removeLastLine = () => {
+        if (!lineInfo.prevLine) return;
         const newValue =
-          currentTarget.value.substr(0, curPos - lastLine.length - 1) + currentTarget.value.substr(curPos);
+          currentTarget.value.substr(0, curPos - lineInfo.prevLine.length - 1) + currentTarget.value.substr(curPos);
         this.setText(newValue, undefined, {
-          start: curPos - lastLine.length - 1,
-          end: curPos - lastLine.length - 1,
+          start: curPos - lineInfo.prevLine.length - 1,
+          end: curPos - lineInfo.prevLine.length - 1,
         });
       };
 
-      const lastLine = beforeText[beforeText.length - 2];
       // Enter key, check previous line
-      const isSymbol = lastLine.match(/^(\s?)([\-\*]) /);
+      const isSymbol = lineInfo.prevLine.match(/^(\s?)([\-\*]) /);
       if (isSymbol) {
-        if (/^(\s?)([\-\*]) $/.test(lastLine)) {
+        if (/^(\s?)([\-\*]) $/.test(lineInfo.prevLine)) {
           removeLastLine();
           return;
         }
@@ -400,10 +401,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
         });
         return;
       }
-      const isOrderList = lastLine.match(/^(\s?)(\d+)\. /);
+      const isOrderList = lineInfo.prevLine.match(/^(\s?)(\d+)\. /);
       if (isOrderList) {
         const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2]) + 1}. `;
-        if (/^(\s?)(\d+)\. $/.test(lastLine)) {
+        if (/^(\s?)(\d+)\. $/.test(lineInfo.prevLine)) {
           removeLastLine();
           return;
         }
@@ -475,12 +476,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param option
    */
   insertMarkdown(type: string, option: any = {}) {
-    let selection = this.getSelection();
+    const curSelection = this.getSelection();
     let decorateOption = option ? { ...option } : {};
     if (type === 'image') {
       decorateOption = {
         ...decorateOption,
-        target: option.target || selection.text || '',
+        target: option.target || curSelection.text || '',
         imageUrl: option.imageUrl || this.config.imageUrl,
       };
     }
@@ -490,19 +491,36 @@ class Editor extends React.Component<EditorProps, EditorState> {
         linkUrl: this.config.linkUrl,
       };
     }
-    if (type === 'tab' && selection.start !== selection.end) {
+    if (type === 'tab' && curSelection.start !== curSelection.end) {
       const curLineStart =
         this.getMdValue()
-          .slice(0, selection.start)
+          .slice(0, curSelection.start)
           .lastIndexOf('\n') + 1;
       this.setSelection({
         start: curLineStart,
-        end: selection.end,
+        end: curSelection.end,
       });
-      selection = this.getSelection();
     }
-    const decorate = getDecorated(selection.text, type, decorateOption);
-    this.insertText(decorate.text, true, decorate.selection);
+    const decorate = getDecorated(curSelection.text, type, decorateOption);
+    let { text } = decorate;
+    const { selection } = decorate;
+    if (decorate.newBlock) {
+      const lineInfo = getLineAndCol(this.getMdValue(), curSelection.start);
+      if (lineInfo.col > 0 && lineInfo.curLine.length > 0) {
+        text = `\n${text}`;
+        if (selection) {
+          selection.start++;
+          selection.end++;
+        }
+      }
+      if (lineInfo.afterText.substr(0, 2) !== '\n\n') {
+        if (lineInfo.afterText.substr(0, 1) !== '\n') {
+          text += '\n';
+        }
+        text += '\n';
+      }
+    }
+    this.insertText(text, true, selection);
   }
   /**
    * Insert a placeholder, and replace it when the Promise resolved

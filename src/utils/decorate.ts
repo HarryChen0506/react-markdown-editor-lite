@@ -2,6 +2,7 @@ import { repeat } from './tool';
 
 interface Decorated {
   text: string;
+  newBlock?: boolean;
   selection?: {
     start: number;
     end: number;
@@ -37,27 +38,34 @@ function decorateTableText(option: any) {
   for (let j = 1; j <= row; j++) {
     colStr += '\n' + rowData.join('');
   }
-  return `\n${rowHeader.join('')}\n${rowDivision.join('')}${colStr}\n`;
+  return `${rowHeader.join('')}\n${rowDivision.join('')}${colStr}`;
 }
 
 function decorateList(type: 'order' | 'unordered', target: string) {
   let text = target;
-  if (text.indexOf('\n') !== 0) {
+  if (text.substr(0, 1) !== '\n') {
     text = '\n' + text;
   }
   if (type === 'unordered') {
-    return text.replace(/\n/g, '\n* ');
+    return text.length > 1 ? text.replace(/\n/g, '\n* ').trim() : '* ';
   } else {
     let count = 1;
-    return text.replace(/\n/g, () => {
-      return `\n${count++}. `;
-    });
+    if (text.length > 1) {
+      return text
+        .replace(/\n/g, () => {
+          return `\n${count++}. `;
+        })
+        .trim();
+    } else {
+      return '1. ';
+    }
   }
 }
 
-function createTextDecorated(text: string): Decorated {
+function createTextDecorated(text: string, newBlock?: boolean): Decorated {
   return {
     text,
+    newBlock,
     selection: {
       start: text.length,
       end: text.length,
@@ -95,14 +103,15 @@ function getDecorated(target: string, type: string, option?: any): Decorated {
         },
       };
     case 'unordered':
-      return createTextDecorated(decorateList('unordered', target));
+      return createTextDecorated(decorateList('unordered', target), true);
     case 'order':
-      return createTextDecorated(decorateList('order', target));
+      return createTextDecorated(decorateList('order', target), true);
     case 'hr':
-      return createTextDecorated('\n---\n');
+      return createTextDecorated('---', true);
     case 'table':
       return {
         text: decorateTableText(option),
+        newBlock: true,
       };
     case 'image':
       return {

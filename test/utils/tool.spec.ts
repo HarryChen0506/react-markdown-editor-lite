@@ -45,6 +45,20 @@ describe('Test tools', function() {
     expect(Tools.isPromise('123')).to.be.false;
     expect(Tools.isPromise(function() { })).to.be.false;
   });
+  it('Test getLineAndCol', function() {
+    const text = "123\n456\n789";
+    expect(Tools.getLineAndCol(text, 5)).to.deep.equal({
+      line: 2,
+      col: 1,
+      beforeText: "123\n4",
+      afterText: "56\n789",
+      curLine: "456",
+      prevLine: "123",
+      nextLine: "789"
+    });
+    expect(Tools.getLineAndCol(text, 2).prevLine).to.be.null;
+    expect(Tools.getLineAndCol(text, 8).nextLine).to.be.null;
+  });
   // KeyMatch
   it('Test isKeyMatch (Match)', function() {
     expect(Tools.isKeyMatch(zWithCommand, {
