@@ -505,16 +505,21 @@ class Editor extends React.Component<EditorProps, EditorState> {
     let { text } = decorate;
     const { selection } = decorate;
     if (decorate.newBlock) {
-      const lineInfo = getLineAndCol(this.getMdValue(), curSelection.start);
-      if (lineInfo.col > 0 && lineInfo.curLine.length > 0) {
+      const startLineInfo = getLineAndCol(this.getMdValue(), curSelection.start);
+      const { col, curLine } = startLineInfo;
+      if (col > 0 && curLine.length > 0) {
         text = `\n${text}`;
         if (selection) {
           selection.start++;
           selection.end++;
         }
       }
-      if (lineInfo.afterText.substr(0, 2) !== '\n\n') {
-        if (lineInfo.afterText.substr(0, 1) !== '\n') {
+      let { afterText } = startLineInfo;
+      if (curSelection.start !== curSelection.end) {
+        afterText = getLineAndCol(this.getMdValue(), curSelection.end).afterText;
+      }
+      if (afterText.trim() !== '' && afterText.substr(0, 2) !== '\n\n') {
+        if (afterText.substr(0, 1) !== '\n') {
           text += '\n';
         }
         text += '\n';
