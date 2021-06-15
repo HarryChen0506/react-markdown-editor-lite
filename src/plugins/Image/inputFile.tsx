@@ -1,5 +1,5 @@
 // TableList
-import * as React from 'react';
+import React from 'react';
 
 interface InputFileProps {
   accept: string;
@@ -8,8 +8,11 @@ interface InputFileProps {
 
 class InputFile extends React.Component<InputFileProps, any> {
   private timerId?: number;
+
   private locked: boolean;
+
   private input: React.RefObject<HTMLInputElement>;
+
   constructor(props: any) {
     super(props);
     this.timerId = undefined;

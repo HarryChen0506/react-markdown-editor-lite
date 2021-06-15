@@ -4,7 +4,7 @@
  * see src/demo/index.tsx.
  */
 
-import * as React from 'react';
+import React from 'react';
 import { KeyboardEventListener } from '../../share/var';
 import { PluginComponent } from '../Plugin';
 import DropList from '../../components/DropList';
@@ -23,6 +23,7 @@ interface TabInsertState {
 
 export default class TabInsert extends PluginComponent<TabInsertState> {
   static pluginName = 'tab-insert';
+
   static defaultConfig = {
     tabMapValue: 1,
   };

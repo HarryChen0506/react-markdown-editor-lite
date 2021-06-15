@@ -33,7 +33,7 @@ renderHTML support both HTML or ReactElement, for example, markdown-it returns H
 Please note: what the onChange callback gets is the properties of the current state. If renderHTML is performed asynchronously, text and html may not correspond exactly.
 
 ```js
-import * as React from 'react';
+import React from 'react';
 import MdEditor from 'react-markdown-editor-lite';
 // Import styles
 import 'react-markdown-editor-lite/lib/index.css';

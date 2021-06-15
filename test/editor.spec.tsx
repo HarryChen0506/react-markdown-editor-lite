@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { expect } from 'chai';
-import * as React from 'react';
+import React from 'react';
 import Editor from '../src';
 
 describe('Test Editor', function() {

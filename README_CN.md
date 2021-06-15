@@ -55,7 +55,7 @@ yarn add react-markdown-editor-lite
 
 ```js
 // 导入React、react-markdown-editor-lite，以及一个你喜欢的Markdown渲染器
-import * as React from 'react';
+import React from 'react';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 // 导入编辑器的样式

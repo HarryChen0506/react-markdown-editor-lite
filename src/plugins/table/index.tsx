@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import DropList from '../../components/DropList';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent, PluginProps } from '../../plugins/Plugin';
+import { PluginComponent, PluginProps } from '../Plugin';
 import TableList from './table';
 
 interface State {
@@ -18,6 +18,7 @@ interface Props extends PluginProps {
 
 export default class Table extends PluginComponent<State, Props> {
   static pluginName = 'table';
+
   static defaultConfig = {
     maxRow: 6,
     maxCol: 6,
@@ -39,6 +40,7 @@ export default class Table extends PluginComponent<State, Props> {
       show: true,
     });
   }
+
   private hide() {
     this.setState({
       show: false,
@@ -57,7 +59,7 @@ export default class Table extends PluginComponent<State, Props> {
         <Icon type="grid" />
         <DropList show={this.state.show} onClose={this.hide}>
           <TableList
-            visiblity={this.state.show}
+            visibility={this.state.show}
             maxRow={config.maxRow}
             maxCol={config.maxCol}
             onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}

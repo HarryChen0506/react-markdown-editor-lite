@@ -1,5 +1,4 @@
-import * as React from 'react';
-import './index.less';
+import React from 'react';
 
 interface DropListProps {
   show: boolean;
@@ -11,6 +10,7 @@ class DropList extends React.Component<DropListProps, any> {
     super(props);
     this.handleClose = this.handleClose.bind(this);
   }
+
   handleClose(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     e.stopPropagation();
     const { onClose } = this.props;
@@ -18,6 +18,7 @@ class DropList extends React.Component<DropListProps, any> {
       onClose();
     }
   }
+
   render() {
     return (
       <div className={`drop-wrap ${this.props.show ? 'show' : 'hidden'}`} onClick={this.handleClose}>

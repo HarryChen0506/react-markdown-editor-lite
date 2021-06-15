@@ -55,7 +55,7 @@ Following steps:
 
 ```js
 // import react, react-markdown-editor-lite, and a markdown parser you like
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';

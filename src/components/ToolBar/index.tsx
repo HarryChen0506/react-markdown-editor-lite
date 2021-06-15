@@ -1,5 +1,4 @@
-import * as React from 'react';
-import './index.less';
+import React from 'react';
 
 interface ToolBarProps {
   style?: React.CSSProperties;

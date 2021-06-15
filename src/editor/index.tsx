@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -11,7 +11,6 @@ import mergeConfig from '../utils/mergeConfig';
 import { getLineAndCol, isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
-import './index.less';
 import { HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
@@ -49,14 +48,11 @@ interface EditorState {
     md: boolean;
     html: boolean;
   };
-  table: {
-    maxRow: number;
-    maxCol: number;
-  };
 }
 
 class Editor extends React.Component<EditorProps, EditorState> {
   private static plugins: Plugin[] = [];
+
   /**
    * Register plugin
    * @param {any} comp Plugin component
@@ -72,6 +68,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     Editor.plugins.push({ comp, config });
   }
+
   /**
    * Unregister plugin
    * @param {any} comp Plugin component
@@ -84,6 +81,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       }
     }
   }
+
   /**
    * Unregister all plugins
    * @param {any} comp Plugin component
@@ -91,23 +89,30 @@ class Editor extends React.Component<EditorProps, EditorState> {
   static unuseAll() {
     Editor.plugins = [];
   }
+
   /**
    * Locales
    */
   static addLocale = i18n.add.bind(i18n);
+
   static useLocale = i18n.setCurrent.bind(i18n);
+
   static getLocale = i18n.getCurrent.bind(i18n);
 
   private config: EditorConfig;
+
   private emitter: Emitter;
 
   private nodeMdText = React.createRef<HTMLTextAreaElement>();
+
   private nodeMdPreview = React.createRef<HtmlRender>();
+
   private nodeMdPreviewWrapper = React.createRef<HTMLDivElement>();
 
   private hasContentChanged = true;
 
   private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
+
   private handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 
   constructor(props: any) {
@@ -121,7 +126,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
       html: '',
       view: this.config.view || defaultConfig.view!,
       fullScreen: false,
-      table: this.config.table || defaultConfig.table!,
       plugins: this.getPlugins(),
     };
 
@@ -161,7 +165,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   componentDidUpdate(prevProps: EditorProps) {
     if (typeof this.props.value !== 'undefined' && this.props.value !== this.state.text) {
-      let value = this.props.value;
+      let { value } = this.props;
       if (typeof value !== 'string') {
         value = String(value).toString();
       }
@@ -221,7 +225,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       plugins = [...Editor.plugins];
     }
     const result: { [x: string]: React.ReactElement[] } = {};
-    plugins.forEach(it => {
+    plugins.forEach((it) => {
       if (typeof result[it.comp.align] === 'undefined') {
         result[it.comp.align] = [];
       }
@@ -242,8 +246,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   // sync left and right section's scroll
   private scrollScale = 1;
+
   private isSyncingScroll = false;
+
   private shouldSyncScroll: 'md' | 'html' = 'md';
+
   private handleSyncScroll(type: 'md' | 'html', e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) {
     // prevent loop
     if (type !== this.shouldSyncScroll) {
@@ -290,15 +297,14 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (isPromise(res)) {
       // @ts-ignore
       return res.then((r: HtmlType) => this.setHtml(r));
-    } else if (typeof res === 'function') {
+    } if (typeof res === 'function') {
       return this.setHtml(res());
-    } else {
-      return this.setHtml(res);
     }
+    return this.setHtml(res);
   }
 
   private setHtml(html: HtmlType): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.setState({ html }, resolve);
     });
   }
@@ -331,7 +337,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   private handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     e.persist();
-    const value = e.target.value;
+    const { value } = e.target;
     // 触发内部事件
     this.setText(value, e);
   }
@@ -362,7 +368,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (!event.dataTransfer) {
       return;
     }
-    const items = event.dataTransfer.items;
+    const { items } = event.dataTransfer;
     if (items) {
       e.preventDefault();
       this.uploadWithDataTransfer(items);
@@ -380,8 +386,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
       const removeLastLine = () => {
         if (!lineInfo.prevLine) return;
-        const newValue =
-          currentTarget.value.substr(0, curPos - lineInfo.prevLine.length - 1) + currentTarget.value.substr(curPos);
+        const newValue = currentTarget.value.substr(0, curPos - lineInfo.prevLine.length - 1) + currentTarget.value.substr(curPos);
         this.setText(newValue, undefined, {
           start: curPos - lineInfo.prevLine.length - 1,
           end: curPos - lineInfo.prevLine.length - 1,
@@ -389,9 +394,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
 
       // Enter key, check previous line
-      const isSymbol = lineInfo.prevLine.match(/^(\s?)([\-\*]) /);
+      const isSymbol = lineInfo.prevLine.match(/^(\s?)([-*]) /);
       if (isSymbol) {
-        if (/^(\s?)([\-\*]) $/.test(lineInfo.prevLine)) {
+        if (/^(\s?)([-*]) $/.test(lineInfo.prevLine)) {
           removeLastLine();
           return;
         }
@@ -403,7 +408,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       }
       const isOrderList = lineInfo.prevLine.match(/^(\s?)(\d+)\. /);
       if (isOrderList) {
-        const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2]) + 1}. `;
+        const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2], 10) + 1}. `;
         if (/^(\s?)(\d+)\. $/.test(lineInfo.prevLine)) {
           removeLastLine();
           return;
@@ -412,7 +417,6 @@ class Editor extends React.Component<EditorProps, EditorState> {
           start: toInsert.length,
           end: toInsert.length,
         });
-        return;
       }
     }
   }
@@ -428,6 +432,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   getMdElement() {
     return this.nodeMdText.current;
   }
+
   getHtmlElement() {
     return this.nodeMdPreviewWrapper.current;
   }
@@ -440,6 +445,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.nodeMdText.current.setSelectionRange(0, 0, 'none');
     }
   }
+
   /**
    * Get selected
    * @return {Selection}
@@ -492,10 +498,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
     }
     if (type === 'tab' && curSelection.start !== curSelection.end) {
-      const curLineStart =
-        this.getMdValue()
-          .slice(0, curSelection.start)
-          .lastIndexOf('\n') + 1;
+      const curLineStart = this.getMdValue()
+        .slice(0, curSelection.start)
+        .lastIndexOf('\n') + 1;
       this.setSelection({
         start: curLineStart,
         end: curSelection.end,
@@ -527,6 +532,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     this.insertText(text, true, selection);
   }
+
   /**
    * Insert a placeholder, and replace it when the Promise resolved
    * @param placeholder
@@ -534,11 +540,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   insertPlaceholder(placeholder: string, wait: Promise<string>) {
     this.insertText(placeholder, true);
-    wait.then(str => {
+    wait.then((str) => {
       const text = this.getMdValue().replace(placeholder, str);
       this.setText(text);
     });
   }
+
   /**
    * Insert text
    * @param {string} value The text will be insert
@@ -556,13 +563,13 @@ class Editor extends React.Component<EditorProps, EditorState> {
       undefined,
       newSelection
         ? {
-            start: newSelection.start + beforeContent.length,
-            end: newSelection.end + beforeContent.length,
-          }
+          start: newSelection.start + beforeContent.length,
+          end: newSelection.end + beforeContent.length,
+        }
         : {
-            start: selection.start,
-            end: selection.start,
-          },
+          start: selection.start,
+          end: selection.start,
+        },
     );
   }
 
@@ -623,39 +630,39 @@ class Editor extends React.Component<EditorProps, EditorState> {
   getHtmlValue(): string {
     if (typeof this.state.html === 'string') {
       return this.state.html;
-    } else {
-      if (this.nodeMdPreview.current) {
-        return this.nodeMdPreview.current.getHtml();
-      } else {
-        return '';
-      }
     }
+    if (this.nodeMdPreview.current) {
+      return this.nodeMdPreview.current.getHtml();
+    }
+    return '';
   }
 
   /**
    * Listen keyboard events
    */
   private keyboardListeners: KeyboardEventListener[] = [];
+
   /**
    * Listen keyboard events
    * @param {KeyboardEventListener} data
    */
   onKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach(it => this.onKeyboard(it));
+      data.forEach((it) => this.onKeyboard(it));
       return;
     }
     if (!this.keyboardListeners.includes(data)) {
       this.keyboardListeners.push(data);
     }
   }
+
   /**
    * Unlisten keyboard events
    * @param {KeyboardEventListener} data
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach(it => this.offKeyboard(it));
+      data.forEach((it) => this.offKeyboard(it));
       return;
     }
     const index = this.keyboardListeners.indexOf(data);
@@ -663,6 +670,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.keyboardListeners.splice(index, 1);
     }
   }
+
   private handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     // 遍历监听数组，找找有没有被监听
     for (const it of this.keyboardListeners) {
@@ -676,7 +684,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.emitter.emit(this.emitter.EVENT_KEY_DOWN, e);
   }
 
-  private getEventType(event: EditorEvent) {
+  private getEventType(event: EditorEvent): string | undefined {
     switch (event) {
       case 'change':
         return this.emitter.EVENT_CHANGE;
@@ -694,6 +702,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return this.emitter.EVENT_SCROLL;
     }
   }
+
   /**
    * Listen events
    * @param {EditorEvent} event Event type
@@ -705,6 +714,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.emitter.on(eventType, cb);
     }
   }
+
   /**
    * Unlisten events
    * @param {EditorEvent} event Event type
@@ -733,6 +743,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       },
     );
   }
+
   /**
    * Get view property
    * @return {object}
@@ -757,6 +768,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       );
     }
   }
+
   /**
    * Is full screen
    * @return {boolean}
@@ -777,7 +789,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
         if (file) {
           const placeholder = getUploadPlaceholder(file, onImageUpload);
           queue.push(Promise.resolve(placeholder.placeholder));
-          placeholder.uploaded.then(str => {
+          placeholder.uploaded.then((str) => {
             const text = this.getMdValue().replace(placeholder.placeholder, str);
             const offset = str.length - placeholder.placeholder.length;
             // 计算出替换后的光标位置
@@ -789,10 +801,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
           });
         }
       } else if (it.kind === 'string' && it.type === 'text/plain') {
-        queue.push(new Promise(resolve => it.getAsString(resolve)));
+        queue.push(new Promise((resolve) => it.getAsString(resolve)));
       }
     });
-    Promise.all(queue).then(res => {
+    Promise.all(queue).then((res) => {
       const text = res.join('');
       const selection = this.getSelection();
       this.insertText(text, true, {

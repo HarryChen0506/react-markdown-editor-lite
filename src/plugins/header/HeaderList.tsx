@@ -1,6 +1,5 @@
 // HeaderList
-import * as React from 'react';
-import './HeaderList.less';
+import React from 'react';
 
 interface HeaderListProps {
   onSelectHeader?: (header: string) => void;
@@ -13,6 +12,7 @@ class HeaderList extends React.Component<HeaderListProps, any> {
       onSelectHeader(header);
     }
   }
+
   render() {
     return (
       <ul className="header-list">

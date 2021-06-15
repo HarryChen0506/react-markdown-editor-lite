@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import DropList from '../../components/DropList';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../../plugins/Plugin';
+import { PluginComponent } from '../Plugin';
 import HeaderList from './HeaderList';
 
 interface State {

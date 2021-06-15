@@ -1,6 +1,5 @@
 // Icon
-import * as React from 'react';
-import './fonts/iconfont.css';
+import React from 'react';
 
 interface IconProps {
   type: string;

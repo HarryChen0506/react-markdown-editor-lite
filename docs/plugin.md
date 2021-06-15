@@ -179,7 +179,7 @@ Editor.use(Counter, {
 ### Function component
 You can aslo use function component to write a plugin
 ```js
-import * as React from 'react';
+import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 
 interface CounterState {

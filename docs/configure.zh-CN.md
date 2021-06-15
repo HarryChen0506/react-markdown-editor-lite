@@ -30,7 +30,7 @@ renderHTML支持返回HTML文本或ReactElement，例如，markdown-it返回的�
 请注意：onChange回调获取到的是当前状态的属性。如果renderHTML是异步进行，则text和html不一定完全对应。
 
 ```js
-import * as React from 'react';
+import React from 'react';
 import MdEditor from 'react-markdown-editor-lite';
 // 导入编辑器的样式
 import 'react-markdown-editor-lite/lib/index.css';

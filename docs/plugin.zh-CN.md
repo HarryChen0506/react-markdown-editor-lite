@@ -198,7 +198,7 @@ Editor.use(Counter, {
 ### 函数组件
 同样可以使用函数组件来编写插件
 ```js
-import * as React from 'react';
+import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 
 interface CounterState {
