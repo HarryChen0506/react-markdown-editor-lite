@@ -140,8 +140,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.handlePaste = this.handlePaste.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
     this.handleToggleMenu = this.handleToggleMenu.bind(this);
-    this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleEditorKeyDown = this.handleEditorKeyDown.bind(this);
     this.handleLocaleUpdate = this.handleLocaleUpdate.bind(this);
 
     this.handleFocus = this.handleFocus.bind(this);
@@ -297,7 +297,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
     if (isPromise(res)) {
       // @ts-ignore
       return res.then((r: HtmlType) => this.setHtml(r));
-    } if (typeof res === 'function') {
+    }
+    if (typeof res === 'function') {
       return this.setHtml(res());
     }
     return this.setHtml(res);
@@ -375,48 +376,48 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
-  // Handle key up
-  private handleKeyUp(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
     if (keyCode === 13 || key === 'Enter') {
       const text = e.currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
-      if (!lineInfo.prevLine) return;
 
-      const removeLastLine = () => {
-        if (!lineInfo.prevLine) return;
-        const newValue = currentTarget.value.substr(0, curPos - lineInfo.prevLine.length - 1) + currentTarget.value.substr(curPos);
+      const emptyCurrentLine = () => {
+        const newValue = currentTarget.value.substr(0, curPos - lineInfo.curLine.length) + currentTarget.value.substr(curPos);
         this.setText(newValue, undefined, {
-          start: curPos - lineInfo.prevLine.length - 1,
-          end: curPos - lineInfo.prevLine.length - 1,
+          start: curPos - lineInfo.curLine.length,
+          end: curPos - lineInfo.curLine.length,
         });
+        e.preventDefault();
+      };
+
+      const addSymbol = (symbol: string) => {
+        this.insertText(`\n${symbol}`, false, {
+          start: symbol.length + 1,
+          end: symbol.length + 1,
+        });
+        e.preventDefault();
       };
 
       // Enter key, check previous line
-      const isSymbol = lineInfo.prevLine.match(/^(\s?)([-*]) /);
+      const isSymbol = lineInfo.curLine.match(/^(\s?)([-*]) /);
       if (isSymbol) {
-        if (/^(\s?)([-*]) $/.test(lineInfo.prevLine)) {
-          removeLastLine();
+        if (/^(\s?)([-*]) $/.test(lineInfo.curLine)) {
+          emptyCurrentLine();
           return;
         }
-        this.insertText(isSymbol[0], false, {
-          start: isSymbol[0].length,
-          end: isSymbol[0].length,
-        });
+        addSymbol(isSymbol[0]);
         return;
       }
-      const isOrderList = lineInfo.prevLine.match(/^(\s?)(\d+)\. /);
+      const isOrderList = lineInfo.curLine.match(/^(\s?)(\d+)\. /);
       if (isOrderList) {
-        const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2], 10) + 1}. `;
-        if (/^(\s?)(\d+)\. $/.test(lineInfo.prevLine)) {
-          removeLastLine();
+        if (/^(\s?)(\d+)\. $/.test(lineInfo.curLine)) {
+          emptyCurrentLine();
           return;
         }
-        this.insertText(toInsert, false, {
-          start: toInsert.length,
-          end: toInsert.length,
-        });
+        const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2], 10) + 1}. `;
+        addSymbol(toInsert);
       }
     }
   }
@@ -578,11 +579,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {string} value
    * @param {any} event
    */
-  setText(
-    value: string = '',
-    event?: React.ChangeEvent<HTMLTextAreaElement>,
-    newSelection?: { start: number; end: number },
-  ) {
+  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, newSelection?: { start: number; end: number }) {
     const { onChangeTrigger = 'both' } = this.config;
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
@@ -823,22 +820,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
     const editorId = id ? `${id}_md` : undefined;
     const previewerId = id ? `${id}_html` : undefined;
     return (
-      <div
-        id={id}
-        className={`rc-md-editor ${fullScreen ? 'full' : ''}`}
-        style={this.props.style}
-        onKeyDown={this.handleKeyDown}
-        onDrop={this.handleDrop}
-      >
+      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
         <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
         <div className="editor-container">
           {showHideMenu && (
             <ToolBar>
-              <span
-                className="button button-type-menu"
-                title={isShowMenu ? 'hidden menu' : 'show menu'}
-                onClick={this.handleToggleMenu}
-              >
+              <span className="button button-type-menu" title={isShowMenu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
                 <Icon type={`expand-${isShowMenu ? 'less' : 'more'}`} />
               </span>
             </ToolBar>
@@ -856,20 +843,14 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
-              onKeyUp={this.handleKeyUp}
+              onKeyDown={this.handleEditorKeyDown}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
             />
           </section>
           <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
-            <div
-              id={previewerId}
-              className="section-container html-wrap"
-              ref={this.nodeMdPreviewWrapper}
-              onMouseOver={() => (this.shouldSyncScroll = 'html')}
-              onScroll={this.handlePreviewScroll}
-            >
+            <div id={previewerId} className="section-container html-wrap" ref={this.nodeMdPreviewWrapper} onMouseOver={() => (this.shouldSyncScroll = 'html')} onScroll={this.handlePreviewScroll}>
               <HtmlRender html={this.state.html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
             </div>
           </section>
