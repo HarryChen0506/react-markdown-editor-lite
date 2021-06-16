@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { expect } from 'chai';
-import React from 'react';
+import * as React from 'react';
 import Editor from '../src';
 
 const TextComponent = (props: { onClick: (ref: Editor) => void; value?: string }) => {

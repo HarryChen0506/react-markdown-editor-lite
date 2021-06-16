@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';

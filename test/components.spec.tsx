@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { expect } from 'chai';
-import React from 'react';
+import * as React from 'react';
 import DropList from '../src/components/DropList';
 import Icon from '../src/components/Icon';
 

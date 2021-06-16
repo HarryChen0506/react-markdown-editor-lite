@@ -1,5 +1,5 @@
 // HeaderList
-import React from 'react';
+import * as React from 'react';
 
 interface HeaderListProps {
   onSelectHeader?: (header: string) => void;

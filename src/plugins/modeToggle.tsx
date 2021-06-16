@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Icon from '../components/Icon';
 import i18n from '../i18n';
 import { PluginComponent } from './Plugin';

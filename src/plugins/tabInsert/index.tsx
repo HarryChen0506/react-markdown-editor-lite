@@ -4,7 +4,7 @@
  * see src/demo/index.tsx.
  */
 
-import React from 'react';
+import * as React from 'react';
 import { KeyboardEventListener } from '../../share/var';
 import { PluginComponent } from '../Plugin';
 import DropList from '../../components/DropList';
