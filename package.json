@@ -1,15 +1,16 @@
 {
   "name": "react-markdown-editor-lite",
-  "version": "1.2.5-8",
+  "version": "1.2.5-9",
   "description": "a light-weight Markdown editor based on React",
-  "main": "./es5/index.js",
-  "module": "./es/index.js",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
   "unpkg": "lib/index.js",
   "jsdelivr": "lib/index.js",
   "files": [
-    "es",
-    "es5",
+    "cjs",
+    "esm",
     "lib",
+    "preview",
     "package.json",
     "README.md"
   ],

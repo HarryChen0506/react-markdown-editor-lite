@@ -2,6 +2,13 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 
+const floderMap = {
+  es: 'esm',
+  lib: 'cjs',
+  dist: 'lib',
+  build: 'preview',
+};
+
 module.exports = ({ onGetWebpackConfig, onHook }) => {
   onGetWebpackConfig(config => {
     // 启用静态文件支持
@@ -23,35 +30,29 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
     if (config.output.get('libraryTarget') === 'umd') {
       const entries = config.entryPoints.entries();
       for (const it in entries) {
-        config.entryPoints.set("index", entries[it]);
+        config.entryPoints.set('index', entries[it]);
         config.entryPoints.delete(it);
       }
     }
   });
 
   onHook('before.build.run', () => {
-    fse.rmdirSync(path.join(__dirname, 'es'), { recursive: true });
-    fse.rmdirSync(path.join(__dirname, 'lib'), { recursive: true });
-    fse.rmdirSync(path.join(__dirname, 'es5'), { recursive: true });
-    fse.rmdirSync(path.join(__dirname, 'dist'), { recursive: true });
-    fse.rmdirSync(path.join(__dirname, 'preview'), { recursive: true });
-    fse.rmdirSync(path.join(__dirname, 'build'), { recursive: true });
+    const floders = [...Object.keys(floderMap), ...Object.values(floderMap)];
+    for (const it of floders) {
+      fse.rmdirSync(path.join(__dirname, it), { recursive: true });
+      console.log('Remove directory ' + it);
+    }
   });
 
   onHook('after.build.compile', () => {
-    if (fs.existsSync(path.join(__dirname, 'lib'))) {
-      fs.renameSync(path.join(__dirname, 'lib'), path.join(__dirname, 'es5'));
-      console.log("Rename lib to es5");
-    }
-    if (fs.existsSync(path.join(__dirname, 'dist'))) {
-      fs.renameSync(path.join(__dirname, 'dist'), path.join(__dirname, 'lib'));
-      console.log("Rename dist to lib");
-    }
-    if (fs.existsSync(path.join(__dirname, 'build'))) {
-      fs.renameSync(path.join(__dirname, 'build'), path.join(__dirname, 'preview'));
-      console.log("Rename build to preview");
+    const toRename = Object.keys(floderMap);
+    for (const it of toRename) {
+      if (fs.existsSync(path.join(__dirname, it))) {
+        fs.renameSync(path.join(__dirname, it), path.join(__dirname, floderMap[it]));
+        console.log('Rename ' + it + ' to ' + floderMap[it]);
+      }
     }
     const dirs = fs.readdirSync(__dirname);
-    console.log("Current files: ", dirs.join(" "));
+    console.log('Current files: ', dirs.join(' '));
   });
 };

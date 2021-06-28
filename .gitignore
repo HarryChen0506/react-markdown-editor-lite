@@ -19,8 +19,8 @@ node_modules/
 .npm
 
 # dist
-es
-es5
+esm
+cjs
 lib
 dist
 preview
