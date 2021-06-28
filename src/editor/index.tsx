@@ -21,6 +21,7 @@ interface EditorProps extends EditorConfig {
   value?: string;
   renderHTML: (text: string) => HtmlType | Promise<HtmlType> | (() => HtmlType);
   style?: React.CSSProperties;
+  autoFocus?: boolean;
   placeholder?: string;
   readOnly?: boolean;
   config?: any;
@@ -835,6 +836,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
               id={editorId}
               ref={this.nodeMdText}
               name={this.props.name || 'textarea'}
+              autoFocus={this.props.autoFocus}
               placeholder={this.props.placeholder}
               readOnly={this.props.readOnly}
               value={this.state.text}
