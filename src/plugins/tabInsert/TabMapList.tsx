@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import i18n from '../../i18n';
-import './TabMapList.less';
 
 interface TabMapListProps {
   value: number;
