@@ -2,7 +2,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 
-const floderMap = {
+const folderMap = {
   es: 'esm',
   lib: 'cjs',
   dist: 'lib',
@@ -37,7 +37,7 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
   });
 
   onHook('before.build.run', () => {
-    const floders = [...Object.keys(floderMap), ...Object.values(floderMap)];
+    const floders = [...Object.keys(folderMap), ...Object.values(folderMap)];
     for (const it of floders) {
       fse.rmdirSync(path.join(__dirname, it), { recursive: true });
       console.log('Remove directory ' + it);
@@ -45,11 +45,11 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
   });
 
   onHook('after.build.compile', () => {
-    const toRename = Object.keys(floderMap);
+    const toRename = Object.keys(folderMap);
     for (const it of toRename) {
       if (fs.existsSync(path.join(__dirname, it))) {
-        fs.renameSync(path.join(__dirname, it), path.join(__dirname, floderMap[it]));
-        console.log('Rename ' + it + ' to ' + floderMap[it]);
+        fs.renameSync(path.join(__dirname, it), path.join(__dirname, folderMap[it]));
+        console.log('Rename ' + it + ' to ' + folderMap[it]);
       }
     }
     const dirs = fs.readdirSync(__dirname);
