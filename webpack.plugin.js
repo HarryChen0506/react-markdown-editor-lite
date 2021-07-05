@@ -37,8 +37,8 @@ module.exports = ({ onGetWebpackConfig, onHook }) => {
   });
 
   onHook('before.build.run', () => {
-    const floders = [...Object.keys(folderMap), ...Object.values(folderMap)];
-    for (const it of floders) {
+    const folders = [...Object.keys(folderMap), ...Object.values(folderMap)];
+    for (const it of folders) {
       fse.rmdirSync(path.join(__dirname, it), { recursive: true });
       console.log('Remove directory ' + it);
     }
