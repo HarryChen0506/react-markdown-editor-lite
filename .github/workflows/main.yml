@@ -51,8 +51,8 @@ jobs:
       with:
         name: lib
         path: |
-          es
-          es5
+          esm
+          cjs
           lib
           preview
     - name: Upload coverage
