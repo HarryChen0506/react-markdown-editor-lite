@@ -3,7 +3,9 @@ import { PluginComponent } from './Plugin';
 
 export default class AutoResize extends PluginComponent {
   static pluginName = 'auto-resize';
+
   static align = 'left';
+
   static defaultConfig = {
     min: 200,
     max: Infinity,
@@ -11,6 +13,7 @@ export default class AutoResize extends PluginComponent {
   };
 
   private timer: number | null = null;
+
   private useTimer: boolean;
 
   constructor(props: any) {
@@ -26,7 +29,7 @@ export default class AutoResize extends PluginComponent {
     const resizeElement = (e: HTMLElement) => {
       e.style.height = 'auto';
       const height = Math.min(Math.max(this.getConfig('min'), e.scrollHeight), this.getConfig('max'));
-      e.style.height = height + 'px';
+      e.style.height = `${height}px`;
       return height;
     };
 
@@ -38,7 +41,7 @@ export default class AutoResize extends PluginComponent {
     if (el && view.md) {
       const height = resizeElement(el);
       if (previewer) {
-        previewer.style.height = height + 'px';
+        previewer.style.height = `${height}px`;
       }
       return;
     }

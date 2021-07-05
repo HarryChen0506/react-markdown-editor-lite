@@ -47,12 +47,16 @@ jobs:
     - name: Coverage
       run: yarn run coverage
     - name: Upload bundles
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: lib
-        path: lib
+        path: |
+          esm
+          cjs
+          lib
+          preview
     - name: Upload coverage
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: coverage
         path: coverage

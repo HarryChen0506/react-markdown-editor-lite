@@ -9,10 +9,12 @@ export interface PreviewProps {
 
 export abstract class Preview<T extends HTMLElement> extends React.Component<PreviewProps, any> {
   protected el: React.RefObject<T>;
+
   constructor(props: any) {
     super(props);
     this.el = React.createRef();
   }
+
   abstract getHtml(): string;
 
   getElement(): T | null {
@@ -31,25 +33,25 @@ export class HtmlRender extends Preview<HTMLDivElement> {
     }
     if (this.el.current) {
       return this.el.current.innerHTML;
-    } else {
-      return '';
     }
+    return '';
   }
+
   render() {
     return typeof this.props.html === 'string'
       ? React.createElement('div', {
-          ref: this.el,
-          dangerouslySetInnerHTML: { __html: this.props.html },
-          className: this.props.className || 'custom-html-style',
-        })
+        ref: this.el,
+        dangerouslySetInnerHTML: { __html: this.props.html },
+        className: this.props.className || 'custom-html-style',
+      })
       : React.createElement(
-          'div',
-          {
-            ref: this.el,
-            className: this.props.className || 'custom-html-style',
-          },
-          this.props.html,
-        );
+        'div',
+        {
+          ref: this.el,
+          className: this.props.className || 'custom-html-style',
+        },
+        this.props.html,
+      );
   }
 }
 

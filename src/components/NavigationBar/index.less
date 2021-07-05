@@ -30,7 +30,8 @@
       position: relative;
       min-width: 24px;
       height: 28px;
-      margin-right: 5px;
+      margin-left: 3px;
+      margin-right: 3px;
       display: inline-block;
       cursor: pointer;
       line-height: 28px;
@@ -42,6 +43,13 @@
       &.disabled {
         color: #bdbdbd; // grey lighten-1
         cursor: not-allowed;
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
       }
     }
 

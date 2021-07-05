@@ -16,15 +16,16 @@ enum NEXT_ACTION {
   SHOW_HTML,
 }
 
-export default class ModeToggle extends PluginComponent<ModeToggleState> {
+class ModeToggle extends PluginComponent<ModeToggleState> {
   static pluginName = 'mode-toggle';
+
   static align = 'right';
 
   private get isDisplay() {
     const { canView } = this.editorConfig;
     if (canView) {
       // 至少有两种情况可以显示的时候，才会显示切换按钮
-      return [canView.html, canView.md, canView.both].filter(it => it).length >= 2;
+      return [canView.html, canView.md, canView.both].filter((it) => it).length >= 2;
     }
     return false;
   }
@@ -117,7 +118,7 @@ export default class ModeToggle extends PluginComponent<ModeToggleState> {
   }
 
   getDisplayInfo() {
-    const next = this.next;
+    const { next } = this;
     switch (next) {
       case NEXT_ACTION.SHOW_ALL:
         return {
@@ -143,14 +144,15 @@ export default class ModeToggle extends PluginComponent<ModeToggleState> {
       return (
         <span
           className="button button-type-mode"
-          title={i18n.get('btnMode' + display.title)}
+          title={i18n.get(`btnMode${display.title}`)}
           onClick={this.handleClick}
         >
           <Icon type={display.icon} />
         </span>
       );
-    } else {
-      return null;
     }
+    return null;
   }
 }
+
+export default ModeToggle;

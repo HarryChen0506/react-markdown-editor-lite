@@ -1,10 +1,9 @@
 import * as React from 'react';
-import './table.less';
 
 interface TableListProps {
   maxRow?: number;
   maxCol?: number;
-  visiblity: boolean;
+  visibility: boolean;
   onSetTable?: (table: { row: number; col: number }) => void;
 }
 
@@ -33,9 +32,7 @@ class TableList extends React.Component<TableListProps, TableListState> {
 
   formatTableModel(maxRow = 0, maxCol = 0) {
     const result = new Array(maxRow).fill(undefined);
-    return result.map(_ => {
-      return new Array(maxCol).fill(0);
-    });
+    return result.map((_) => new Array(maxCol).fill(0));
   }
 
   calcWrapStyle() {
@@ -61,11 +58,7 @@ class TableList extends React.Component<TableListProps, TableListState> {
 
   private getList(i: number, j: number) {
     const { list } = this.state;
-    return list.map((v, row) => {
-      return v.map((_, col) => {
-        return row <= i && col <= j ? 1 : 0;
-      });
-    });
+    return list.map((v, row) => v.map((_, col) => (row <= i && col <= j ? 1 : 0)));
   }
 
   handleHover(i: number, j: number) {
@@ -85,7 +78,7 @@ class TableList extends React.Component<TableListProps, TableListState> {
   }
 
   componentDidUpdate(prevProps: TableListProps) {
-    if (this.props.visiblity === false && prevProps.visiblity !== this.props.visiblity) {
+    if (this.props.visibility === false && prevProps.visibility !== this.props.visibility) {
       this.setState({
         list: this.getList(-1, -1),
       });
@@ -95,19 +88,15 @@ class TableList extends React.Component<TableListProps, TableListState> {
   render() {
     return (
       <ul className="table-list wrap" style={this.calcWrapStyle()}>
-        {this.state.list.map((row, i) => {
-          return row.map((col, j) => {
-            return (
-              <li
-                className={`list-item ${col === 1 ? 'active' : ''}`}
-                key={`${i}-${j}`}
-                style={this.calcItemStyle(i, j)}
-                onMouseOver={this.handleHover.bind(this, i, j)}
-                onClick={this.handleSetTable.bind(this, i, j)}
-              />
-            );
-          });
-        })}
+        {this.state.list.map((row, i) => row.map((col, j) => (
+          <li
+            className={`list-item ${col === 1 ? 'active' : ''}`}
+            key={`${i}-${j}`}
+            style={this.calcItemStyle(i, j)}
+            onMouseOver={this.handleHover.bind(this, i, j)}
+            onClick={this.handleSetTable.bind(this, i, j)}
+          />
+        )))}
       </ul>
     );
   }

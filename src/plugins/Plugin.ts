@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Editor from '../editor';
+import type Editor from '../editor';
 import { EditorConfig } from '../share/var';
 
 export interface PluginProps {
@@ -10,7 +10,9 @@ export interface PluginProps {
 
 export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProps> extends React.Component<P, S> {
   static pluginName: string = '';
+
   static align: string = 'left';
+
   static defaultConfig = {};
 
   protected get editor(): Editor {
@@ -19,10 +21,6 @@ export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProp
 
   protected get editorConfig(): EditorConfig {
     return this.props.editorConfig;
-  }
-
-  constructor(props: P) {
-    super(props);
   }
 
   protected getConfig(key: string, defaultValue?: any) {

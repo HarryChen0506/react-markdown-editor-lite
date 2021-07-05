@@ -10,6 +10,7 @@ class Emitter extends EventEmitter {
   EVENT_SCROLL = 'a7';
   EVENT_LANG_CHANGE = 'b1';
 }
-const emitter = new Emitter();
+const globalEmitter = new Emitter();
 
-export default emitter;
+export { globalEmitter };
+export default Emitter;

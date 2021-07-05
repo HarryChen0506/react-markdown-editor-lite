@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../../plugins/Plugin';
+import { PluginComponent } from '../Plugin';
 import { KeyboardEventListener } from '../../share/var';
 import LoggerPlugin from './logger';
 
@@ -11,8 +11,11 @@ export default class Logger extends PluginComponent {
   static pluginName = 'logger';
 
   private logger: LoggerPlugin;
+
   private timerId?: number;
+
   private handleKeyboards: KeyboardEventListener[] = [];
+
   private lastPop: string | null = null;
 
   constructor(props: any) {
@@ -80,20 +83,23 @@ export default class Logger extends PluginComponent {
     // 监听变化事件
     this.editor.on('change', this.handleChange);
     // 监听键盘事件
-    this.handleKeyboards.forEach(it => this.editor.onKeyboard(it));
+    this.handleKeyboards.forEach((it) => this.editor.onKeyboard(it));
     // 初始化时，把已有值填充进logger
     this.logger.initValue = this.editor.getMdValue();
     this.forceUpdate();
   }
 
   componentWillUnmount() {
+    if (this.timerId) {
+      window.clearTimeout(this.timerId);
+    }
     this.editor.off('change', this.handleChange);
-    this.handleKeyboards.forEach(it => this.editor.offKeyboard(it));
+    this.handleKeyboards.forEach((it) => this.editor.offKeyboard(it));
   }
 
   pause() {
     if (this.timerId) {
-      clearInterval(this.timerId);
+      window.clearTimeout(this.timerId);
       this.timerId = undefined;
     }
   }
@@ -102,7 +108,7 @@ export default class Logger extends PluginComponent {
     const hasUndo = this.logger.getUndoCount() > 1 || this.logger.initValue !== this.editor.getMdValue();
     const hasRedo = this.logger.getRedoCount() > 0;
     return (
-      <React.Fragment>
+      <>
         <span
           className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`}
           title={i18n.get('btnUndo')}
@@ -117,7 +123,7 @@ export default class Logger extends PluginComponent {
         >
           <Icon type="redo" />
         </span>
-      </React.Fragment>
+      </>
     );
   }
 }

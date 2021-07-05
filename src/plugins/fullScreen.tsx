@@ -9,6 +9,7 @@ interface FullScreenState {
 
 export default class FullScreen extends PluginComponent<FullScreenState> {
   static pluginName = 'full-screen';
+
   static align = 'right';
 
   constructor(props: any) {
@@ -50,8 +51,7 @@ export default class FullScreen extends PluginComponent<FullScreenState> {
           <Icon type={enable ? 'fullscreen-exit' : 'fullscreen'} />
         </span>
       );
-    } else {
-      return null;
     }
+    return null;
   }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../../plugins/Plugin';
+import { PluginComponent } from '../Plugin';
 import { isPromise } from '../../utils/tool';
 import getUploadPlaceholder from '../../utils/uploadPlaceholder';
 import InputFile from './inputFile';
@@ -52,7 +52,7 @@ export default class Image extends PluginComponent<State> {
     if (onCustomImageUpload) {
       const res = onCustomImageUpload.call(this, e);
       if (isPromise(res)) {
-        res.then(result => {
+        res.then((result) => {
           if (result && result.url) {
             this.editor.insertMarkdown('image', {
               target: result.text,

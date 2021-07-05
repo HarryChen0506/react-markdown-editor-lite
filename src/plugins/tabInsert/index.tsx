@@ -23,6 +23,7 @@ interface TabInsertState {
 
 export default class TabInsert extends PluginComponent<TabInsertState> {
   static pluginName = 'tab-insert';
+
   static defaultConfig = {
     tabMapValue: 1,
   };

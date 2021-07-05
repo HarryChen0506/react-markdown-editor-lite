@@ -80,6 +80,18 @@ Editor.use(Plugins.TabInsert, {
   tabMapValue: 1,
 });
 ```
+### Insert dividers
+
+`divider` is a special plugin, you can not unuse it, and you also shouldn't use it. If you want to insert a divider into toolbar, just put `divider` into the `plugins` array.
+
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+const plugins = ['header', 'table', 'divider', 'link', 'clear', 'divider', 'font-bold'];
+
+<Editor plugins={plugins} />
+```
+
 ## Demo
 ```js
 import Editor, { Plugins }  from 'react-markdown-editor-lite';
@@ -94,9 +106,11 @@ Editor.unuse(Plugins.Header);
 const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
 <Editor plugins={plugins} />
 ```
+
 ## Written a plugin
-### Demo
-[View online](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+### Demos
+* [Demo](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
+* [SSR Demo](https://codesandbox.io/s/next-js-80bne)
 ### Normal
 Plugin is a React Component, and must extend PluginComponent.
 
@@ -165,7 +179,7 @@ Editor.use(Counter, {
 ### Function component
 You can aslo use function component to write a plugin
 ```js
-import * as React from 'react';
+import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 
 interface CounterState {

@@ -1,5 +1,5 @@
 # 插件
-[English documention see here](./plugin.md)
+[English documentation see here](./plugin.md)
 ## 插件可以干什么？
 插件可以往工具栏添加按钮，并操作编辑器的内容。
 ## 使用和卸载插件
@@ -80,6 +80,17 @@ Editor.use(Plugins.TabInsert, {
   tabMapValue: 1,
 });
 ```
+### 插入分隔线
+
+`divider` 是一个特殊的插件，你不能卸载它，但你也不需要手动添加它。如果你想在工具栏上插入一个分隔符，将 `divider` 添加到 `plugins` 数组中即可。
+
+```js
+import Editor, { Plugins } from 'react-markdown-editor-lite';
+
+const plugins = ['header', 'table', 'divider', 'link', 'clear', 'divider', 'font-bold'];
+
+<Editor plugins={plugins} />
+```
 ## Demo
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
@@ -93,6 +104,29 @@ Editor.unuse(Plugins.Header);
 // 这里去掉了内置的image插件，仅单个编辑器生效
 const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mode-toggle', 'full-screen'];
 <Editor plugins={plugins} />
+```
+## 带自定义插件的NextJS Demo
+```js
+import dynamic from "next/dynamic";
+import ReactMarkdown from "react-markdown";
+import "react-markdown-editor-lite/lib/index.css";
+
+const MdEditor = dynamic(
+  () => {
+    return new Promise((resolve) => {
+      Promise.all([
+        import("react-markdown-editor-lite"),
+        import("./plugin")
+      ]).then((res) => {
+        res[0].default.use(res[1].default);
+        resolve(res[0].default);
+      });
+    });
+  },
+  {
+    ssr: false
+  }
+);
 ```
 ## 编写插件
 ### Demo
@@ -164,7 +198,7 @@ Editor.use(Counter, {
 ### 函数组件
 同样可以使用函数组件来编写插件
 ```js
-import * as React from 'react';
+import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
 
 interface CounterState {
