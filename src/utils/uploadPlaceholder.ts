@@ -1,11 +1,11 @@
+import { v4 as uuid } from 'uuid';
 import { UploadFunc } from '../share/var';
-import * as uuid from 'uuid/v4';
 import getDecorated from './decorate';
 import { isPromise } from './tool';
 
 function getUploadPlaceholder(file: File, onImageUpload: UploadFunc) {
   const placeholder = getDecorated('', 'image', {
-    target: 'Uploading_' + uuid(),
+    target: `Uploading_${uuid()}`,
     imageUrl: '',
   }).text;
   const uploaded = new Promise((resolve: (url: string) => void) => {
