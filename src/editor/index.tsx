@@ -24,6 +24,7 @@ interface EditorProps extends EditorConfig {
   autoFocus?: boolean;
   placeholder?: string;
   readOnly?: boolean;
+  className?: string;
   config?: any;
   plugins?: string[];
   // Configs
@@ -821,7 +822,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     const editorId = id ? `${id}_md` : undefined;
     const previewerId = id ? `${id}_html` : undefined;
     return (
-      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
+      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''} ${this.props.className ?? ''}`} style={this.props.style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
         <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
         <div className="editor-container">
           {showHideMenu && (
