@@ -43,6 +43,7 @@ interface EditorState {
   text: string;
   html: HtmlType;
   fullScreen: boolean;
+  composing: boolean;
   plugins: { [x: string]: React.ReactElement[] };
   view: {
     menu: boolean;
@@ -127,6 +128,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       html: '',
       view: this.config.view || defaultConfig.view!,
       fullScreen: false,
+      composing: false,
       plugins: this.getPlugins(),
     };
 
@@ -379,7 +381,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
-    if (keyCode === 13 || key === 'Enter') {
+    if ((keyCode === 13 || key === 'Enter') && this.state.composing === false) {
       const text = e.currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
@@ -846,6 +848,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onKeyDown={this.handleEditorKeyDown}
+              onCompositionStart={() => this.setState({ composing: true })}
+              onCompositionEnd={() => this.setState({ composing: false })}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
