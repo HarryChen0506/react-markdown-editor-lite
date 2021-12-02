@@ -816,15 +816,15 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
+    const { view, fullScreen, text, html } = this.state;
+    const { id, className = "", style, name = "textarea", autoFocus, placeholder, readOnly } = this.props;
     const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
-    const { view, fullScreen } = this.state;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
-    const { id } = this.props;
     const editorId = id ? `${id}_md` : undefined;
     const previewerId = id ? `${id}_html` : undefined;
     return (
-      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''} ${this.props.className ?? ''}`} style={this.props.style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
+      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''} ${className}`} style={style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
         <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
         <div className="editor-container">
           {showHideMenu && (
@@ -838,11 +838,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
             <textarea
               id={editorId}
               ref={this.nodeMdText}
-              name={this.props.name || 'textarea'}
-              autoFocus={this.props.autoFocus}
-              placeholder={this.props.placeholder}
-              readOnly={this.props.readOnly}
-              value={this.state.text}
+              name={name}
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              value={text}
               className={`section-container input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
@@ -858,7 +858,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           </section>
           <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
             <div id={previewerId} className="section-container html-wrap" ref={this.nodeMdPreviewWrapper} onMouseOver={() => (this.shouldSyncScroll = 'html')} onScroll={this.handlePreviewScroll}>
-              <HtmlRender html={this.state.html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
+              <HtmlRender html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
             </div>
           </section>
         </div>
