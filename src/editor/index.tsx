@@ -113,6 +113,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private hasContentChanged = true;
 
+  private composing = false;
+
   private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
 
   private handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
@@ -380,7 +382,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
-    if (keyCode === 13 || key === 'Enter') {
+    if ((keyCode === 13 || key === 'Enter') && this.composing === false) {
       const text = e.currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
@@ -847,6 +849,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onKeyDown={this.handleEditorKeyDown}
+              onCompositionStart={() => this.composing = true}
+              onCompositionEnd={() => this.composing = false}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
