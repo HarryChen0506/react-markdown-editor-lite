@@ -70,7 +70,7 @@
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
     "lint-staged": "^10.0.2",
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^12.3.2",
     "mocha": "^5.2.0",
     "mochawesome": "^4.1.0",
     "nyc": "^15.0.0",
