@@ -1,13 +1,21 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../Plugin';
+import { PluginComponent, PluginProps } from '../Plugin';
 import { KeyboardEventListener } from '../../share/var';
 import LoggerPlugin from './logger';
 
 const LOGGER_INTERVAL = 600;
 
-export default class Logger extends PluginComponent {
+interface State {}
+interface Props extends PluginProps {
+  config: {
+    loggerInterval?: number;
+    maxLogSize?: number;
+  };
+}
+
+export default class Logger extends PluginComponent<State, Props> {
   static pluginName = 'logger';
 
   private logger: LoggerPlugin;
@@ -31,7 +39,9 @@ export default class Logger extends PluginComponent {
       { key: 'z', keyCode: 90, aliasCommand: true, withKey: ['ctrlKey'], callback: this.handleUndo },
     ];
 
-    this.logger = new LoggerPlugin();
+    this.logger = new LoggerPlugin({
+      maxLogSize: this.props.config.maxLogSize,
+    });
   }
 
   private handleUndo() {
@@ -68,15 +78,18 @@ export default class Logger extends PluginComponent {
       window.clearTimeout(this.timerId);
       this.timerId = 0;
     }
-    this.timerId = window.setTimeout(() => {
-      if (this.logger.getLast() !== value) {
-        this.logger.push(value);
-        this.lastPop = null;
-        this.forceUpdate();
-      }
-      window.clearTimeout(this.timerId);
-      this.timerId = 0;
-    }, LOGGER_INTERVAL);
+    this.timerId = window.setTimeout(
+      () => {
+        if (this.logger.getLast() !== value) {
+          this.logger.push(value);
+          this.lastPop = null;
+          this.forceUpdate();
+        }
+        window.clearTimeout(this.timerId);
+        this.timerId = 0;
+      },
+      typeof this.props.config.loggerInterval === 'number' ? this.props.config.loggerInterval : LOGGER_INTERVAL,
+    );
   }
 
   componentDidMount() {

@@ -4,17 +4,31 @@
 
 const MAX_LOG_SIZE = 100;
 
+interface LoggerProps {
+  maxLogSize?: number;
+}
+
 class Logger {
   private record: string[] = [];
 
   private recycle: string[] = [];
 
+  config = {
+    maxLogSize: MAX_LOG_SIZE,
+  };
+
   initValue: string = '';
+
+  constructor(props?: LoggerProps) {
+    this.config = {
+      maxLogSize: typeof props?.maxLogSize === 'number' ? props.maxLogSize : MAX_LOG_SIZE,
+    };
+  }
 
   push(val: string) {
     const result = this.record.push(val);
     // 如果超过了最长限制，把之前的清理掉，避免造成内存浪费
-    while (this.record.length > MAX_LOG_SIZE) {
+    while (this.record.length > this.config.maxLogSize) {
       this.record.shift();
     }
     return result;
@@ -25,7 +39,7 @@ class Logger {
   }
 
   getLast(): string {
-    const length = this.record.length;
+    const { length } = this.record;
     return this.record[length - 1];
   }
 
