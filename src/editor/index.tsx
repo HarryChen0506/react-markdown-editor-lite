@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { v4 as uuid } from 'uuid';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -235,6 +236,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       if (typeof result[it.comp.align] === 'undefined') {
         result[it.comp.align] = [];
       }
+      const key = it.comp.pluginName === 'divider' ? uuid() : it.comp.pluginName;
       result[it.comp.align].push(
         React.createElement(it.comp, {
           editor: this,
@@ -243,7 +245,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             ...(it.comp.defaultConfig || {}),
             ...(it.config || {}),
           },
-          key: it.comp.pluginName,
+          key,
         }),
       );
     });
@@ -719,7 +721,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten events
+   * Un-listen events
    * @param {EditorEvent} event Event type
    * @param {any} cb Callback
    */
@@ -878,8 +880,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onKeyDown={this.handleEditorKeyDown}
-              onCompositionStart={() => this.composing = true}
-              onCompositionEnd={() => this.composing = false}
+              onCompositionStart={() => (this.composing = true)}
+              onCompositionEnd={() => (this.composing = false)}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
