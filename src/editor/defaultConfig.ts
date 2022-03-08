@@ -29,6 +29,7 @@ const defaultConfig: EditorConfig = {
   onImageUpload: undefined,
   onCustomImageUpload: undefined,
   shortcuts: true,
+  onChangeTrigger: 'both',
 };
 
 export default defaultConfig;
