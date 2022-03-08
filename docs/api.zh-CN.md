@@ -203,7 +203,7 @@ offKeyboard(data: KeyboardEventListener): void;
   * 可显示或隐藏：编辑器，预览区域，菜单栏
   * @param enable
   */
-setView(to: {
+setView({
     md?: boolean;
     menu?: boolean;
     html?: boolean;

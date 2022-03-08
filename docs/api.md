@@ -200,7 +200,7 @@ offKeyboard(data: KeyboardEventListener): void;
   * You can hide or show: editor(md), preview(html), menu bar(menu)
   * @param enable
   */
-setView(to: {
+setView({
     md?: boolean;
     menu?: boolean;
     html?: boolean;
