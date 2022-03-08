@@ -2,8 +2,8 @@
 [中文文档见此](./plugin.zh-CN.md)
 ## What can plugins do?
 Plugins can insert buttons into menu bar, and control editor's content.
-## Use or unuse a plugin
-See [API documention](./api.md)
+## Use or un-use a plugin
+See [API documentation](./api.md)
 ## Built-in plugins
 ### Plugins list
 Those plugins are built-in plugin:
@@ -53,7 +53,7 @@ Those plugins are built-in plugin:
 
 * If you enabled `logger` plugin, it will auto register `undo` and `redo` API, you can use them with `callApi`.
 
-### Unuse a built-in plugin
+### Un-use a built-in plugin
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 
@@ -85,7 +85,7 @@ Editor.use(Plugins.TabInsert, {
 ```
 ### Insert dividers
 
-`divider` is a special plugin, you can not unuse it, and you also shouldn't use it. If you want to insert a divider into toolbar, just put `divider` into the `plugins` array.
+`divider` is a special plugin, you can not un-use it, and you also shouldn't use it. If you want to insert a divider into toolbar, just put `divider` into the `plugins` array.
 
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
@@ -133,7 +133,7 @@ interface CounterState {
 class Counter extends PluginComponent<CounterState> {
   // Define plugin name here, must be unique
   static pluginName = 'counter';
-  // Define which place to be render, default is left, you can aslo use 'right'
+  // Define which place to be render, default is left, you can also use 'right'
   static align = 'left';
   // Define default config if required
   static defaultConfig = {
@@ -180,7 +180,7 @@ Editor.use(Counter, {
 ```
 
 ### Function component
-You can aslo use function component to write a plugin
+You can also use function component to write a plugin
 ```js
 import React from 'react';
 import { PluginProps } from 'react-markdown-editor-lite';
