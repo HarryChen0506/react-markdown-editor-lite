@@ -115,6 +115,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private composing = false;
 
+  private pluginApis = new Map<string, any>();
+
   private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
 
   private handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
@@ -771,6 +773,33 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
+   * Register a plugin API
+   * @param {string} name API name
+   * @param {any} cb callback
+   */
+  registerApi(name: string, cb: any) {
+    this.pluginApis.set(name, cb);
+  }
+
+  unregisterApi(name: string) {
+    this.pluginApis.delete(name);
+  }
+
+  /**
+   * Call a plugin API
+   * @param {string} name API name
+   * @param {any} others arguments
+   * @returns {any}
+   */
+  callApi<T = any>(name: string, ...others: any): T {
+    const handler = this.pluginApis.get(name);
+    if (!handler) {
+      throw new Error(`API ${name} not found`);
+    }
+    return handler(...others);
+  }
+
+  /**
    * Is full screen
    * @return {boolean}
    */
@@ -817,7 +846,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   render() {
     const { view, fullScreen, text, html } = this.state;
-    const { id, className = "", style, name = "textarea", autoFocus, placeholder, readOnly } = this.props;
+    const { id, className = '', style, name = 'textarea', autoFocus, placeholder, readOnly } = this.props;
     const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;

@@ -50,6 +50,9 @@ Those plugins are built-in plugin:
   'tab-insert'
 ]
 ```
+
+* If you enabled `logger` plugin, it will auto register `undo` and `redo` API, you can use them with `callApi`.
+
 ### Unuse a built-in plugin
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';

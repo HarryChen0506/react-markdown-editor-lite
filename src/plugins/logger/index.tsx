@@ -32,6 +32,9 @@ export default class Logger extends PluginComponent {
     ];
 
     this.logger = new LoggerPlugin();
+    // 注册API
+    this.editor.registerApi('undo', this.handleUndo);
+    this.editor.registerApi('redo', this.handleRedo);
   }
 
   private handleUndo() {
