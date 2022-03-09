@@ -662,7 +662,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten keyboard events
+   * Un-listen keyboard events
    * @param {KeyboardEventListener} data
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {

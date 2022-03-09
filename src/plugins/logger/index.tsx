@@ -56,12 +56,13 @@ export default class Logger extends PluginComponent {
     }
   }
 
-  handleChange(value: string, e: any, isChange: boolean) {
+  handleChange(value: string, e: any, isNotInput: boolean) {
     if (this.logger.getLast() === value || (this.lastPop !== null && this.lastPop === value)) {
       return;
     }
     this.logger.cleanRedo();
-    if (isChange) {
+    if (isNotInput) {
+      // from setText API call, not a input
       this.logger.push(value);
       this.lastPop = null;
       this.forceUpdate();
