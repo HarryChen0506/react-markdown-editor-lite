@@ -1,6 +1,6 @@
 ---
 name: BUG
-about: Report bugs
+about: Report bugs  报告 BUG
 title: "[BUG]"
 labels: bug
 assignees: ''
