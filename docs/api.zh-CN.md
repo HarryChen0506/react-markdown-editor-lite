@@ -49,8 +49,8 @@ const MyEditor = () => {
  * @param {string} name API名称
  * @param {any} cb 回调
  */
-registerApi(name: string, cb: any): void;
-unregisterApi(name: string): void;
+registerPluginApi(name: string, cb: any): void;
+unregisterPluginApi(name: string): void;
 
 /**
  * 调用插件API
@@ -58,18 +58,18 @@ unregisterApi(name: string): void;
  * @param {any} others 参数
  * @returns {any}
  */
-callApi<T = any>(name: string, ...others: any): T;
+callPluginApi<T = any>(name: string, ...others: any): T;
 ```
 
 例如：
 ```js
 // 在你的插件中注册API
-this.editor.registerApi("my-api", (number1, number2) => {
+this.editor.registerPluginApi("my-api", (number1, number2) => {
   console.log(number1 + number2);
 });
 
 // 通过编辑器的ref调用API
-editorRef.current.callApi("my-api", 1, 2);
+editorRef.current.callPluginApi("my-api", 1, 2);
 ```
 
 ## 操作选中区域

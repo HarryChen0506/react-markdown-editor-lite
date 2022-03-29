@@ -779,11 +779,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {string} name API name
    * @param {any} cb callback
    */
-  registerApi(name: string, cb: any) {
+  registerPluginApi(name: string, cb: any) {
     this.pluginApis.set(name, cb);
   }
 
-  unregisterApi(name: string) {
+  unregisterPluginApi(name: string) {
     this.pluginApis.delete(name);
   }
 
@@ -793,7 +793,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {any} others arguments
    * @returns {any}
    */
-  callApi<T = any>(name: string, ...others: any): T {
+  callPluginApi<T = any>(name: string, ...others: any): T {
     const handler = this.pluginApis.get(name);
     if (!handler) {
       throw new Error(`API ${name} not found`);

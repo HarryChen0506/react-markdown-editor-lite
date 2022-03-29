@@ -48,8 +48,8 @@ Plugin can export some methods to users.
  * @param {string} name API name
  * @param {any} cb callback
  */
-registerApi(name: string, cb: any): void;
-unregisterApi(name: string): void;
+registerPluginApi(name: string, cb: any): void;
+unregisterPluginApi(name: string): void;
 
 /**
  * Call a plugin API
@@ -57,18 +57,18 @@ unregisterApi(name: string): void;
  * @param {any} others arguments
  * @returns {any}
  */
-callApi<T = any>(name: string, ...others: any): T;
+callPluginApi<T = any>(name: string, ...others: any): T;
 ```
 
 Example:
 ```js
 // Register API in your plugin
-this.editor.registerApi("my-api", (number1, number2) => {
+this.editor.registerPluginApi("my-api", (number1, number2) => {
   console.log(number1 + number2);
 });
 
 // Call API with editor's ref
-editorRef.current.callApi("my-api", 1, 2);
+editorRef.current.callPluginApi("my-api", 1, 2);
 ```
 
 ## Selected

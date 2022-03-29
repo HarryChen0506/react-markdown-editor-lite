@@ -51,7 +51,7 @@ Those plugins are built-in plugin:
 ]
 ```
 
-* If you enabled `logger` plugin, it will auto register `undo` and `redo` API, you can use them with `callApi`.
+* If you enabled `logger` plugin, it will auto register `undo` and `redo` API, you can use them with `callPluginApi`.
 
 ### Un-use a built-in plugin
 ```js

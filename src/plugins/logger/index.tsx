@@ -1,13 +1,11 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent, PluginProps } from '../Plugin';
 import { KeyboardEventListener } from '../../share/var';
+import { PluginComponent } from '../Plugin';
 import LoggerPlugin from './logger';
 
-interface State {}
-
-export default class Logger extends PluginComponent<State, PluginProps> {
+export default class Logger extends PluginComponent {
   static pluginName = 'logger';
 
   private logger: LoggerPlugin;
@@ -35,8 +33,8 @@ export default class Logger extends PluginComponent<State, PluginProps> {
       maxSize: this.editorConfig.loggerMaxSize,
     });
     // 注册API
-    this.editor.registerApi('undo', this.handleUndo);
-    this.editor.registerApi('redo', this.handleRedo);
+    this.editor.registerPluginApi('undo', this.handleUndo);
+    this.editor.registerPluginApi('redo', this.handleRedo);
   }
 
   private handleUndo() {
@@ -100,6 +98,8 @@ export default class Logger extends PluginComponent<State, PluginProps> {
       window.clearTimeout(this.timerId);
     }
     this.editor.off('change', this.handleChange);
+    this.editor.unregisterPluginApi('undo');
+    this.editor.unregisterPluginApi('redo');
     this.handleKeyboards.forEach((it) => this.editor.offKeyboard(it));
   }
 
