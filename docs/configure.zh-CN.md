@@ -17,6 +17,8 @@
 | markdownClass | 编辑区域的className | String | `''` |  |
 | imageUrl | 当没有定义上传函数时，默认插入的图片 | String | `''` |  |
 | linkUrl | 默认插入的链接日志 | String | `''` |  |
+| loggerMaxSize | 历史记录最大容量（条） | number | 100 |  |
+| loggerInterval | 历史记录触发间隔（ms） | number | 600 |  |
 | table | 通过菜单栏创建表格的最大行、列 | Object | `{maxRow: 4, maxCol: 6}` | |
 | syncScrollMode | 同步滚动预览区域与编辑区域 | Array | `['rightFollowLeft', 'leftFollowRight']` | |
 | imageAccept | 接受上传的图片类型，例如`.jpg,.png` | String | `''` | |

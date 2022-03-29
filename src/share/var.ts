@@ -25,6 +25,8 @@ export interface EditorConfig {
   imageUrl?: string;
   imageAccept?: string;
   linkUrl?: string;
+  loggerMaxSize?: number;
+  loggerInterval?: number;
   table?: {
     maxRow: number;
     maxCol: number;

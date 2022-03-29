@@ -5,17 +5,9 @@ import { PluginComponent, PluginProps } from '../Plugin';
 import { KeyboardEventListener } from '../../share/var';
 import LoggerPlugin from './logger';
 
-const LOGGER_INTERVAL = 600;
-
 interface State {}
-interface Props extends PluginProps {
-  config: {
-    loggerInterval?: number;
-    maxLogSize?: number;
-  };
-}
 
-export default class Logger extends PluginComponent<State, Props> {
+export default class Logger extends PluginComponent<State, PluginProps> {
   static pluginName = 'logger';
 
   private logger: LoggerPlugin;
@@ -40,7 +32,7 @@ export default class Logger extends PluginComponent<State, Props> {
     ];
 
     this.logger = new LoggerPlugin({
-      maxLogSize: this.props.config.maxLogSize,
+      maxSize: this.editorConfig.loggerMaxSize,
     });
     // 注册API
     this.editor.registerApi('undo', this.handleUndo);
@@ -82,18 +74,15 @@ export default class Logger extends PluginComponent<State, Props> {
       window.clearTimeout(this.timerId);
       this.timerId = 0;
     }
-    this.timerId = window.setTimeout(
-      () => {
-        if (this.logger.getLast() !== value) {
-          this.logger.push(value);
-          this.lastPop = null;
-          this.forceUpdate();
-        }
-        window.clearTimeout(this.timerId);
-        this.timerId = 0;
-      },
-      typeof this.props.config.loggerInterval === 'number' ? this.props.config.loggerInterval : LOGGER_INTERVAL,
-    );
+    this.timerId = window.setTimeout(() => {
+      if (this.logger.getLast() !== value) {
+        this.logger.push(value);
+        this.lastPop = null;
+        this.forceUpdate();
+      }
+      window.clearTimeout(this.timerId);
+      this.timerId = 0;
+    }, this.editorConfig.loggerInterval);
   }
 
   componentDidMount() {
@@ -126,18 +115,10 @@ export default class Logger extends PluginComponent<State, Props> {
     const hasRedo = this.logger.getRedoCount() > 0;
     return (
       <>
-        <span
-          className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`}
-          title={i18n.get('btnUndo')}
-          onClick={this.handleUndo}
-        >
+        <span className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`} title={i18n.get('btnUndo')} onClick={this.handleUndo}>
           <Icon type="undo" />
         </span>
-        <span
-          className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`}
-          title={i18n.get('btnRedo')}
-          onClick={this.handleRedo}
-        >
+        <span className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`} title={i18n.get('btnRedo')} onClick={this.handleRedo}>
           <Icon type="redo" />
         </span>
       </>
