@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { v4 as uuid } from 'uuid';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -24,6 +25,7 @@ interface EditorProps extends EditorConfig {
   autoFocus?: boolean;
   placeholder?: string;
   readOnly?: boolean;
+  className?: string;
   config?: any;
   plugins?: string[];
   // Configs
@@ -111,6 +113,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private nodeMdPreviewWrapper = React.createRef<HTMLDivElement>();
 
   private hasContentChanged = true;
+
+  private composing = false;
+
+  private pluginApis = new Map<string, any>();
 
   private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
 
@@ -230,6 +236,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       if (typeof result[it.comp.align] === 'undefined') {
         result[it.comp.align] = [];
       }
+      const key = it.comp.pluginName === 'divider' ? uuid() : it.comp.pluginName;
       result[it.comp.align].push(
         React.createElement(it.comp, {
           editor: this,
@@ -238,7 +245,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             ...(it.comp.defaultConfig || {}),
             ...(it.config || {}),
           },
-          key: it.comp.pluginName,
+          key,
         }),
       );
     });
@@ -379,7 +386,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
-    if (keyCode === 13 || key === 'Enter') {
+    if ((keyCode === 13 || key === 'Enter') && this.composing === false) {
       const text = e.currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
@@ -655,7 +662,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten keyboard events
+   * Un-listen keyboard events
    * @param {KeyboardEventListener} data
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
@@ -714,7 +721,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten events
+   * Un-listen events
    * @param {EditorEvent} event Event type
    * @param {any} cb Callback
    */
@@ -768,6 +775,33 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
+   * Register a plugin API
+   * @param {string} name API name
+   * @param {any} cb callback
+   */
+  registerApi(name: string, cb: any) {
+    this.pluginApis.set(name, cb);
+  }
+
+  unregisterApi(name: string) {
+    this.pluginApis.delete(name);
+  }
+
+  /**
+   * Call a plugin API
+   * @param {string} name API name
+   * @param {any} others arguments
+   * @returns {any}
+   */
+  callApi<T = any>(name: string, ...others: any): T {
+    const handler = this.pluginApis.get(name);
+    if (!handler) {
+      throw new Error(`API ${name} not found`);
+    }
+    return handler(...others);
+  }
+
+  /**
    * Is full screen
    * @return {boolean}
    */
@@ -813,15 +847,15 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   render() {
+    const { view, fullScreen, text, html } = this.state;
+    const { id, className = '', style, name = 'textarea', autoFocus, placeholder, readOnly } = this.props;
     const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
-    const { view, fullScreen } = this.state;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
-    const { id } = this.props;
     const editorId = id ? `${id}_md` : undefined;
     const previewerId = id ? `${id}_html` : undefined;
     return (
-      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''}`} style={this.props.style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
+      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''} ${className}`} style={style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
         <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
         <div className="editor-container">
           {showHideMenu && (
@@ -835,17 +869,19 @@ class Editor extends React.Component<EditorProps, EditorState> {
             <textarea
               id={editorId}
               ref={this.nodeMdText}
-              name={this.props.name || 'textarea'}
-              autoFocus={this.props.autoFocus}
-              placeholder={this.props.placeholder}
-              readOnly={this.props.readOnly}
-              value={this.state.text}
+              name={name}
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              value={text}
               className={`section-container input ${this.config.markdownClass || ''}`}
               wrap="hard"
               onChange={this.handleChange}
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onKeyDown={this.handleEditorKeyDown}
+              onCompositionStart={() => (this.composing = true)}
+              onCompositionEnd={() => (this.composing = false)}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}
@@ -853,7 +889,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
           </section>
           <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
             <div id={previewerId} className="section-container html-wrap" ref={this.nodeMdPreviewWrapper} onMouseOver={() => (this.shouldSyncScroll = 'html')} onScroll={this.handlePreviewScroll}>
-              <HtmlRender html={this.state.html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
+              <HtmlRender html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
             </div>
           </section>
         </div>

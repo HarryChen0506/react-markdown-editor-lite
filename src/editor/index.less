@@ -23,6 +23,11 @@
     min-height: 0;
     position: relative;
     > .section {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 1px;
+      border-right: 1px solid #e0e0e0;
+
       &.in-visible {
         display: none;
       }
@@ -31,9 +36,12 @@
         padding: 15px;
         padding-top: 10px;
       }
+
+      &:last-child {
+        border-radius: none;
+      }
     }
     .sec-md {
-      flex: 1;
       min-height: 0;
       min-width: 0;
       .input {
@@ -53,7 +61,6 @@
       }
     }
     .sec-html {
-      flex: 1;
       min-height: 0;
       min-width: 0;
       .html-wrap {

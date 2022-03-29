@@ -42,6 +42,9 @@ export default class Logger extends PluginComponent<State, Props> {
     this.logger = new LoggerPlugin({
       maxLogSize: this.props.config.maxLogSize,
     });
+    // 注册API
+    this.editor.registerApi('undo', this.handleUndo);
+    this.editor.registerApi('redo', this.handleRedo);
   }
 
   private handleUndo() {
@@ -63,12 +66,13 @@ export default class Logger extends PluginComponent<State, Props> {
     }
   }
 
-  handleChange(value: string, e: any, isChange: boolean) {
+  handleChange(value: string, e: any, isNotInput: boolean) {
     if (this.logger.getLast() === value || (this.lastPop !== null && this.lastPop === value)) {
       return;
     }
     this.logger.cleanRedo();
-    if (isChange) {
+    if (isNotInput) {
+      // from setText API call, not a input
       this.logger.push(value);
       this.lastPop = null;
       this.forceUpdate();
