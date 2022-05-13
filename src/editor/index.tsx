@@ -409,18 +409,18 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
 
       // Enter key, check previous line
-      const isSymbol = lineInfo.curLine.match(/^(\s?)([-*]) /);
+      const isSymbol = lineInfo.curLine.match(/^(\s*?)\* /);
       if (isSymbol) {
-        if (/^(\s?)([-*]) $/.test(lineInfo.curLine)) {
+        if (/^(\s*?)\\* $/.test(lineInfo.curLine)) {
           emptyCurrentLine();
           return;
         }
         addSymbol(isSymbol[0]);
         return;
       }
-      const isOrderList = lineInfo.curLine.match(/^(\s?)(\d+)\. /);
+      const isOrderList = lineInfo.curLine.match(/^(\s*?)(\d+)\. /);
       if (isOrderList) {
-        if (/^(\s?)(\d+)\. $/.test(lineInfo.curLine)) {
+        if (/^(\s*?)(\d+)\. $/.test(lineInfo.curLine)) {
           emptyCurrentLine();
           return;
         }
