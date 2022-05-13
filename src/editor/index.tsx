@@ -191,6 +191,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
+  isComposing() {
+    return this.composing;
+  }
+
   private getPlugins() {
     let plugins: Plugin[] = [];
     if (this.props.plugins) {
@@ -387,7 +391,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
     if ((keyCode === 13 || key === 'Enter') && this.composing === false) {
-      const text = e.currentTarget.value;
+      const text = currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
 
@@ -411,7 +415,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       // Enter key, check previous line
       const isSymbol = lineInfo.curLine.match(/^(\s*?)\* /);
       if (isSymbol) {
-        if (/^(\s*?)\\* $/.test(lineInfo.curLine)) {
+        if (/^(\s*?)\* $/.test(lineInfo.curLine)) {
           emptyCurrentLine();
           return;
         }
