@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export type UploadFunc = ((file: File) => Promise<string>) | ((file: File, callback: (url: string) => void) => void);
 
-export type EditorEvent = 'change' | 'fullscreen' | 'viewchange' | 'keydown' | 'focus' | 'blur' | 'scroll';
+export type EditorEvent = 'change' | 'fullscreen' | 'viewchange' | 'keydown' | 'focus' | 'blur' | 'scroll' | 'editor_keydown';
 
 export interface EditorConfig {
   theme?: string;

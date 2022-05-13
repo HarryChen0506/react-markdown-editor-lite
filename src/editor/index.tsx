@@ -426,8 +426,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
         }
         const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2], 10) + 1}. `;
         addSymbol(toInsert);
+        return;
       }
     }
+    // 触发默认事件
+    this.emitter.emit(this.emitter.EVENT_EDITOR_KEY_DOWN, e);
   }
 
   // Handle language change
@@ -699,6 +702,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return this.emitter.EVENT_VIEW_CHANGE;
       case 'keydown':
         return this.emitter.EVENT_KEY_DOWN;
+      case 'editor_keydown':
+        return this.emitter.EVENT_EDITOR_KEY_DOWN;
       case 'blur':
         return this.emitter.EVENT_BLUR;
       case 'focus':
