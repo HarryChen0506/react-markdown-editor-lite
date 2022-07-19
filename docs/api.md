@@ -39,6 +39,38 @@ const MyEditor = () => {
   )
 }
 ```
+
+### Plugin register/unregister API and use it
+Plugin can export some methods to users.
+```js
+/**
+ * Register a plugin API
+ * @param {string} name API name
+ * @param {any} cb callback
+ */
+registerPluginApi(name: string, cb: any): void;
+unregisterPluginApi(name: string): void;
+
+/**
+ * Call a plugin API
+ * @param {string} name API name
+ * @param {any} others arguments
+ * @returns {any}
+ */
+callPluginApi<T = any>(name: string, ...others: any): T;
+```
+
+Example:
+```js
+// Register API in your plugin
+this.editor.registerPluginApi("my-api", (number1, number2) => {
+  console.log(number1 + number2);
+});
+
+// Call API with editor's ref
+editorRef.current.callPluginApi("my-api", 1, 2);
+```
+
 ## Selected
 ### Data struct
 ```js
@@ -168,7 +200,7 @@ offKeyboard(data: KeyboardEventListener): void;
   * You can hide or show: editor(md), preview(html), menu bar(menu)
   * @param enable
   */
-setView(to: {
+setView({
     md?: boolean;
     menu?: boolean;
     html?: boolean;

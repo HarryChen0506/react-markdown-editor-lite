@@ -1,11 +1,9 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../Plugin';
 import { KeyboardEventListener } from '../../share/var';
+import { PluginComponent } from '../Plugin';
 import LoggerPlugin from './logger';
-
-const LOGGER_INTERVAL = 600;
 
 export default class Logger extends PluginComponent {
   static pluginName = 'logger';
@@ -31,7 +29,12 @@ export default class Logger extends PluginComponent {
       { key: 'z', keyCode: 90, aliasCommand: true, withKey: ['ctrlKey'], callback: this.handleUndo },
     ];
 
-    this.logger = new LoggerPlugin();
+    this.logger = new LoggerPlugin({
+      maxSize: this.editorConfig.loggerMaxSize,
+    });
+    // 注册API
+    this.editor.registerPluginApi('undo', this.handleUndo);
+    this.editor.registerPluginApi('redo', this.handleRedo);
   }
 
   private handleUndo() {
@@ -53,12 +56,13 @@ export default class Logger extends PluginComponent {
     }
   }
 
-  handleChange(value: string, e: any, isChange: boolean) {
+  handleChange(value: string, e: any, isNotInput: boolean) {
     if (this.logger.getLast() === value || (this.lastPop !== null && this.lastPop === value)) {
       return;
     }
     this.logger.cleanRedo();
-    if (isChange) {
+    if (isNotInput) {
+      // from setText API call, not a input
       this.logger.push(value);
       this.lastPop = null;
       this.forceUpdate();
@@ -76,7 +80,7 @@ export default class Logger extends PluginComponent {
       }
       window.clearTimeout(this.timerId);
       this.timerId = 0;
-    }, LOGGER_INTERVAL);
+    }, this.editorConfig.loggerInterval);
   }
 
   componentDidMount() {
@@ -94,6 +98,8 @@ export default class Logger extends PluginComponent {
       window.clearTimeout(this.timerId);
     }
     this.editor.off('change', this.handleChange);
+    this.editor.unregisterPluginApi('undo');
+    this.editor.unregisterPluginApi('redo');
     this.handleKeyboards.forEach((it) => this.editor.offKeyboard(it));
   }
 
@@ -109,18 +115,10 @@ export default class Logger extends PluginComponent {
     const hasRedo = this.logger.getRedoCount() > 0;
     return (
       <>
-        <span
-          className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`}
-          title={i18n.get('btnUndo')}
-          onClick={this.handleUndo}
-        >
+        <span className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`} title={i18n.get('btnUndo')} onClick={this.handleUndo}>
           <Icon type="undo" />
         </span>
-        <span
-          className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`}
-          title={i18n.get('btnRedo')}
-          onClick={this.handleRedo}
-        >
+        <span className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`} title={i18n.get('btnRedo')} onClick={this.handleRedo}>
           <Icon type="redo" />
         </span>
       </>

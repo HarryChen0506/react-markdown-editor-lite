@@ -1,13 +1,19 @@
 ---
 name: BUG
-about: Report bugs
+about: Report bugs  报告 BUG
 title: "[BUG]"
 labels: bug
 assignees: ''
 
 ---
 
-## OS and browser
+## Please note 提问前请注意
+* Your problem is NOT related to markdown rendering (eg some markdown syntax doesn't display correctly). For these problems you should ask help from the markdown renderer you are using.
+* Please submit according to this template, otherwise issue may be closed directly.
+* 你的问题与markdown渲染无关（例如，某些 Markdown 语法无法正确显示）。这些问题你应该询问你所使用的 Markdown 渲染器。
+* 请按照此模板提交，否则 issue 可能会被直接关闭。
+
+## Your environment
 For example, Windows 10, Chrome 80.0.
 例如：Windows 10，Chrome 80.0
 

@@ -40,6 +40,38 @@ const MyEditor = () => {
   )
 }
 ```
+
+### 插件注册/反注册API及调用
+用于插件本身对外暴露一些API，供用户调用
+```js
+/**
+ * 注册插件API
+ * @param {string} name API名称
+ * @param {any} cb 回调
+ */
+registerPluginApi(name: string, cb: any): void;
+unregisterPluginApi(name: string): void;
+
+/**
+ * 调用插件API
+ * @param {string} name API名称
+ * @param {any} others 参数
+ * @returns {any}
+ */
+callPluginApi<T = any>(name: string, ...others: any): T;
+```
+
+例如：
+```js
+// 在你的插件中注册API
+this.editor.registerPluginApi("my-api", (number1, number2) => {
+  console.log(number1 + number2);
+});
+
+// 通过编辑器的ref调用API
+editorRef.current.callPluginApi("my-api", 1, 2);
+```
+
 ## 操作选中区域
 ### 数据结构
 ```js
@@ -171,7 +203,7 @@ offKeyboard(data: KeyboardEventListener): void;
   * 可显示或隐藏：编辑器，预览区域，菜单栏
   * @param enable
   */
-setView(to: {
+setView({
     md?: boolean;
     menu?: boolean;
     html?: boolean;

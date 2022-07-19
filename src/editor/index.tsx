@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { v4 as uuid } from 'uuid';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -115,6 +116,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private composing = false;
 
+  private pluginApis = new Map<string, any>();
+
   private handleInputScroll: (e: React.UIEvent<HTMLTextAreaElement>) => void;
 
   private handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
@@ -188,6 +191,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
   }
 
+  isComposing() {
+    return this.composing;
+  }
+
   private getPlugins() {
     let plugins: Plugin[] = [];
     if (this.props.plugins) {
@@ -233,6 +240,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       if (typeof result[it.comp.align] === 'undefined') {
         result[it.comp.align] = [];
       }
+      const key = it.comp.pluginName === 'divider' ? uuid() : it.comp.pluginName;
       result[it.comp.align].push(
         React.createElement(it.comp, {
           editor: this,
@@ -241,7 +249,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             ...(it.comp.defaultConfig || {}),
             ...(it.config || {}),
           },
-          key: it.comp.pluginName,
+          key,
         }),
       );
     });
@@ -383,7 +391,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   private handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     const { keyCode, key, currentTarget } = e;
     if ((keyCode === 13 || key === 'Enter') && this.composing === false) {
-      const text = e.currentTarget.value;
+      const text = currentTarget.value;
       const curPos = currentTarget.selectionStart;
       const lineInfo = getLineAndCol(text, curPos);
 
@@ -405,25 +413,28 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
 
       // Enter key, check previous line
-      const isSymbol = lineInfo.curLine.match(/^(\s?)([-*]) /);
+      const isSymbol = lineInfo.curLine.match(/^(\s*?)\* /);
       if (isSymbol) {
-        if (/^(\s?)([-*]) $/.test(lineInfo.curLine)) {
+        if (/^(\s*?)\* $/.test(lineInfo.curLine)) {
           emptyCurrentLine();
           return;
         }
         addSymbol(isSymbol[0]);
         return;
       }
-      const isOrderList = lineInfo.curLine.match(/^(\s?)(\d+)\. /);
+      const isOrderList = lineInfo.curLine.match(/^(\s*?)(\d+)\. /);
       if (isOrderList) {
-        if (/^(\s?)(\d+)\. $/.test(lineInfo.curLine)) {
+        if (/^(\s*?)(\d+)\. $/.test(lineInfo.curLine)) {
           emptyCurrentLine();
           return;
         }
         const toInsert = `${isOrderList[1]}${parseInt(isOrderList[2], 10) + 1}. `;
         addSymbol(toInsert);
+        return;
       }
     }
+    // 触发默认事件
+    this.emitter.emit(this.emitter.EVENT_EDITOR_KEY_DOWN, e);
   }
 
   // Handle language change
@@ -658,7 +669,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten keyboard events
+   * Un-listen keyboard events
    * @param {KeyboardEventListener} data
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
@@ -695,6 +706,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
         return this.emitter.EVENT_VIEW_CHANGE;
       case 'keydown':
         return this.emitter.EVENT_KEY_DOWN;
+      case 'editor_keydown':
+        return this.emitter.EVENT_EDITOR_KEY_DOWN;
       case 'blur':
         return this.emitter.EVENT_BLUR;
       case 'focus':
@@ -717,7 +730,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
-   * Unlisten events
+   * Un-listen events
    * @param {EditorEvent} event Event type
    * @param {any} cb Callback
    */
@@ -771,6 +784,33 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   /**
+   * Register a plugin API
+   * @param {string} name API name
+   * @param {any} cb callback
+   */
+  registerPluginApi(name: string, cb: any) {
+    this.pluginApis.set(name, cb);
+  }
+
+  unregisterPluginApi(name: string) {
+    this.pluginApis.delete(name);
+  }
+
+  /**
+   * Call a plugin API
+   * @param {string} name API name
+   * @param {any} others arguments
+   * @returns {any}
+   */
+  callPluginApi<T = any>(name: string, ...others: any): T {
+    const handler = this.pluginApis.get(name);
+    if (!handler) {
+      throw new Error(`API ${name} not found`);
+    }
+    return handler(...others);
+  }
+
+  /**
    * Is full screen
    * @return {boolean}
    */
@@ -817,7 +857,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   render() {
     const { view, fullScreen, text, html } = this.state;
-    const { id, className = "", style, name = "textarea", autoFocus, placeholder, readOnly } = this.props;
+    const { id, className = '', style, name = 'textarea', autoFocus, placeholder, readOnly } = this.props;
     const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
@@ -849,8 +889,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onScroll={this.handleInputScroll}
               onMouseOver={() => (this.shouldSyncScroll = 'md')}
               onKeyDown={this.handleEditorKeyDown}
-              onCompositionStart={() => this.composing = true}
-              onCompositionEnd={() => this.composing = false}
+              onCompositionStart={() => (this.composing = true)}
+              onCompositionEnd={() => (this.composing = false)}
               onPaste={this.handlePaste}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}

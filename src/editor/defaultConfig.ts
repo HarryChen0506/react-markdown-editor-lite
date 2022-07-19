@@ -21,6 +21,8 @@ const defaultConfig: EditorConfig = {
   imageUrl: '',
   imageAccept: '',
   linkUrl: '',
+  loggerMaxSize: 100,
+  loggerInterval: 600,
   table: {
     maxRow: 4,
     maxCol: 6,
@@ -29,6 +31,7 @@ const defaultConfig: EditorConfig = {
   onImageUpload: undefined,
   onCustomImageUpload: undefined,
   shortcuts: true,
+  onChangeTrigger: 'both',
 };
 
 export default defaultConfig;

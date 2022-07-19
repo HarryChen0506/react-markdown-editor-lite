@@ -20,6 +20,8 @@
 | markdownClass | className of editor panel | String | `''` |  |
 | imageUrl | default image url | String | `''` |  |
 | linkUrl | default link url | String | `''` |  |
+| loggerMaxSize | max history logger size | number | 100 |  |
+| loggerInterval | history logger interval (ms) | number | 600 |  |
 | table | Max amount of rows and columns that a table created through the toolbar can have | Object | `{ maxRow: 4, maxCol: 6 }` | |
 | syncScrollMode | Scroll sync mode between editor and preview | Array | `['rightFollowLeft', 'leftFollowRight']` | |
 | imageAccept | Accepted file extensions for images, list of comma separated values i.e `.jpg,.png` | String | `''` | |

@@ -50,6 +50,9 @@
   'tab-insert'
 ]
 ```
+
+* 如果启用了`logger`插件，则会自动注册`undo`和`redo`两个API，可通过`callPluginApi`调用。
+
 ### 卸载内置插件
 ```js
 import Editor, { Plugins } from 'react-markdown-editor-lite';
