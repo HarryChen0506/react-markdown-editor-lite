@@ -16,7 +16,7 @@ import { HtmlRender, HtmlType } from './preview';
 
 type Plugin = { comp: any; config: any };
 
-interface EditorProps extends EditorConfig {
+export interface EditorProps extends EditorConfig {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -41,7 +41,7 @@ interface EditorProps extends EditorConfig {
   onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
 }
 
-interface EditorState {
+export interface EditorState {
   text: string;
   html: HtmlType;
   fullScreen: boolean;
