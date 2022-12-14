@@ -1,4 +1,4 @@
-import Editor from './editor';
+import Editor, { EditorProps, EditorState } from './editor';
 import AutoResize from './plugins/autoResize';
 import BlockCodeBlock from './plugins/block/code-block';
 import BlockCodeInline from './plugins/block/code-inline';
@@ -48,6 +48,8 @@ Editor.use(FullScreen);
 export { DropList };
 export { PluginComponent };
 export type { PluginProps };
+// 导出编辑器类型
+export type { EditorProps, EditorState };
 // 导出实用工具
 export { default as getDecorated } from './utils/decorate';
 // 导出内置插件
