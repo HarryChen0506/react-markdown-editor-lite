@@ -841,7 +841,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             });
           });
         }
-      } else if (it.kind === 'string' && it.type === 'text/plain') {
+      } else if (it.kind === 'string' && (it.type === 'text/plain' || it.type === 'text/uri-list')) {
         queue.push(new Promise((resolve) => it.getAsString(resolve)));
       }
     });
