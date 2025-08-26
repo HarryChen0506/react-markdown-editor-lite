@@ -1,9 +1,4 @@
 {
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["DOM", "ES2022"],
