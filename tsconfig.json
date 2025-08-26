@@ -17,5 +17,5 @@
     "esModuleInterop": true,
     "useDefineForClassFields": true
   },
-  "include": ["src", "test"]
+  "include": ["src"]
 }
