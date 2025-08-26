@@ -1,8 +1,11 @@
 import { setTimeout as sleep } from 'node:timers/promises';
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect } from 'chai';
 import * as React from 'react';
 import Editor from '../src';
+
+const user = userEvent.setup();
 
 const TextComponent = (props: {
   onClick: (ref: Editor) => void;
@@ -30,7 +33,7 @@ const TextComponent = (props: {
   );
 };
 
-const doClick = (
+const doClick = async (
   onClick: (ref: Editor) => void,
   options: {
     value?: string;
@@ -56,11 +59,7 @@ const doClick = (
 
   const btn = handler.container.querySelector('#click_handler');
   if (btn) {
-    const event = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-    });
-    fireEvent(btn, event);
+    await user.click(btn);
   }
 
   return {
@@ -80,17 +79,17 @@ const next = (cb: any, time = 10) => {
 
 describe('Test API', () => {
   // getSelection
-  it('getSelection', () => {
+  it('getSelection', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       selected = editor.getSelection().text;
     };
-    doClick(handleClick);
+    await doClick(handleClick);
     expect(selected).to.equals('23');
   });
 
   // setText with newSelection
-  it('setText', () => {
+  it('setText', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.setText('abcdefg', undefined, {
@@ -100,24 +99,24 @@ describe('Test API', () => {
 
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('abcdefg');
     return next(() => expect(selected).to.equals('ab'));
   });
 
   // insertText
-  it('insertText 1', () => {
+  it('insertText 1', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', true);
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1xx456');
     return next(() => expect(selected).to.equals(''));
   });
   // insertText
-  it('insertText 2', () => {
+  it('insertText 2', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', false, {
@@ -126,31 +125,31 @@ describe('Test API', () => {
       });
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1xx23456');
     return next(() => expect(selected).to.equals('x'));
   });
 
   // insertMarkdown
-  it('insertMarkdown bold', () => {
+  it('insertMarkdown bold', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('bold');
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1**23**456');
     return next(() => expect(selected).to.equals('23'));
   });
 
   // insertMarkdown
-  it('insertMarkdown unordered', () => {
+  it('insertMarkdown unordered', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('unordered');
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick, {
+    const { textarea } = await doClick(handleClick, {
       value: '123\n234\n345\n456',
       start: 2,
       end: 10,
@@ -160,7 +159,7 @@ describe('Test API', () => {
   });
 
   // insertMarkdown
-  it('insertMarkdown table', () => {
+  it('insertMarkdown table', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('table', {
@@ -169,7 +168,7 @@ describe('Test API', () => {
       });
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     const expectTable =
       '| Head | Head | Head | Head |\n| --- | --- | --- | --- |\n| Data | Data | Data | Data |\n| Data | Data | Data | Data |';
     expect(textarea.value).to.equals('1\n' + expectTable + '\n\n456');
@@ -184,13 +183,13 @@ describe('Test API', () => {
         new Promise(resolve => {
           setTimeout(() => {
             resolve('_resolved_');
-          }, 500);
+          }, 300);
         }),
       );
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1_placeholder_456');
-    await sleep(500);
+    await sleep(400);
     expect(textarea.value).to.equals('1_resolved_456');
   });
 

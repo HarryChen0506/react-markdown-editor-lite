@@ -1,14 +1,22 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect } from 'chai';
-import * as React from 'react';
+import React from 'react';
 import DropList from '../src/components/DropList';
 import Icon from '../src/components/Icon';
 
-describe('Test Components', function() {
+const user = userEvent.setup();
+
+describe('Test Components', () => {
   // render
-  it('DropList render', function() {
+  it('DropList render', async () => {
     let isClosed = false;
-    render(<DropList show={true} onClose={() => isClosed = true}>dropdown-item</DropList>);
+
+    render(
+      <DropList show={true} onClose={() => (isClosed = true)}>
+        dropdown-item
+      </DropList>,
+    );
 
     const item = screen.queryByText('dropdown-item');
 
@@ -16,14 +24,13 @@ describe('Test Components', function() {
 
     // click a item
     if (item !== null) {
-      fireEvent.click(item);
+      await user.click(item);
     }
 
     expect(isClosed).to.be.true;
   });
 
-
-  it('Icon render', function() {
+  it('Icon render', () => {
     const { container } = render(<Icon type="test" />);
 
     expect(container.querySelector('.rmel-iconfont')).not.to.be.null;
