@@ -1,25 +1,21 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react",
-    "lib": [
-      "dom",
-      "es2017"
-    ],
-    "rootDir": "./src",
-    "outDir": "./lib",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noEmit": false,
-    "preserveConstEnums": true,
-    "removeComments": false,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "es5",
-    "declaration": true
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true
   },
-  "exclude": ["./lib", "./image"],
-  "include": ["./src"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "ES2022"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "useDefineForClassFields": true
+  },
+  "include": ["src", "test"]
 }

@@ -1,19 +1,31 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { setTimeout as sleep } from 'node:timers/promises';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { expect } from 'chai';
 import * as React from 'react';
 import Editor from '../src';
 
-const TextComponent = (props: { onClick: (ref: Editor) => void; value?: string }) => {
+const TextComponent = (props: {
+  onClick: (ref: Editor) => void;
+  value?: string;
+}) => {
   const { value, onClick } = props;
   const ref = React.useRef<Editor>(null);
 
   return (
     <div>
-      <button id="click_handler" onClick={() => ref.current && onClick(ref.current)}>
+      <button
+        id="click_handler"
+        onClick={() => ref.current && onClick(ref.current)}
+      >
         Click
       </button>
       <label htmlFor="myeditor_md">My Editor</label>
-      <Editor ref={ref} id="myeditor" renderHTML={text => text} defaultValue={value || '123456'} />
+      <Editor
+        ref={ref}
+        id="myeditor"
+        renderHTML={text => text}
+        defaultValue={value || '123456'}
+      />
     </div>
   );
 };
@@ -26,7 +38,9 @@ const doClick = (
     end?: number;
   } = {},
 ) => {
-  const handler = render(<TextComponent onClick={onClick} value={options.value} />);
+  const handler = render(
+    <TextComponent onClick={onClick} value={options.value} />,
+  );
 
   const textarea = handler.queryByLabelText('My Editor') as HTMLTextAreaElement;
 
@@ -64,9 +78,9 @@ const next = (cb: any, time = 10) => {
   });
 };
 
-describe('Test API', function() {
+describe('Test API', () => {
   // getSelection
-  it('getSelection', function() {
+  it('getSelection', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       selected = editor.getSelection().text;
@@ -76,7 +90,7 @@ describe('Test API', function() {
   });
 
   // setText with newSelection
-  it('setText', function() {
+  it('setText', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.setText('abcdefg', undefined, {
@@ -92,7 +106,7 @@ describe('Test API', function() {
   });
 
   // insertText
-  it('insertText 1', function() {
+  it('insertText 1', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', true);
@@ -103,7 +117,7 @@ describe('Test API', function() {
     return next(() => expect(selected).to.equals(''));
   });
   // insertText
-  it('insertText 2', function() {
+  it('insertText 2', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', false, {
@@ -118,7 +132,7 @@ describe('Test API', function() {
   });
 
   // insertMarkdown
-  it('insertMarkdown bold', function() {
+  it('insertMarkdown bold', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('bold');
@@ -130,7 +144,7 @@ describe('Test API', function() {
   });
 
   // insertMarkdown
-  it('insertMarkdown unordered', function() {
+  it('insertMarkdown unordered', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('unordered');
@@ -146,7 +160,7 @@ describe('Test API', function() {
   });
 
   // insertMarkdown
-  it('insertMarkdown table', function() {
+  it('insertMarkdown table', () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('table', {
@@ -163,20 +177,21 @@ describe('Test API', function() {
   });
 
   // insertPlaceholder
-  it('insertPlaceholder', function() {
+  it('insertPlaceholder', async () => {
     const handleClick = (editor: Editor) => {
       editor.insertPlaceholder(
         '_placeholder_',
         new Promise(resolve => {
           setTimeout(() => {
             resolve('_resolved_');
-          }, 5);
+          }, 500);
         }),
       );
     };
     const { textarea } = doClick(handleClick);
     expect(textarea.value).to.equals('1_placeholder_456');
-    return next(() => expect(textarea.value).to.equals('1_resolved_456'));
+    await sleep(500);
+    expect(textarea.value).to.equals('1_resolved_456');
   });
 
   afterEach(cleanup);

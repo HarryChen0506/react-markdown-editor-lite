@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent } from '../Plugin';
 import { isPromise } from '../../utils/tool';
 import getUploadPlaceholder from '../../utils/uploadPlaceholder';
+import { PluginComponent } from '../Plugin';
 import InputFile from './inputFile';
 
 interface State {
@@ -13,7 +13,7 @@ interface State {
 export default class Image extends PluginComponent<State> {
   static pluginName = 'image';
 
-  private inputFile: React.RefObject<InputFile>;
+  private inputFile: React.RefObject<InputFile | null>;
 
   constructor(props: any) {
     super(props);
@@ -43,7 +43,10 @@ export default class Image extends PluginComponent<State> {
     const { onImageUpload } = this.editorConfig;
     if (onImageUpload) {
       const placeholder = getUploadPlaceholder(file, onImageUpload);
-      this.editor.insertPlaceholder(placeholder.placeholder, placeholder.uploaded);
+      this.editor.insertPlaceholder(
+        placeholder.placeholder,
+        placeholder.uploaded,
+      );
     }
   }
 
@@ -52,7 +55,7 @@ export default class Image extends PluginComponent<State> {
     if (onCustomImageUpload) {
       const res = onCustomImageUpload.call(this, e);
       if (isPromise(res)) {
-        res.then((result) => {
+        res.then(result => {
           if (result && result.url) {
             this.editor.insertMarkdown('image', {
               target: result.text,
@@ -67,7 +70,11 @@ export default class Image extends PluginComponent<State> {
   render() {
     const isCustom = !!this.editorConfig.onCustomImageUpload;
     return isCustom ? (
-      <span className="button button-type-image" title={i18n.get('btnImage')} onClick={this.handleCustomImageUpload}>
+      <span
+        className="button button-type-image"
+        title={i18n.get('btnImage')}
+        onClick={this.handleCustomImageUpload}
+      >
         <Icon type="image" />
       </span>
     ) : (

@@ -1,0 +1,14 @@
+{
+  "require": [
+    "source-map-support/register",
+    "jsdom-global/register",
+    "ignore-styles"
+  ],
+  "extensions": ["ts", "tsx"],
+  "reporter": "mochawesome",
+  "recursive": true,
+  "fullTrace": true,
+  "bail": true,
+  "spec": ["test/**/*.spec.{ts,tsx}"],
+  "node-option": ["import=tsx", "no-warnings"]
+}
