@@ -904,7 +904,7 @@ class Editor<C = any> extends Component<EditorProps<C>, EditorState> {
             });
           });
         }
-      } else if (it.kind === 'string' && it.type === 'text/plain') {
+      } else if (it.kind === 'string' && it.type.indexOf('text/') === 0) {
         queue.push(new Promise(resolve => it.getAsString(resolve)));
       }
     });
