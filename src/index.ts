@@ -1,4 +1,4 @@
-import DropList from './components/DropList/index';
+import DropList from './components/DropList';
 import Editor, { type EditorProps, type EditorState } from './editor';
 import AutoResize from './plugins/autoResize';
 import BlockCodeBlock from './plugins/block/code-block';
@@ -18,10 +18,11 @@ import ListOrdered from './plugins/list/ordered';
 import ListUnordered from './plugins/list/unordered';
 import Logger from './plugins/logger';
 import ModeToggle from './plugins/modeToggle';
-import type { PluginProps } from './plugins/Plugin';
 import { PluginComponent } from './plugins/Plugin';
 import TabInsert from './plugins/tabInsert';
 import Table from './plugins/table';
+
+export type { EditorPlugin, FunctionPlugin, PluginProps } from './share/var';
 
 // 注册默认插件
 Editor.use(Header);
@@ -47,7 +48,7 @@ Editor.use(FullScreen);
 // 导出工具组件
 export { DropList };
 export { PluginComponent };
-export type { PluginProps, EditorProps, EditorState };
+export type { EditorProps, EditorState };
 // 导出实用工具
 export { default as getDecorated } from './utils/decorate';
 // 导出内置插件

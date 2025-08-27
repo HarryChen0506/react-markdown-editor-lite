@@ -3,7 +3,8 @@
 ## 插件可以干什么？
 插件可以往工具栏添加按钮，并操作编辑器的内容。
 ## 使用和卸载插件
-参见[API文档](./api.zh-CN.md)
+通过`use`和`unuse` API，或者通过`plugins`属性。
+参见[API文档](./api.zh-CN.md)、[配置文档](./configure.zh-CN.md)
 ## 内置插件
 ### 插件列表
 内置以下插件：
@@ -135,12 +136,17 @@ const MdEditor = dynamic(
 ### Demo
 [在线查看](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
 ### 普通方式
-插件本身是一个React Component，需要继承自PluginComponent。
+插件本身是一个React Component，需要继承自PluginComponent，或实现`FunctionPlugin`
 
 在PluginComponent中，可以：
 * 通过`this.editor`获取编辑器实例，调用所有编辑器API。
 * 通过`this.editorConfig`获取编辑器的设置。
 * 通过`this.getConfig`或`this.props.config`获取use时传入的数据。
+
+在FunctionPlugin中，可以：
+* 通过`props.editor`获取编辑器实例，调用所有编辑器API。
+* 通过`props.editorConfig`获取编辑器的设置。
+* 通过`props.config`获取use时传入的数据。
 
 下面，我们编写一个计数器，每次点击均往编辑器中插入一个递增的数字。起始数字从use时传入的选项读取。
 ```js
@@ -150,7 +156,11 @@ interface CounterState {
   num: number;
 }
 
-class Counter extends PluginComponent<CounterState> {
+interface CounterConfig {
+  start: number;
+}
+
+class Counter extends PluginComponent<CounterState, CounterConfig> {
   // 这里定义插件名称，注意不能重复
   static pluginName = 'counter';
   // 定义按钮被放置在哪个位置，默认为左侧，还可以放置在右侧（right）
@@ -192,23 +202,29 @@ class Counter extends PluginComponent<CounterState> {
   }
 }
 
-
 // 使用：
 Editor.use(Counter, {
   start: 10
 });
+
+// 或者
+<Editor plugins={[Counter, { start: 20 }]} />
 ```
 ### 函数组件
 同样可以使用函数组件来编写插件
 ```js
 import React from 'react';
-import { PluginProps } from 'react-markdown-editor-lite';
+import { FunctionPlugin } from 'react-markdown-editor-lite';
 
 interface CounterState {
   num: number;
 }
 
-const Counter = (props: PluginProps) => {
+interface CounterConfig {
+  start: number;
+}
+
+const Counter: FunctionPlugin<CounterConfig> = (props) => {
   const [num, setNum] = React.useState(props.config.start);
   
   const handleClick = () => {
@@ -228,17 +244,21 @@ const Counter = (props: PluginProps) => {
     </span>
   );
 }
+// 必须定义插件名称
+Counter.pluginName = 'counter';
 // 如果需要的话，可以在这里定义默认选项
 Counter.defaultConfig = {
-  start: 0
+  start: 0,
 }
 Counter.align = 'left';
-Counter.pluginName = 'counter';
 
 // 使用：
 Editor.use(Counter, {
   start: 10
 });
+
+// 或者
+<Editor plugins={[Counter, { start: 20 }]} />
 ```
 
 ## 是否可以不渲染任何UI？

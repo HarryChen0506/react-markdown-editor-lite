@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom/client';
 import ReactMarkdown from 'react-markdown';
-import MdEditor, { Plugins } from '../src';
+import MdEditor, { type FunctionPlugin, Plugins } from '../src';
 import '../src/index.less';
 
 const PLUGINS = undefined;
@@ -14,6 +14,14 @@ const PLUGINS = undefined;
 
 MdEditor.use(Plugins.TabInsert, {
   tabMapValue: 1, // note that 1 means a '\t' instead of ' '.
+});
+
+const FCPlugin: FunctionPlugin = props => {
+  return <div>{JSON.stringify(props.config)}</div>;
+};
+FCPlugin.pluginName = 'fc-plugin';
+MdEditor.use(FCPlugin, {
+  count: 1,
 });
 
 interface State {
@@ -132,6 +140,11 @@ class Demo extends Component<{}, State> {
           <MdEditor
             style={{ height: '500px', width: '100%' }}
             renderHTML={this.renderHTML}
+            pluginConfig={{
+              'fc-plugin': {
+                count: 2,
+              },
+            }}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>

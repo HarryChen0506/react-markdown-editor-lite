@@ -3,7 +3,8 @@
 ## What can plugins do?
 Plugins can insert buttons into menu bar, and control editor's content.
 ## Use or un-use a plugin
-See [API documentation](./api.md)
+Through the `use` and `unuse` APIs, or through the `plugins` property.
+See the [API documentation](./api.md) and [configure documentation](./configure.md)
 ## Built-in plugins
 ### Plugins list
 Those plugins are built-in plugin:
@@ -115,12 +116,17 @@ const plugins = ['header', 'table', 'my-plugins', 'link', 'clear', 'logger', 'mo
 * [Demo](https://codesandbox.io/s/rmel-demo-write-plugin-p82fc)
 * [SSR Demo](https://codesandbox.io/s/next-js-80bne)
 ### Normal
-Plugin is a React Component, and must extend PluginComponent.
+Plugin is a React Component, and must extend PluginComponent or implement FunctionPlugin.
 
 In PluginComponent, you can:
 * Get editor instance by `this.editor`, and call all editor's APIs.
 * Get editor's config by `this.editorConfig`.
 * Get the options passed in use by `this.getConfig` or `this.props.config`.
+
+In PluginComponent, you can:
+* Get editor instance by `props.editor`, and call all editor's APIs.
+* Get editor's config by `props.editorConfig`.
+* Get the options passed in use by `props.config`.
 
 In following, we written a counter, insert an increasing number into the editor with each click. The starting number is read from the options passed in use.
 ```js
@@ -130,7 +136,11 @@ interface CounterState {
   num: number;
 }
 
-class Counter extends PluginComponent<CounterState> {
+interface CounterConfig {
+  start: number;
+}
+
+class Counter extends PluginComponent<CounterState, CounterConfig> {
   // Define plugin name here, must be unique
   static pluginName = 'counter';
   // Define which place to be render, default is left, you can also use 'right'
@@ -177,19 +187,26 @@ class Counter extends PluginComponent<CounterState> {
 Editor.use(Counter, {
   start: 10
 });
+
+// Or:
+<Editor plugins={[Counter, { start: 20 }]} />
 ```
 
 ### Function component
 You can also use function component to write a plugin
 ```js
 import React from 'react';
-import { PluginProps } from 'react-markdown-editor-lite';
+import { FunctionPlugin } from 'react-markdown-editor-lite';
 
 interface CounterState {
   num: number;
 }
 
-const Counter = (props: PluginProps) => {
+interface CounterConfig {
+  start: number;
+}
+
+const Counter: FunctionPlugin<CounterConfig> = (props) => {
   const [num, setNum] = React.useState(props.config.start);
   
   const handleClick = () => {
@@ -209,18 +226,22 @@ const Counter = (props: PluginProps) => {
     </span>
   );
 }
+// Must define plugin name
+Counter.pluginName = 'counter';
 // Define default config if required
 Counter.defaultConfig = {
   start: 0
 }
 Counter.align = 'left';
-Counter.pluginName = 'counter';
 
 
 // Usage:
 Editor.use(Counter, {
   start: 10
 });
+
+// Or:
+<Editor plugins={[Counter, { start: 20 }]} />
 ```
 ## Is it possible not to render any UI ?
 Yes, just return a empty element (such as `<span></span>`, etc) in `render` method.

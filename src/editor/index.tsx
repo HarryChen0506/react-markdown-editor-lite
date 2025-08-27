@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import * as React from 'react';
+import React, { Component } from 'react';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -9,6 +9,7 @@ import Emitter, { globalEmitter } from '../share/emitter';
 import {
   type EditorConfig,
   type EditorEvent,
+  type EditorPlugin,
   initialSelection,
   type KeyboardEventListener,
   type Selection,
@@ -20,9 +21,9 @@ import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
 import { HtmlRender, type HtmlType } from './preview';
 
-type Plugin = { comp: any; config: any };
+export type PluginItem = [EditorPlugin, any | undefined];
 
-export interface EditorProps extends EditorConfig {
+export interface EditorProps<C> extends EditorConfig {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -33,7 +34,7 @@ export interface EditorProps extends EditorConfig {
   readOnly?: boolean;
   className?: string;
   config?: any;
-  plugins?: string[];
+  plugins?: Array<string | PluginItem>;
   // Configs
   onChange?: (
     data: {
@@ -48,6 +49,7 @@ export interface EditorProps extends EditorConfig {
     e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>,
     type: 'md' | 'html',
   ) => void;
+  pluginConfig?: C;
 }
 
 export interface EditorState {
@@ -62,37 +64,39 @@ export interface EditorState {
   };
 }
 
-class Editor extends React.Component<EditorProps, EditorState> {
-  private static plugins: Plugin[] = [];
+class Editor<C = any> extends Component<EditorProps<C>, EditorState> {
+  private static plugins: PluginItem[] = [];
 
   /**
    * Register plugin
    * @param {any} comp Plugin component
    * @param {any} config Other configs
    */
-  static use(comp: any, config: any = {}) {
+  static use(comp: EditorPlugin, config: any = {}) {
     // Check for duplicate plugins
     for (let i = 0; i < Editor.plugins.length; i++) {
-      if (Editor.plugins[i].comp === comp) {
-        Editor.plugins.splice(i, 1, { comp, config });
+      if (Editor.plugins[i][0] === comp) {
+        Editor.plugins.splice(i, 1, [comp, config]);
         return;
       }
     }
-    Editor.plugins.push({ comp, config });
+    Editor.plugins.push([comp, config]);
   }
+  static register = Editor.use.bind(Editor);
 
   /**
    * Unregister plugin
    * @param {any} comp Plugin component
    */
-  static unuse(comp: any) {
+  static unuse(comp: EditorPlugin) {
     for (let i = 0; i < Editor.plugins.length; i++) {
-      if (Editor.plugins[i].comp === comp) {
+      if (Editor.plugins[i][0] === comp) {
         Editor.plugins.splice(i, 1);
         return;
       }
     }
   }
+  static unregister = Editor.unuse.bind(Editor);
 
   /**
    * Unregister all plugins
@@ -182,7 +186,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     globalEmitter.off(globalEmitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
   }
 
-  componentDidUpdate(prevProps: EditorProps) {
+  componentDidUpdate(prevProps: EditorProps<C>) {
     if (
       typeof this.props.value !== 'undefined' &&
       this.props.value !== this.state.text
@@ -211,19 +215,16 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   private getPlugins() {
-    let plugins: Plugin[] = [];
+    let plugins: PluginItem[] = [];
     if (this.props.plugins) {
       // If plugins option is configured, use only specified plugins
-      const addToPlugins = (name: string) => {
+      const addToPlugins = (name: string | PluginItem) => {
         if (name === DividerPlugin.pluginName) {
-          plugins.push({
-            comp: DividerPlugin,
-            config: {},
-          });
+          plugins.push([DividerPlugin, {}]);
           return;
         }
         for (const it of Editor.plugins) {
-          if (it.comp.pluginName === name) {
+          if (it[0].pluginName === name) {
             plugins.push(it);
             return;
           }
@@ -252,18 +253,19 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     const result: { [x: string]: React.ReactElement[] } = {};
     plugins.forEach(it => {
-      if (typeof result[it.comp.align] === 'undefined') {
-        result[it.comp.align] = [];
+      const { align = 'left', pluginName = '' } = it[0];
+      if (typeof result[align] === 'undefined') {
+        result[align] = [];
       }
-      const key =
-        it.comp.pluginName === 'divider' ? nanoid() : it.comp.pluginName;
-      result[it.comp.align].push(
-        React.createElement(it.comp, {
+      const key = pluginName === 'divider' ? nanoid() : pluginName;
+      result[align].push(
+        React.createElement(it[0] as any, {
           editor: this,
           editorConfig: this.config,
           config: {
-            ...(it.comp.defaultConfig || {}),
-            ...(it.config || {}),
+            ...(it[0].defaultConfig || {}),
+            ...(it[1] || {}),
+            ...((this.props.pluginConfig as any)?.[pluginName] || {}),
           },
           key,
         }),
@@ -927,10 +929,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
       placeholder,
       readOnly,
     } = this.props;
-    const showHideMenu =
-      this.config.canView &&
-      this.config.canView.hideMenu &&
-      !this.config.canView.menu;
+    const { canView } = this.config;
+    const showHideMenu = canView?.hideMenu && canView?.menu;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
     const editorId = id ? `${id}_md` : undefined;

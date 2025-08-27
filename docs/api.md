@@ -3,7 +3,7 @@
 ## Plugins
 ### Written a plugin
 See [plugin.md](./plugin.md)
-### Editor.use
+### Editor.use / Editor.register
 Register plugin
 ```js
 /**
@@ -11,7 +11,18 @@ Register plugin
   * @param comp Plugin
   * @param config Other configurations
   */
-static use(comp: any, config?: any): void;
+static use(comp: EditorPlugin, config?: any): void;
+static register(comp: EditorPlugin, config?: any): void;
+```
+### Editor.unuse / Editor.unregister
+Unregister plugin
+```js
+/**
+  * Unregister plugin
+  * @param comp Plugin
+  */
+static unuse(comp: EditorPlugin): void;
+static unregister(comp: EditorPlugin): void;
 ```
 ## Locales
 * addLocale: Add language pack

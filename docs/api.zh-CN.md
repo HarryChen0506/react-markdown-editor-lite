@@ -3,7 +3,7 @@
 ## 插件
 ### 编写插件
 见[plugin.md](./plugin.md)
-### Editor.use
+### Editor.use / Editor.register
 注册插件
 ```js
 /**
@@ -11,7 +11,18 @@
   * @param comp 插件
   * @param config 其他配置
   */
-static use(comp: any, config?: any): void;
+static use(comp: EditorPlugin, config?: any): void;
+static register(comp: EditorPlugin, config?: any): void;
+```
+### Editor.unuse / Editor.unregister
+反注册插件
+```js
+/**
+  * 反注册插件
+  * @param comp
+  */
+static unuse(comp: EditorPlugin): void;
+static unregister(comp: EditorPlugin): void;
 ```
 ## 多语言
 Editor.addLocale / useLocale / getLocale，分别为添加语言包、设置当前语言、获取当前语言
