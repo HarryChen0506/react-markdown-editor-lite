@@ -17,7 +17,9 @@
   "scripts": {
     "build": "rslib build",
     "check": "biome check --write",
-    "dev": "rslib build --watch",
+    "build:watch": "rslib build --watch",
+    "dev": "rsbuild dev",
+    "build:demo": "rsbuild build",
     "format": "biome format --write",
     "test": "mocha",
     "coverage": "nyc mocha"
@@ -44,6 +46,7 @@
   "homepage": "https://unpkg.com/react-markdown-editor-lite@1.2.5-8/build/index.html",
   "devDependencies": {
     "@biomejs/biome": "2.1.3",
+    "@rsbuild/core": "^1.5.0",
     "@rsbuild/plugin-less": "^1.5.0",
     "@rsbuild/plugin-react": "^1.3.5",
     "@rslib/core": "^0.12.2",
@@ -67,7 +70,7 @@
     "nyc": "^15.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-markdown": "^4.3.1",
+    "react-markdown": "^10.1.0",
     "simple-git-hooks": "^2.13.0",
     "source-map-support": "^0.5.21",
     "tsx": "^4.20.5",

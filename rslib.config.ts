@@ -64,11 +64,15 @@ export default defineConfig({
         emitCss: true,
       },
       tools: {
-        rspack: config => {
-          config.module.rules?.push({
-            test: /\.(eot|ttf)$/,
-            type: 'asset/inline',
-          });
+        rspack: {
+          module: {
+            rules: [
+              {
+                test: /\.(eot|ttf)$/,
+                type: 'asset/inline',
+              },
+            ],
+          },
         },
       },
     },
