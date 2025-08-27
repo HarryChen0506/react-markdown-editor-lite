@@ -10,7 +10,6 @@
     "cjs",
     "esm",
     "lib",
-    "preview",
     "package.json",
     "README.md"
   ],
