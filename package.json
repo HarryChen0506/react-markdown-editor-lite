@@ -3,7 +3,7 @@
   "version": "1.2.5-9",
   "description": "a light-weight Markdown editor based on React",
   "main": "./cjs/index.js",
-  "module": "./esm/index.js",
+  "module": "./esm/index.mjs",
   "unpkg": "lib/index.js",
   "jsdelivr": "lib/index.js",
   "files": [
