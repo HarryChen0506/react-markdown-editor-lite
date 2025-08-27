@@ -102,9 +102,8 @@
     "all": true
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "classnames": "^2.2.6",
     "eventemitter3": "^4.0.0",
-    "nanoid": "^5.1.5"
+    "nanoid": "^4.0.2"
   }
 }

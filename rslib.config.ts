@@ -67,9 +67,20 @@ export default defineConfig({
         },
         minify: true,
         emitCss: true,
+        overrideBrowserslist: [
+          'defaults',
+          'not ie < 11',
+          'last 2 versions',
+          '> 0.2%',
+          'iOS 7',
+          'last 3 iOS versions',
+        ],
       },
       tools: {
         rspack: {
+          resolve: {
+            symlinks: false,
+          },
           module: {
             rules: [
               {
@@ -85,5 +96,12 @@ export default defineConfig({
   output: {
     target: 'web',
   },
-  plugins: [pluginReact(), pluginLess()],
+  plugins: [
+    pluginReact({
+      swcReactOptions: {
+        runtime: 'classic',
+      },
+    }),
+    pluginLess(),
+  ],
 });
