@@ -55,7 +55,12 @@ export default defineConfig({
       },
       output: {
         externals: {
-          react: 'React',
+          react: {
+            root: 'React',
+            amd: 'react',
+            commonjs: 'react',
+            commonjs2: 'react',
+          },
         },
         distPath: {
           root: './lib',
