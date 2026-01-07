@@ -11,13 +11,13 @@ class InputFile extends React.Component<InputFileProps, any> {
 
   private locked: boolean;
 
-  private input: React.RefObject<HTMLInputElement>;
+  private input: React.RefObject<HTMLInputElement | null>;
 
   constructor(props: any) {
     super(props);
     this.timerId = undefined;
     this.locked = false;
-    this.input = React.createRef();
+    this.input = React.createRef<HTMLInputElement>();
   }
 
   click() {

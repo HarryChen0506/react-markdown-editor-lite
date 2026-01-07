@@ -140,8 +140,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
       this.state.view.menu = false;
     }
 
-    this.nodeMdText = React.createRef();
-    this.nodeMdPreviewWrapper = React.createRef();
+    this.nodeMdText = React.createRef<HTMLTextAreaElement>();
+    this.nodeMdPreviewWrapper = React.createRef<HTMLDivElement>();
 
     this.handleChange = this.handleChange.bind(this);
     this.handlePaste = this.handlePaste.bind(this);

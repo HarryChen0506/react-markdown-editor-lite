@@ -13,12 +13,12 @@ interface State {
 export default class Image extends PluginComponent<State> {
   static pluginName = 'image';
 
-  private inputFile: React.RefObject<InputFile>;
+  private inputFile: React.RefObject<InputFile | null>;
 
   constructor(props: any) {
     super(props);
 
-    this.inputFile = React.createRef();
+    this.inputFile = React.createRef<InputFile>();
     this.onImageChanged = this.onImageChanged.bind(this);
     this.handleCustomImageUpload = this.handleCustomImageUpload.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);

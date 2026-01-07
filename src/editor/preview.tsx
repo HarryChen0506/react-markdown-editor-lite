@@ -8,11 +8,11 @@ export interface PreviewProps {
 }
 
 export abstract class Preview<T extends HTMLElement> extends React.Component<PreviewProps, any> {
-  protected el: React.RefObject<T>;
+  protected el: React.RefObject<T | null>;
 
   constructor(props: any) {
     super(props);
-    this.el = React.createRef();
+    this.el = React.createRef<T>();
   }
 
   abstract getHtml(): string;
