@@ -4,8 +4,27 @@
   "description": "a light-weight Markdown editor based on React",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
+  "types": "./cjs/index.d.ts",
   "unpkg": "lib/index.js",
   "jsdelivr": "lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./cjs/index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./cjs/index.js",
+      "default": "./esm/index.js"
+    },
+    "./style": {
+      "import": "./esm/style.js",
+      "require": "./cjs/style.js",
+      "default": "./esm/style.js"
+    },
+    "./style.js": {
+      "import": "./esm/style.js",
+      "require": "./cjs/style.js",
+      "default": "./esm/style.js"
+    }
+  },
   "files": [
     "cjs",
     "esm",
