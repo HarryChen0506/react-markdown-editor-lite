@@ -23,7 +23,8 @@
       "import": "./esm/style.js",
       "require": "./cjs/style.js",
       "default": "./esm/style.js"
-    }
+    },
+    "./lib/index.css": "./lib/index.css"
   },
   "files": [
     "cjs",
