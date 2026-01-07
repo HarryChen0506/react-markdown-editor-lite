@@ -1,0 +1,103 @@
+.rc-md-navigation {
+  min-height: 38px;
+  padding: 0px 8px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e0e0e0; // grey lighten-2
+  font-size: 16px;
+  background: #f5f5f5; // grey lighten-4
+  user-select: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  &.in-visible {
+    display: none;
+  }
+
+  .navigation-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #757575; // grey darken-1
+  }
+  .button-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .button {
+      position: relative;
+      min-width: 24px;
+      height: 28px;
+      margin-left: 3px;
+      margin-right: 3px;
+      display: inline-block;
+      cursor: pointer;
+      line-height: 28px;
+      text-align: center;
+      color: #757575; // grey darken-1
+      &:hover {
+        color: #212121; // grey darken-4
+      }
+      &.disabled {
+        color: #bdbdbd; // grey lighten-1
+        cursor: not-allowed;
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .rmel-iconfont {
+      font-size: 18px;
+    }
+  }
+  ul,
+  li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5,
+  .h6 {
+    font-family: inherit;
+    font-weight: 500;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    line-height: 1.1
+  }
+  h1 {
+    font-size: 34px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 24px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  h5 {
+    font-size: 14px;
+  }
+  h6 {
+    font-size: 12px;
+  }
+}
