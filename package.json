@@ -18,6 +18,7 @@
     "dev": "NODE_OPTIONS=--openssl-legacy-provider build-scripts start",
     "build": "NODE_OPTIONS=--openssl-legacy-provider build-scripts build",
     "prod": "NODE_OPTIONS=--openssl-legacy-provider build-scripts build",
+    "prepare": "npm run build",
     "prepack": "npm run build",
     "test": "mocha",
     "coverage": "nyc mocha",
