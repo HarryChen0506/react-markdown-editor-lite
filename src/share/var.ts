@@ -1,4 +1,4 @@
-import type { ComponentClass, FC } from 'react';
+import type { FC } from 'react';
 import type Editor from '../editor';
 import type { PluginComponent } from '../plugins/Plugin';
 
@@ -87,4 +87,6 @@ export type FunctionPlugin<C = any> = FC<PluginProps<C>> & {
   align?: string;
   defaultConfig?: C;
 };
-export type EditorPlugin<C = any> = typeof PluginComponent<C> | FunctionPlugin;
+export type EditorPlugin<C = any> =
+  | typeof PluginComponent<any, C>
+  | FunctionPlugin;
