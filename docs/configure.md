@@ -12,7 +12,7 @@
 | renderHTML | Render markdown text to HTML. You can return either string, function or Promise | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **required** |
 | placeholder | Default hint | String | undefined |  |
 | readOnly | Is readonly | Boolean | false | |
-| plugins | Plugin list | string[] | undefined |  |
+| plugins | Plugin list | `Array<string \| [EditorPlugin, any]>` | undefined |  |
 | shortcuts | Enable markdown shortcuts | boolean | false |  |
 | view | Controls which items will be displayd by default, includes: menu(Menu bar), md(Editor), html(Preview) | Object | `{ menu: true, md: true, html: true }` |  |
 | canView | Controls which items can be displayd, includes: menu(Menu bar), md(Editor), html(Preview), fullScreen(Full screen)，hideMenu(Hide button to toggle menu bar) | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
@@ -29,6 +29,28 @@
 | onChangeTrigger | Configure when the onChange will be triggered, allow: both, beforeRender (before render html), afterRender (after render html) | Enum | `'both` |  |
 | onImageUpload | Called on image upload, return a Promise that resolved with image url | `(file: File) => Promise<string>;` | undefined |  |
 | onCustomImageUpload | custom image upload here, needs return Promise | `() => Promise` | See detail in src/editor/index.jsx |  |
+
+## plugins
+
+You can add plugins or define the order of plugins using `plugins`:
+```jsx
+import Editor from 'react-markdown-editor-lite';
+import MyPlugin from './my-plugin';
+
+// Note: Assume MyPlugin.pluginName is 'my-plugin'
+
+// Method 1
+<Editor plugins={['header', [MyPlugin, { /* plugin config */ }]]} />
+
+// or
+Editor.use(MyPlugin, { /* plugin config */ });
+<Editor
+  plugins={['header', 'my-plugin']}
+  pluginConfig={{
+    'my-plugin': { /* plugin config */ }
+  }}
+/>
+```
 
 ## renderHTML
 renderHTML support both HTML or ReactElement, for example, markdown-it returns HTML and react-markdown returns ReactElement.

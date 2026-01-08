@@ -1,14 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import type Editor from '../editor';
-import { EditorConfig } from '../share/var';
+import type { EditorConfig, PluginProps } from '../share/var';
 
-export interface PluginProps {
-  editor: Editor;
-  editorConfig: EditorConfig;
-  config: any;
-}
-
-export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProps> extends React.Component<P, S> {
+export abstract class PluginComponent<
+  S = any,
+  C = any,
+  P extends PluginProps = PluginProps<C>,
+> extends React.Component<P, S> {
   static pluginName: string = '';
 
   static align: string = 'left';
@@ -23,8 +21,13 @@ export abstract class PluginComponent<S = {}, P extends PluginProps = PluginProp
     return this.props.editorConfig;
   }
 
+  protected get config(): C {
+    return this.props.config;
+  }
+
   protected getConfig(key: string, defaultValue?: any) {
-    return typeof this.props.config[key] !== 'undefined' && this.props.config[key] !== null
+    return typeof this.props.config[key] !== 'undefined' &&
+      this.props.config[key] !== null
       ? this.props.config[key]
       : defaultValue;
   }

@@ -1,8 +1,0 @@
-{
-  "library": "ReactMarkdownEditorLite",
-  "libraryTarget": "umd",
-  "plugins": [
-    "build-plugin-component",
-    "./webpack.plugin.js"
-  ]
-}

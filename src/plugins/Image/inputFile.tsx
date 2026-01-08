@@ -11,7 +11,7 @@ class InputFile extends React.Component<InputFileProps, any> {
 
   private locked: boolean;
 
-  private input: React.RefObject<HTMLInputElement>;
+  private input: React.RefObject<HTMLInputElement | null>;
 
   constructor(props: any) {
     super(props);

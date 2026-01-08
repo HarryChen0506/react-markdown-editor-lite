@@ -10,43 +10,29 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [20.x]
 
     steps:
-    - uses: actions/checkout@v2
-    # Install node
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        registry-url: 'https://registry.npmjs.org'
-    # Install Yarn
-    - name: Install Yarn
-      run: npm i -g yarn
-    # Yarn caches
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-    - uses: actions/cache@v1
-      id: yarn-cache
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    - name: Install dependencies
+      run: pnpm i --frozen-lockfile
     # Update version
     - name: Get version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
     - name: Update version
       run: npm version --no-git-tag-version ${{ steps.get_version.outputs.VERSION }}
-    # Install dependencies
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
     - name: Build
-      run: yarn run prod
+      run: npm run prod
     - name: Test
-      run: yarn run test
+      run: npm run test
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

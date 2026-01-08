@@ -7,12 +7,15 @@ export interface PreviewProps {
   className?: string;
 }
 
-export abstract class Preview<T extends HTMLElement> extends React.Component<PreviewProps, any> {
-  protected el: React.RefObject<T>;
+export abstract class Preview<T extends HTMLElement> extends React.Component<
+  PreviewProps,
+  any
+> {
+  protected el: React.RefObject<T | null>;
 
   constructor(props: any) {
     super(props);
-    this.el = React.createRef();
+    this.el = React.createRef<T>();
   }
 
   abstract getHtml(): string;
@@ -40,18 +43,18 @@ export class HtmlRender extends Preview<HTMLDivElement> {
   render() {
     return typeof this.props.html === 'string'
       ? React.createElement('div', {
-        ref: this.el,
-        dangerouslySetInnerHTML: { __html: this.props.html },
-        className: this.props.className || 'custom-html-style',
-      })
-      : React.createElement(
-        'div',
-        {
           ref: this.el,
+          dangerouslySetInnerHTML: { __html: this.props.html },
           className: this.props.className || 'custom-html-style',
-        },
-        this.props.html,
-      );
+        })
+      : React.createElement(
+          'div',
+          {
+            ref: this.el,
+            className: this.props.className || 'custom-html-style',
+          },
+          this.props.html,
+        );
   }
 }
 

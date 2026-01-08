@@ -1,22 +1,20 @@
-import * as React from 'react';
+import React from 'react';
 import DropList from '../../components/DropList';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { PluginComponent, PluginProps } from '../Plugin';
+import { PluginComponent } from '../Plugin';
 import TableList from './table';
 
 interface State {
   show: boolean;
 }
 
-interface Props extends PluginProps {
-  config: {
-    maxRow?: number;
-    maxCol?: number;
-  };
+interface Config {
+  maxRow?: number;
+  maxCol?: number;
 }
 
-export default class Table extends PluginComponent<State, Props> {
+export default class Table extends PluginComponent<State, Config> {
   static pluginName = 'table';
 
   static defaultConfig = {
@@ -62,7 +60,9 @@ export default class Table extends PluginComponent<State, Props> {
             visibility={this.state.show}
             maxRow={config.maxRow}
             maxCol={config.maxCol}
-            onSetTable={(option: any) => this.editor.insertMarkdown('table', option)}
+            onSetTable={(option: any) =>
+              this.editor.insertMarkdown('table', option)
+            }
           />
         </DropList>
       </span>

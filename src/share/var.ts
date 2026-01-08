@@ -1,8 +1,20 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import type Editor from '../editor';
+import type { PluginComponent } from '../plugins/Plugin';
 
-export type UploadFunc = ((file: File) => Promise<string>) | ((file: File, callback: (url: string) => void) => void);
+export type UploadFunc =
+  | ((file: File) => Promise<string>)
+  | ((file: File, callback: (url: string) => void) => void);
 
-export type EditorEvent = 'change' | 'fullscreen' | 'viewchange' | 'keydown' | 'focus' | 'blur' | 'scroll' | 'editor_keydown';
+export type EditorEvent =
+  | 'change'
+  | 'fullscreen'
+  | 'viewchange'
+  | 'keydown'
+  | 'focus'
+  | 'blur'
+  | 'scroll'
+  | 'editor_keydown';
 
 export interface EditorConfig {
   theme?: string;
@@ -51,7 +63,9 @@ export const initialSelection: Selection = {
   text: '',
 };
 
-export type KeyboardEventCallback = (e: React.KeyboardEvent<HTMLDivElement>) => void;
+export type KeyboardEventCallback = (
+  e: React.KeyboardEvent<HTMLDivElement>,
+) => void;
 export interface KeyboardEventCondition {
   key?: string;
   keyCode: number;
@@ -61,3 +75,18 @@ export interface KeyboardEventCondition {
 export interface KeyboardEventListener extends KeyboardEventCondition {
   callback: KeyboardEventCallback;
 }
+
+export interface PluginProps<C = any> {
+  editor: Editor;
+  editorConfig: EditorConfig;
+  config: C;
+}
+
+export type FunctionPlugin<C = any> = FC<PluginProps<C>> & {
+  pluginName?: string;
+  align?: string;
+  defaultConfig?: C;
+};
+export type EditorPlugin<C = any> =
+  | typeof PluginComponent<any, C>
+  | FunctionPlugin;

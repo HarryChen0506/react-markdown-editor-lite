@@ -1,22 +1,29 @@
-import * as React from 'react';
-import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
+import React, { Component } from 'react';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
 import i18n from '../i18n';
 import DividerPlugin from '../plugins/divider';
 import Emitter, { globalEmitter } from '../share/emitter';
-import { EditorConfig, EditorEvent, initialSelection, KeyboardEventListener, Selection } from '../share/var';
+import {
+  type EditorConfig,
+  type EditorEvent,
+  type EditorPlugin,
+  initialSelection,
+  type KeyboardEventListener,
+  type Selection,
+} from '../share/var';
 import getDecorated from '../utils/decorate';
 import mergeConfig from '../utils/mergeConfig';
 import { getLineAndCol, isKeyMatch, isPromise } from '../utils/tool';
 import getUploadPlaceholder from '../utils/uploadPlaceholder';
 import defaultConfig from './defaultConfig';
-import { HtmlRender, HtmlType } from './preview';
+import { HtmlRender, type HtmlType } from './preview';
 
-type Plugin = { comp: any; config: any };
+export type PluginItem = [EditorPlugin, any | undefined];
 
-interface EditorProps extends EditorConfig {
+export interface EditorProps<C> extends EditorConfig {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -27,7 +34,7 @@ interface EditorProps extends EditorConfig {
   readOnly?: boolean;
   className?: string;
   config?: any;
-  plugins?: string[];
+  plugins?: Array<string | PluginItem>;
   // Configs
   onChange?: (
     data: {
@@ -38,10 +45,14 @@ interface EditorProps extends EditorConfig {
   ) => void;
   onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
-  onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
+  onScroll?: (
+    e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>,
+    type: 'md' | 'html',
+  ) => void;
+  pluginConfig?: C;
 }
 
-interface EditorState {
+export interface EditorState {
   text: string;
   html: HtmlType;
   fullScreen: boolean;
@@ -53,37 +64,39 @@ interface EditorState {
   };
 }
 
-class Editor extends React.Component<EditorProps, EditorState> {
-  private static plugins: Plugin[] = [];
+class Editor<C = any> extends Component<EditorProps<C>, EditorState> {
+  private static plugins: PluginItem[] = [];
 
   /**
    * Register plugin
    * @param {any} comp Plugin component
    * @param {any} config Other configs
    */
-  static use(comp: any, config: any = {}) {
+  static use(comp: EditorPlugin, config: any = {}) {
     // Check for duplicate plugins
     for (let i = 0; i < Editor.plugins.length; i++) {
-      if (Editor.plugins[i].comp === comp) {
-        Editor.plugins.splice(i, 1, { comp, config });
+      if (Editor.plugins[i][0] === comp) {
+        Editor.plugins.splice(i, 1, [comp, config]);
         return;
       }
     }
-    Editor.plugins.push({ comp, config });
+    Editor.plugins.push([comp, config]);
   }
+  static register = Editor.use.bind(Editor);
 
   /**
    * Unregister plugin
    * @param {any} comp Plugin component
    */
-  static unuse(comp: any) {
+  static unuse(comp: EditorPlugin) {
     for (let i = 0; i < Editor.plugins.length; i++) {
-      if (Editor.plugins[i].comp === comp) {
+      if (Editor.plugins[i][0] === comp) {
         Editor.plugins.splice(i, 1);
         return;
       }
     }
   }
+  static unregister = Editor.unuse.bind(Editor);
 
   /**
    * Unregister all plugins
@@ -129,7 +142,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.config = mergeConfig(defaultConfig, this.props.config, this.props);
 
     this.state = {
-      text: (this.props.value || this.props.defaultValue || '').replace(/↵/g, '\n'),
+      text: (this.props.value || this.props.defaultValue || '').replace(
+        /↵/g,
+        '\n',
+      ),
       html: '',
       view: this.config.view || defaultConfig.view!,
       fullScreen: false,
@@ -170,8 +186,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
     globalEmitter.off(globalEmitter.EVENT_LANG_CHANGE, this.handleLocaleUpdate);
   }
 
-  componentDidUpdate(prevProps: EditorProps) {
-    if (typeof this.props.value !== 'undefined' && this.props.value !== this.state.text) {
+  componentDidUpdate(prevProps: EditorProps<C>) {
+    if (
+      typeof this.props.value !== 'undefined' &&
+      this.props.value !== this.state.text
+    ) {
       let { value } = this.props;
       if (typeof value !== 'string') {
         value = String(value).toString();
@@ -196,19 +215,16 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   private getPlugins() {
-    let plugins: Plugin[] = [];
+    let plugins: PluginItem[] = [];
     if (this.props.plugins) {
       // If plugins option is configured, use only specified plugins
-      const addToPlugins = (name: string) => {
+      const addToPlugins = (name: string | PluginItem) => {
         if (name === DividerPlugin.pluginName) {
-          plugins.push({
-            comp: DividerPlugin,
-            config: {},
-          });
+          plugins.push([DividerPlugin, {}]);
           return;
         }
         for (const it of Editor.plugins) {
-          if (it.comp.pluginName === name) {
+          if (it[0].pluginName === name) {
             plugins.push(it);
             return;
           }
@@ -236,18 +252,20 @@ class Editor extends React.Component<EditorProps, EditorState> {
       plugins = [...Editor.plugins];
     }
     const result: { [x: string]: React.ReactElement[] } = {};
-    plugins.forEach((it) => {
-      if (typeof result[it.comp.align] === 'undefined') {
-        result[it.comp.align] = [];
+    plugins.forEach(it => {
+      const { align = 'left', pluginName = '' } = it[0];
+      if (typeof result[align] === 'undefined') {
+        result[align] = [];
       }
-      const key = it.comp.pluginName === 'divider' ? uuid() : it.comp.pluginName;
-      result[it.comp.align].push(
-        React.createElement(it.comp, {
+      const key = pluginName === 'divider' ? nanoid() : pluginName;
+      result[align].push(
+        React.createElement(it[0] as any, {
           editor: this,
           editorConfig: this.config,
           config: {
-            ...(it.comp.defaultConfig || {}),
-            ...(it.config || {}),
+            ...(it[0].defaultConfig || {}),
+            ...(it[1] || {}),
+            ...((this.props.pluginConfig as any)?.[pluginName] || {}),
           },
           key,
         }),
@@ -263,7 +281,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   private shouldSyncScroll: 'md' | 'html' = 'md';
 
-  private handleSyncScroll(type: 'md' | 'html', e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) {
+  private handleSyncScroll(
+    type: 'md' | 'html',
+    e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>,
+  ) {
     // prevent loop
     if (type !== this.shouldSyncScroll) {
       return;
@@ -275,12 +296,22 @@ class Editor extends React.Component<EditorProps, EditorState> {
     this.emitter.emit(this.emitter.EVENT_SCROLL, e, type);
     // should sync scroll?
     const { syncScrollMode = [] } = this.config;
-    if (!syncScrollMode.includes(type === 'md' ? 'rightFollowLeft' : 'leftFollowRight')) {
+    if (
+      !syncScrollMode.includes(
+        type === 'md' ? 'rightFollowLeft' : 'leftFollowRight',
+      )
+    ) {
       return;
     }
-    if (this.hasContentChanged && this.nodeMdText.current && this.nodeMdPreviewWrapper.current) {
+    if (
+      this.hasContentChanged &&
+      this.nodeMdText.current &&
+      this.nodeMdPreviewWrapper.current
+    ) {
       // 计算出左右的比例
-      this.scrollScale = this.nodeMdText.current.scrollHeight / this.nodeMdPreviewWrapper.current.scrollHeight;
+      this.scrollScale =
+        this.nodeMdText.current.scrollHeight /
+        this.nodeMdPreviewWrapper.current.scrollHeight;
       this.hasContentChanged = false;
     }
     if (!this.isSyncingScroll) {
@@ -289,10 +320,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
         if (this.nodeMdText.current && this.nodeMdPreviewWrapper.current) {
           if (type === 'md') {
             // left to right
-            this.nodeMdPreviewWrapper.current.scrollTop = this.nodeMdText.current.scrollTop / this.scrollScale;
+            this.nodeMdPreviewWrapper.current.scrollTop =
+              this.nodeMdText.current.scrollTop / this.scrollScale;
           } else {
             // right to left
-            this.nodeMdText.current.scrollTop = this.nodeMdPreviewWrapper.current.scrollTop * this.scrollScale;
+            this.nodeMdText.current.scrollTop =
+              this.nodeMdPreviewWrapper.current.scrollTop * this.scrollScale;
           }
         }
         this.isSyncingScroll = false;
@@ -317,7 +350,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   private setHtml(html: HtmlType): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.setState({ html }, resolve);
     });
   }
@@ -364,7 +397,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
     }
     const event = e.nativeEvent as ClipboardEvent;
     // @ts-ignore
-    const items = (event.clipboardData || window.clipboardData).items as DataTransferItemList;
+    const items = (event.clipboardData || window.clipboardData)
+      .items as DataTransferItemList;
 
     if (items) {
       e.preventDefault();
@@ -396,7 +430,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
       const lineInfo = getLineAndCol(text, curPos);
 
       const emptyCurrentLine = () => {
-        const newValue = currentTarget.value.substr(0, curPos - lineInfo.curLine.length) + currentTarget.value.substr(curPos);
+        const newValue =
+          currentTarget.value.substr(0, curPos - lineInfo.curLine.length) +
+          currentTarget.value.substr(curPos);
         this.setText(newValue, undefined, {
           start: curPos - lineInfo.curLine.length,
           end: curPos - lineInfo.curLine.length,
@@ -514,9 +550,8 @@ class Editor extends React.Component<EditorProps, EditorState> {
       };
     }
     if (type === 'tab' && curSelection.start !== curSelection.end) {
-      const curLineStart = this.getMdValue()
-        .slice(0, curSelection.start)
-        .lastIndexOf('\n') + 1;
+      const curLineStart =
+        this.getMdValue().slice(0, curSelection.start).lastIndexOf('\n') + 1;
       this.setSelection({
         start: curLineStart,
         end: curSelection.end,
@@ -526,7 +561,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
     let { text } = decorate;
     const { selection } = decorate;
     if (decorate.newBlock) {
-      const startLineInfo = getLineAndCol(this.getMdValue(), curSelection.start);
+      const startLineInfo = getLineAndCol(
+        this.getMdValue(),
+        curSelection.start,
+      );
       const { col, curLine } = startLineInfo;
       if (col > 0 && curLine.length > 0) {
         text = `\n${text}`;
@@ -537,7 +575,10 @@ class Editor extends React.Component<EditorProps, EditorState> {
       }
       let { afterText } = startLineInfo;
       if (curSelection.start !== curSelection.end) {
-        afterText = getLineAndCol(this.getMdValue(), curSelection.end).afterText;
+        afterText = getLineAndCol(
+          this.getMdValue(),
+          curSelection.end,
+        ).afterText;
       }
       if (afterText.trim() !== '' && afterText.substr(0, 2) !== '\n\n') {
         if (afterText.substr(0, 1) !== '\n') {
@@ -556,7 +597,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   insertPlaceholder(placeholder: string, wait: Promise<string>) {
     this.insertText(placeholder, true);
-    wait.then((str) => {
+    wait.then(str => {
       const text = this.getMdValue().replace(placeholder, str);
       this.setText(text);
     });
@@ -568,24 +609,31 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {boolean} replaceSelected Replace selected text
    * @param {Selection} newSelection New selection
    */
-  insertText(value: string = '', replaceSelected: boolean = false, newSelection?: { start: number; end: number }) {
+  insertText(
+    value: string = '',
+    replaceSelected: boolean = false,
+    newSelection?: { start: number; end: number },
+  ) {
     const { text } = this.state;
     const selection = this.getSelection();
     const beforeContent = text.slice(0, selection.start);
-    const afterContent = text.slice(replaceSelected ? selection.end : selection.start, text.length);
+    const afterContent = text.slice(
+      replaceSelected ? selection.end : selection.start,
+      text.length,
+    );
 
     this.setText(
       beforeContent + value + afterContent,
       undefined,
       newSelection
         ? {
-          start: newSelection.start + beforeContent.length,
-          end: newSelection.end + beforeContent.length,
-        }
+            start: newSelection.start + beforeContent.length,
+            end: newSelection.end + beforeContent.length,
+          }
         : {
-          start: selection.start,
-          end: selection.start,
-        },
+            start: selection.start,
+            end: selection.start,
+          },
     );
   }
 
@@ -594,17 +642,29 @@ class Editor extends React.Component<EditorProps, EditorState> {
    * @param {string} value
    * @param {any} event
    */
-  setText(value: string = '', event?: React.ChangeEvent<HTMLTextAreaElement>, newSelection?: { start: number; end: number }) {
+  setText(
+    value: string = '',
+    event?: React.ChangeEvent<HTMLTextAreaElement>,
+    newSelection?: { start: number; end: number },
+  ) {
     const { onChangeTrigger = 'both' } = this.config;
     const text = value.replace(/↵/g, '\n');
     if (this.state.text === value) {
       return;
     }
     this.setState({ text });
-    if (this.props.onChange && (onChangeTrigger === 'both' || onChangeTrigger === 'beforeRender')) {
+    if (
+      this.props.onChange &&
+      (onChangeTrigger === 'both' || onChangeTrigger === 'beforeRender')
+    ) {
       this.props.onChange({ text, html: this.getHtmlValue() }, event);
     }
-    this.emitter.emit(this.emitter.EVENT_CHANGE, value, event, typeof event === 'undefined');
+    this.emitter.emit(
+      this.emitter.EVENT_CHANGE,
+      value,
+      event,
+      typeof event === 'undefined',
+    );
     if (newSelection) {
       setTimeout(() => this.setSelection(newSelection));
     }
@@ -660,7 +720,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   onKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach((it) => this.onKeyboard(it));
+      data.forEach(it => this.onKeyboard(it));
       return;
     }
     if (!this.keyboardListeners.includes(data)) {
@@ -674,7 +734,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
    */
   offKeyboard(data: KeyboardEventListener | KeyboardEventListener[]) {
     if (Array.isArray(data)) {
-      data.forEach((it) => this.offKeyboard(it));
+      data.forEach(it => this.offKeyboard(it));
       return;
     }
     const index = this.keyboardListeners.indexOf(data);
@@ -830,8 +890,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
         if (file) {
           const placeholder = getUploadPlaceholder(file, onImageUpload);
           queue.push(Promise.resolve(placeholder.placeholder));
-          placeholder.uploaded.then((str) => {
-            const text = this.getMdValue().replace(placeholder.placeholder, str);
+          placeholder.uploaded.then(str => {
+            const text = this.getMdValue().replace(
+              placeholder.placeholder,
+              str,
+            );
             const offset = str.length - placeholder.placeholder.length;
             // 计算出替换后的光标位置
             const selection = this.getSelection();
@@ -841,11 +904,11 @@ class Editor extends React.Component<EditorProps, EditorState> {
             });
           });
         }
-      } else if (it.kind === 'string' && it.type === 'text/plain') {
-        queue.push(new Promise((resolve) => it.getAsString(resolve)));
+      } else if (it.kind === 'string' && it.type.indexOf('text/') === 0) {
+        queue.push(new Promise(resolve => it.getAsString(resolve)));
       }
     });
-    Promise.all(queue).then((res) => {
+    Promise.all(queue).then(res => {
       const text = res.join('');
       const selection = this.getSelection();
       this.insertText(text, true, {
@@ -857,24 +920,49 @@ class Editor extends React.Component<EditorProps, EditorState> {
 
   render() {
     const { view, fullScreen, text, html } = this.state;
-    const { id, className = '', style, name = 'textarea', autoFocus, placeholder, readOnly } = this.props;
-    const showHideMenu = this.config.canView && this.config.canView.hideMenu && !this.config.canView.menu;
+    const {
+      id,
+      className = '',
+      style,
+      name = 'textarea',
+      autoFocus,
+      placeholder,
+      readOnly,
+    } = this.props;
+    const { canView } = this.config;
+    const showHideMenu = canView?.hideMenu && canView?.menu;
     const getPluginAt = (at: string) => this.state.plugins[at] || [];
     const isShowMenu = !!view.menu;
     const editorId = id ? `${id}_md` : undefined;
     const previewerId = id ? `${id}_html` : undefined;
     return (
-      <div id={id} className={`rc-md-editor ${fullScreen ? 'full' : ''} ${className}`} style={style} onKeyDown={this.handleKeyDown} onDrop={this.handleDrop}>
-        <NavigationBar visible={isShowMenu} left={getPluginAt('left')} right={getPluginAt('right')} />
+      <div
+        id={id}
+        className={`rc-md-editor ${fullScreen ? 'full' : ''} ${className}`}
+        style={style}
+        onKeyDown={this.handleKeyDown}
+        onDrop={this.handleDrop}
+      >
+        <NavigationBar
+          visible={isShowMenu}
+          left={getPluginAt('left')}
+          right={getPluginAt('right')}
+        />
         <div className="editor-container">
           {showHideMenu && (
             <ToolBar>
-              <span className="button button-type-menu" title={isShowMenu ? 'hidden menu' : 'show menu'} onClick={this.handleToggleMenu}>
+              <span
+                className="button button-type-menu"
+                title={isShowMenu ? 'hidden menu' : 'show menu'}
+                onClick={this.handleToggleMenu}
+              >
                 <Icon type={`expand-${isShowMenu ? 'less' : 'more'}`} />
               </span>
             </ToolBar>
           )}
-          <section className={`section sec-md ${view.md ? 'visible' : 'in-visible'}`}>
+          <section
+            className={`section sec-md ${view.md ? 'visible' : 'in-visible'}`}
+          >
             <textarea
               id={editorId}
               ref={this.nodeMdText}
@@ -896,9 +984,21 @@ class Editor extends React.Component<EditorProps, EditorState> {
               onBlur={this.handleBlur}
             />
           </section>
-          <section className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}>
-            <div id={previewerId} className="section-container html-wrap" ref={this.nodeMdPreviewWrapper} onMouseOver={() => (this.shouldSyncScroll = 'html')} onScroll={this.handlePreviewScroll}>
-              <HtmlRender html={html} className={this.config.htmlClass} ref={this.nodeMdPreview} />
+          <section
+            className={`section sec-html ${view.html ? 'visible' : 'in-visible'}`}
+          >
+            <div
+              id={previewerId}
+              className="section-container html-wrap"
+              ref={this.nodeMdPreviewWrapper}
+              onMouseOver={() => (this.shouldSyncScroll = 'html')}
+              onScroll={this.handlePreviewScroll}
+            >
+              <HtmlRender
+                html={html}
+                className={this.config.htmlClass}
+                ref={this.nodeMdPreview}
+              />
             </div>
           </section>
         </div>

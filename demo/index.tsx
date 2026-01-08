@@ -1,15 +1,8 @@
----
-title: Simple Usage
-order: 1
----
-
-本 Demo 演示基本用法。
-
-```jsx
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ReactMarkdown from 'react-markdown';
-import MdEditor, { Plugins } from 'react-markdown-editor-lite';
+import MdEditor, { type FunctionPlugin, Plugins } from '../src';
+import '../src/index.less';
 
 const PLUGINS = undefined;
 // const PLUGINS = ['header', 'divider', 'image', 'divider', 'font-bold', 'full-screen'];
@@ -23,14 +16,26 @@ MdEditor.use(Plugins.TabInsert, {
   tabMapValue: 1, // note that 1 means a '\t' instead of ' '.
 });
 
-class Demo extends React.Component {
-  mdEditor = undefined;
+const FCPlugin: FunctionPlugin = props => {
+  return <div>{JSON.stringify(props.config)}</div>;
+};
+FCPlugin.pluginName = 'fc-plugin';
+MdEditor.use(FCPlugin, {
+  count: 1,
+});
+
+interface State {
+  value: string;
+}
+
+class Demo extends Component<{}, State> {
+  mdEditor: MdEditor | undefined = undefined;
 
   constructor(props) {
     super(props);
     this.renderHTML = this.renderHTML.bind(this);
     this.state = {
-      value: "# Hello",
+      value: '# Hello',
     };
   }
 
@@ -41,17 +46,17 @@ class Demo extends React.Component {
     });
   };
 
-  handleImageUpload = (file) => {
+  handleImageUpload = file => {
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = data => {
-        resolve(data.target.result);
+        resolve((data.target as any).result);
       };
       reader.readAsDataURL(file);
     });
   };
 
-  onCustomImageUpload = (event) => {
+  onCustomImageUpload = event => {
     console.log('onCustomImageUpload', event);
     return new Promise((resolve, reject) => {
       const result = window.prompt('Please enter image url here...');
@@ -82,15 +87,15 @@ class Demo extends React.Component {
 
   handleSetValue = () => {
     const text = window.prompt('Content');
-    this.setState({
-      value: text,
-    });
+    if (text) {
+      this.setState({
+        value: text,
+      });
+    }
   };
 
   renderHTML(text) {
-    return React.createElement(ReactMarkdown, {
-      source: text,
-    });
+    return <ReactMarkdown>{text}</ReactMarkdown>;
   }
 
   render() {
@@ -104,7 +109,9 @@ class Demo extends React.Component {
         </nav>
         <div className="editor-wrap" style={{ marginTop: '30px' }}>
           <MdEditor
-            ref={node => (this.mdEditor = node || undefined)}
+            ref={node => {
+              this.mdEditor = node || undefined;
+            }}
             value={this.state.value}
             style={{ height: '500px', width: '100%' }}
             renderHTML={this.renderHTML}
@@ -133,6 +140,11 @@ class Demo extends React.Component {
           <MdEditor
             style={{ height: '500px', width: '100%' }}
             renderHTML={this.renderHTML}
+            pluginConfig={{
+              'fc-plugin': {
+                count: 2,
+              },
+            }}
           />
         </div>
         {/* <div style={{marginTop: '30px'}}>
@@ -155,7 +167,12 @@ class Demo extends React.Component {
   }
 }
 
-ReactDOM.render((
-  <Demo />
-), mountNode);
-```
+const rootEl = document.getElementById('root');
+if (rootEl) {
+  const root = ReactDOM.createRoot(rootEl);
+  root.render(
+    <React.StrictMode>
+      <Demo />
+    </React.StrictMode>,
+  );
+}

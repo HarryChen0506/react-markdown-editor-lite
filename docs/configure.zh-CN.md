@@ -9,7 +9,7 @@
 | renderHTML | 将Markdown渲染为HTML或ReactElement | `(text: string) => string | ReactElement | Promise<string> | Promise<ReactElement>` | none | **必填** |
 | placeholder | 默认提示内容 | String | undefined |  |
 | readOnly | 是否只读状态 | Boolean | false | |
-| plugins | 插件列表 | string[] | undefined |  |
+| plugins | 插件列表 | `Array<string \| [EditorPlugin, any]>` | undefined |  |
 | shortcuts | 启用markdown快捷键 | boolean | false |  |
 | view | 配置哪些项目默认被显示，包括：menu（菜单栏），md（编辑器)，html（预览区） | Object | `{ menu: true, md: true, html: true }` |  |
 | canView | 配置哪些项目可以被显示，包括：menu（菜单栏），md（编辑器)，html（预览区），fullScreen（全屏），hideMenu（隐藏菜单按钮） | Object | `{ menu: true, md: true, html: true, fullScreen: true, hideMenu: true }` |  |
@@ -26,6 +26,29 @@
 | onChangeTrigger | 配置改变回调触发的时机，可选：both、beforeRender（渲染HTML前）、afterRender（渲染HTML后） | Enum | `'both` |  |
 | onImageUpload | 上传图片时调用，需要返回一个Promise，完成时返回图片地址 | `(file: File) => Promise<string>;` | undefined |  |
 | onCustomImageUpload | 自定义图片按钮点击事件，返回一个Promise，完成时返回图片地址。若定义了此函数，则onImageUpload不起作用 | `() => Promise<string>` | undefined |  |
+| pluginConfig | 插件配置 | any | undefined |  |
+
+## plugins
+
+可以通过 plugins 增加插件，或定义插件顺序：
+```jsx
+import Editor from 'react-markdown-editor-lite';
+import MyPlugin from './my-plugin';
+
+// 注意：假设 MyPlugin.pluginName 是 'my-plugin'
+
+// 方式一
+<Editor plugins={['header', [MyPlugin, { /* plugin config */ }]]} />
+
+// 或者
+Editor.use(MyPlugin, { /* plugin config */ });
+<Editor
+  plugins={['header', 'my-plugin']}
+  pluginConfig={{
+    'my-plugin': { /* plugin config */ }
+  }}
+/>
+```
 
 ## renderHTML
 renderHTML支持返回HTML文本或ReactElement，例如，markdown-it返回的是HTML文本，而react-markdown返回的是ReactElement。

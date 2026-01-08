@@ -1,24 +1,39 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { setTimeout as sleep } from 'node:timers/promises';
+import { cleanup, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect } from 'chai';
 import * as React from 'react';
 import Editor from '../src';
 
-const TextComponent = (props: { onClick: (ref: Editor) => void; value?: string }) => {
+const user = userEvent.setup();
+
+const TextComponent = (props: {
+  onClick: (ref: Editor) => void;
+  value?: string;
+}) => {
   const { value, onClick } = props;
   const ref = React.useRef<Editor>(null);
 
   return (
     <div>
-      <button id="click_handler" onClick={() => ref.current && onClick(ref.current)}>
+      <button
+        id="click_handler"
+        onClick={() => ref.current && onClick(ref.current)}
+      >
         Click
       </button>
       <label htmlFor="myeditor_md">My Editor</label>
-      <Editor ref={ref} id="myeditor" renderHTML={text => text} defaultValue={value || '123456'} />
+      <Editor
+        ref={ref}
+        id="myeditor"
+        renderHTML={text => text}
+        defaultValue={value || '123456'}
+      />
     </div>
   );
 };
 
-const doClick = (
+const doClick = async (
   onClick: (ref: Editor) => void,
   options: {
     value?: string;
@@ -26,7 +41,9 @@ const doClick = (
     end?: number;
   } = {},
 ) => {
-  const handler = render(<TextComponent onClick={onClick} value={options.value} />);
+  const handler = render(
+    <TextComponent onClick={onClick} value={options.value} />,
+  );
 
   const textarea = handler.queryByLabelText('My Editor') as HTMLTextAreaElement;
 
@@ -42,11 +59,7 @@ const doClick = (
 
   const btn = handler.container.querySelector('#click_handler');
   if (btn) {
-    const event = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-    });
-    fireEvent(btn, event);
+    await user.click(btn);
   }
 
   return {
@@ -64,19 +77,19 @@ const next = (cb: any, time = 10) => {
   });
 };
 
-describe('Test API', function() {
+describe('Test API', () => {
   // getSelection
-  it('getSelection', function() {
+  it('getSelection', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       selected = editor.getSelection().text;
     };
-    doClick(handleClick);
+    await doClick(handleClick);
     expect(selected).to.equals('23');
   });
 
   // setText with newSelection
-  it('setText', function() {
+  it('setText', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.setText('abcdefg', undefined, {
@@ -86,24 +99,24 @@ describe('Test API', function() {
 
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('abcdefg');
     return next(() => expect(selected).to.equals('ab'));
   });
 
   // insertText
-  it('insertText 1', function() {
+  it('insertText 1', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', true);
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1xx456');
     return next(() => expect(selected).to.equals(''));
   });
   // insertText
-  it('insertText 2', function() {
+  it('insertText 2', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertText('xx', false, {
@@ -112,31 +125,31 @@ describe('Test API', function() {
       });
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1xx23456');
     return next(() => expect(selected).to.equals('x'));
   });
 
   // insertMarkdown
-  it('insertMarkdown bold', function() {
+  it('insertMarkdown bold', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('bold');
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1**23**456');
     return next(() => expect(selected).to.equals('23'));
   });
 
   // insertMarkdown
-  it('insertMarkdown unordered', function() {
+  it('insertMarkdown unordered', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('unordered');
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick, {
+    const { textarea } = await doClick(handleClick, {
       value: '123\n234\n345\n456',
       start: 2,
       end: 10,
@@ -146,7 +159,7 @@ describe('Test API', function() {
   });
 
   // insertMarkdown
-  it('insertMarkdown table', function() {
+  it('insertMarkdown table', async () => {
     let selected = '';
     const handleClick = (editor: Editor) => {
       editor.insertMarkdown('table', {
@@ -155,7 +168,7 @@ describe('Test API', function() {
       });
       setTimeout(() => (selected = editor.getSelection().text));
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     const expectTable =
       '| Head | Head | Head | Head |\n| --- | --- | --- | --- |\n| Data | Data | Data | Data |\n| Data | Data | Data | Data |';
     expect(textarea.value).to.equals('1\n' + expectTable + '\n\n456');
@@ -163,20 +176,21 @@ describe('Test API', function() {
   });
 
   // insertPlaceholder
-  it('insertPlaceholder', function() {
+  it('insertPlaceholder', async () => {
     const handleClick = (editor: Editor) => {
       editor.insertPlaceholder(
         '_placeholder_',
         new Promise(resolve => {
           setTimeout(() => {
             resolve('_resolved_');
-          }, 5);
+          }, 300);
         }),
       );
     };
-    const { textarea } = doClick(handleClick);
+    const { textarea } = await doClick(handleClick);
     expect(textarea.value).to.equals('1_placeholder_456');
-    return next(() => expect(textarea.value).to.equals('1_resolved_456'));
+    await sleep(400);
+    expect(textarea.value).to.equals('1_resolved_456');
   });
 
   afterEach(cleanup);
