@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
 
     steps:
     - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
       with:
-        version: 9
+        version: 10
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -26,11 +26,11 @@ jobs:
     # Update version
     - name: Get version
       id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
     - name: Update version
       run: npm version --no-git-tag-version ${{ steps.get_version.outputs.VERSION }}
     - name: Build
-      run: npm run prod
+      run: npm run build
     - name: Test
       run: npm run test
     - run: npm publish
