@@ -19,6 +19,18 @@ const bundlelessConfig = {
   output: {
     copy: [{ from: '**/*.less', context: path.join(__dirname, 'src') }],
   },
+  tools: {
+    rspack: {
+      module: {
+        rules: [
+          {
+            test: /\.(eot|ttf)$/,
+            type: 'asset/inline',
+          },
+        ],
+      },
+    },
+  },
 };
 
 export default defineConfig({
