@@ -7,7 +7,7 @@
 
 [中文说明](README_CN.md)
 
-- A light-weight(20KB zipped) Markdown editor of React component
+- A light-weight Markdown editor of React component
 - Supports TypeScript
 - Supports custom markdown parser
 - Full markdown support
@@ -15,7 +15,7 @@
 - Full control over UI
 - Supports image uploading and dragging
 - Supports synced scrolling between editor and preview
-- 一款轻量的基于 React 的 Markdown 编辑器, 压缩后代码只有 20KB
+- 一款轻量的基于 React 的 Markdown 编辑器
 - 支持 TypeScript
 - 支持自定义 Markdown 解析器
 - 支持常用的 Markdown 编辑功能，如加粗，斜体等等...
@@ -41,6 +41,8 @@ Pluggable bars
 ```shell
 npm install react-markdown-editor-lite --save
 # or
+pnpm add react-markdown-editor-lite
+# or
 yarn add react-markdown-editor-lite
 ```
 
@@ -56,7 +58,6 @@ Following steps:
 ```js
 // import react, react-markdown-editor-lite, and a markdown parser you like
 import React from 'react';
-import * as ReactDOM from 'react-dom';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 // import style manually
@@ -136,7 +137,7 @@ export default function() {
 
 Full example see [here](https://codesandbox.io/s/next-js-80bne)
 
-## Import in Browser
+## Using UMD version in browser
 
 Since 1.1.0, You can add `script` and `link` tags in your browser and use the global variable `ReactMarkdownEditorLite`.
 
@@ -172,7 +173,7 @@ externals: {
 [npm-version-image]: https://img.shields.io/npm/v/react-markdown-editor-lite.svg
 [npm-downloads-image]: https://img.shields.io/npm/dm/react-markdown-editor-lite.svg?style=flat
 [npm-url]: https://www.npmjs.com/package/react-markdown-editor-lite
-[workflow-image]: https://img.shields.io/github/workflow/status/HarryChen0506/react-markdown-editor-lite/main
+[workflow-image]: https://github.com/HarryChen0506/react-markdown-editor-lite/actions/workflows/main.yml/badge.svg
 [workflow-url]: https://github.com/HarryChen0506/react-markdown-editor-lite/actions?query=workflow%3Amain
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
