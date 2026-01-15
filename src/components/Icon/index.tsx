@@ -1,5 +1,5 @@
 // Icon
-import * as React from 'react';
+import React from 'react';
 
 interface IconProps {
   type: string;

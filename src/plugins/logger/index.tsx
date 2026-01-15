@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
-import { KeyboardEventListener } from '../../share/var';
+import type { KeyboardEventListener } from '../../share/var';
 import { PluginComponent } from '../Plugin';
 import LoggerPlugin from './logger';
 
@@ -24,9 +24,25 @@ export default class Logger extends PluginComponent {
     this.handleUndo = this.handleUndo.bind(this);
     // Mac的Redo比较特殊，是Command+Shift+Z，优先处理
     this.handleKeyboards = [
-      { key: 'y', keyCode: 89, withKey: ['ctrlKey'], callback: this.handleRedo },
-      { key: 'z', keyCode: 90, withKey: ['metaKey', 'shiftKey'], callback: this.handleRedo },
-      { key: 'z', keyCode: 90, aliasCommand: true, withKey: ['ctrlKey'], callback: this.handleUndo },
+      {
+        key: 'y',
+        keyCode: 89,
+        withKey: ['ctrlKey'],
+        callback: this.handleRedo,
+      },
+      {
+        key: 'z',
+        keyCode: 90,
+        withKey: ['metaKey', 'shiftKey'],
+        callback: this.handleRedo,
+      },
+      {
+        key: 'z',
+        keyCode: 90,
+        aliasCommand: true,
+        withKey: ['ctrlKey'],
+        callback: this.handleUndo,
+      },
     ];
 
     this.logger = new LoggerPlugin({
@@ -57,7 +73,10 @@ export default class Logger extends PluginComponent {
   }
 
   handleChange(value: string, e: any, isNotInput: boolean) {
-    if (this.logger.getLast() === value || (this.lastPop !== null && this.lastPop === value)) {
+    if (
+      this.logger.getLast() === value ||
+      (this.lastPop !== null && this.lastPop === value)
+    ) {
       return;
     }
     this.logger.cleanRedo();
@@ -87,7 +106,7 @@ export default class Logger extends PluginComponent {
     // 监听变化事件
     this.editor.on('change', this.handleChange);
     // 监听键盘事件
-    this.handleKeyboards.forEach((it) => this.editor.onKeyboard(it));
+    this.handleKeyboards.forEach(it => this.editor.onKeyboard(it));
     // 初始化时，把已有值填充进logger
     this.logger.initValue = this.editor.getMdValue();
     this.forceUpdate();
@@ -100,7 +119,7 @@ export default class Logger extends PluginComponent {
     this.editor.off('change', this.handleChange);
     this.editor.unregisterPluginApi('undo');
     this.editor.unregisterPluginApi('redo');
-    this.handleKeyboards.forEach((it) => this.editor.offKeyboard(it));
+    this.handleKeyboards.forEach(it => this.editor.offKeyboard(it));
   }
 
   pause() {
@@ -111,14 +130,24 @@ export default class Logger extends PluginComponent {
   }
 
   render() {
-    const hasUndo = this.logger.getUndoCount() > 1 || this.logger.initValue !== this.editor.getMdValue();
+    const hasUndo =
+      this.logger.getUndoCount() > 1 ||
+      this.logger.initValue !== this.editor.getMdValue();
     const hasRedo = this.logger.getRedoCount() > 0;
     return (
       <>
-        <span className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`} title={i18n.get('btnUndo')} onClick={this.handleUndo}>
+        <span
+          className={`button button-type-undo ${hasUndo ? '' : 'disabled'}`}
+          title={i18n.get('btnUndo')}
+          onClick={this.handleUndo}
+        >
           <Icon type="undo" />
         </span>
-        <span className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`} title={i18n.get('btnRedo')} onClick={this.handleRedo}>
+        <span
+          className={`button button-type-redo ${hasRedo ? '' : 'disabled'}`}
+          title={i18n.get('btnRedo')}
+          onClick={this.handleRedo}
+        >
           <Icon type="redo" />
         </span>
       </>

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import React from 'react';
 import i18n from '../../i18n';
 
 interface TabMapListProps {
@@ -20,7 +20,7 @@ class TabMapList extends React.Component<TabMapListProps, any> {
 
     return (
       <ul className="tab-map-list">
-        {[1, 2, 4, 8].map((it) => (
+        {[1, 2, 4, 8].map(it => (
           <li
             key={it}
             className={classNames('list-item', {

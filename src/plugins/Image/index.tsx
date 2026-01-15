@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
 import { isPromise } from '../../utils/tool';

@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from '../components/Icon';
 import NavigationBar from '../components/NavigationBar';
 import ToolBar from '../components/ToolBar';
@@ -64,7 +64,7 @@ export interface EditorState {
   };
 }
 
-class Editor<C = any> extends Component<EditorProps<C>, EditorState> {
+class Editor<C = any> extends React.Component<EditorProps<C>, EditorState> {
   private static plugins: PluginItem[] = [];
 
   /**

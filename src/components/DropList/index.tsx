@@ -1,11 +1,11 @@
-import { Component, type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren } from 'react';
 
 interface DropListProps {
   show: boolean;
   onClose?: () => void;
 }
 
-class DropList extends Component<PropsWithChildren<DropListProps>, any> {
+class DropList extends React.Component<PropsWithChildren<DropListProps>, any> {
   constructor(props: any) {
     super(props);
     this.handleClose = this.handleClose.bind(this);

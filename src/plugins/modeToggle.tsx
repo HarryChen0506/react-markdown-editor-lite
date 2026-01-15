@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Icon from '../components/Icon';
 import i18n from '../i18n';
 import { PluginComponent } from './Plugin';
@@ -25,7 +25,9 @@ class ModeToggle extends PluginComponent<ModeToggleState> {
     const { canView } = this.editorConfig;
     if (canView) {
       // 至少有两种情况可以显示的时候，才会显示切换按钮
-      return [canView.html, canView.md, canView.both].filter((it) => it).length >= 2;
+      return (
+        [canView.html, canView.md, canView.both].filter(it => it).length >= 2
+      );
     }
     return false;
   }
@@ -42,7 +44,11 @@ class ModeToggle extends PluginComponent<ModeToggleState> {
     const { canView } = this.editorConfig;
     const { view } = this.state;
 
-    const actions = [NEXT_ACTION.SHOW_ALL, NEXT_ACTION.SHOW_MD, NEXT_ACTION.SHOW_HTML];
+    const actions = [
+      NEXT_ACTION.SHOW_ALL,
+      NEXT_ACTION.SHOW_MD,
+      NEXT_ACTION.SHOW_HTML,
+    ];
 
     if (canView) {
       if (!canView.both) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type React from 'react';
 
 interface NavigationBarProps {
   left?: React.ReactElement[];
@@ -8,7 +8,9 @@ interface NavigationBarProps {
 
 export default function NavigationBar(props: NavigationBarProps) {
   return (
-    <div className={`rc-md-navigation ${props.visible ? 'visible' : 'in-visible'}`}>
+    <div
+      className={`rc-md-navigation ${props.visible ? 'visible' : 'in-visible'}`}
+    >
       <div className="navigation-nav left">
         <div className="button-wrap">{props.left}</div>
       </div>

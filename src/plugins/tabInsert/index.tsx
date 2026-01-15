@@ -4,13 +4,13 @@
  * see src/demo/index.tsx.
  */
 
-import * as React from 'react';
-import { KeyboardEventListener } from '../../share/var';
-import { PluginComponent } from '../Plugin';
+import React from 'react';
 import DropList from '../../components/DropList';
-import i18n from '../../i18n';
-import TabMapList from './TabMapList';
 import Icon from '../../components/Icon';
+import i18n from '../../i18n';
+import type { KeyboardEventListener } from '../../share/var';
+import { PluginComponent } from '../Plugin';
+import TabMapList from './TabMapList';
 
 /**
  * @field tabMapValue:  Number of spaces will be inputted. Especially, note that 1 means a '\t' instead of ' '.
@@ -46,7 +46,10 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
       keyCode: 9,
       aliasCommand: true,
       withKey: [],
-      callback: () => this.editor.insertMarkdown('tab', { tabMapValue: this.state.tabMapValue }),
+      callback: () =>
+        this.editor.insertMarkdown('tab', {
+          tabMapValue: this.state.tabMapValue,
+        }),
     };
   }
 
@@ -88,7 +91,10 @@ export default class TabInsert extends PluginComponent<TabInsertState> {
       >
         <Icon type="tab" />
         <DropList show={this.state.show} onClose={this.hide}>
-          <TabMapList value={this.state.tabMapValue} onSelectMapValue={this.handleChangeMapValue} />
+          <TabMapList
+            value={this.state.tabMapValue}
+            onSelectMapValue={this.handleChangeMapValue}
+          />
         </DropList>
       </span>
     );

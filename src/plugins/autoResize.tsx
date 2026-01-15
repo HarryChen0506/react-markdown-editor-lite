@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { PluginComponent } from './Plugin';
 
 export default class AutoResize extends PluginComponent {
@@ -19,7 +19,9 @@ export default class AutoResize extends PluginComponent {
   constructor(props: any) {
     super(props);
 
-    this.useTimer = this.getConfig('useTimer') || typeof requestAnimationFrame === 'undefined';
+    this.useTimer =
+      this.getConfig('useTimer') ||
+      typeof requestAnimationFrame === 'undefined';
 
     this.handleChange = this.handleChange.bind(this);
     this.doResize = this.doResize.bind(this);
@@ -28,7 +30,10 @@ export default class AutoResize extends PluginComponent {
   doResize() {
     const resizeElement = (e: HTMLElement) => {
       e.style.height = 'auto';
-      const height = Math.min(Math.max(this.getConfig('min'), e.scrollHeight), this.getConfig('max'));
+      const height = Math.min(
+        Math.max(this.getConfig('min'), e.scrollHeight),
+        this.getConfig('max'),
+      );
       e.style.height = `${height}px`;
       return height;
     };

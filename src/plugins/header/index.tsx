@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import DropList from '../../components/DropList';
 import Icon from '../../components/Icon';
 import i18n from '../../i18n';
@@ -45,7 +45,11 @@ export default class Header extends PluginComponent<State> {
       >
         <Icon type="font-size" />
         <DropList show={this.state.show} onClose={this.hide}>
-          <HeaderList onSelectHeader={(header: string) => this.editor.insertMarkdown(header)} />
+          <HeaderList
+            onSelectHeader={(header: string) =>
+              this.editor.insertMarkdown(header)
+            }
+          />
         </DropList>
       </span>
     );
