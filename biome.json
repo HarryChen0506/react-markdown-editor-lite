@@ -16,7 +16,8 @@
       "arrowParentheses": "asNeeded",
       "jsxQuoteStyle": "double",
       "lineWidth": 80
-    }
+    },
+    "jsxRuntime": "reactClassic"
   },
   "linter": {
     "enabled": true,
